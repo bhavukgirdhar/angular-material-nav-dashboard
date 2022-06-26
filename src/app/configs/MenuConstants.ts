@@ -1,4 +1,4 @@
-import { NavItem } from "../menu-bar/models/NavItem";
+import { NavItem } from "../models/NavItem";
 
 export class MenuConstants {
 
