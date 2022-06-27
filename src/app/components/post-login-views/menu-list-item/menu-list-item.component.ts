@@ -4,6 +4,7 @@ import {Router} from '@angular/router';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import { NavService } from 'src/app/services/nav.service';
 import { NavItem } from 'src/app/models/NavItem';
+import { MenuConstants } from 'src/app/configs/MenuConstants';
 
 @Component({
   selector: 'app-menu-list-item',
@@ -46,7 +47,14 @@ export class MenuListItemComponent implements OnInit {
 
   onItemSelected(item: NavItem) {
     if (!item.children || !item.children.length) {
-      this.router.navigate([item.route]);
+
+      let parentMenu = MenuConstants.MENUS.filter((parent) => {
+          // find() will give -1, if no car was found that matched 
+          //    car.make === 'BWM'
+          return parent.children?.find((child) => child.displayName === item.displayName);
+      });
+
+      this.router.navigate([parentMenu[0].route + "/" + item.route]);
       this.navService.closeNav();
     }
     if (item.children && item.children.length) {

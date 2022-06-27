@@ -7,7 +7,13 @@ const routes: Routes = [
     {
         path: '', component: WelcomeComponent,
         children: [
-            { path: '', component: DashboardComponent }
+            { path: '', component: DashboardComponent },
+            { 
+                path: 'report',
+                loadChildren: () => import(`./reports/reports.module`).then(
+                  module => module.ReportsModule
+                )
+            }
         ]
     }
 ];
