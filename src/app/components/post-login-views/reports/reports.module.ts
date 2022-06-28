@@ -4,6 +4,10 @@ import { AngularMaterialModule } from 'src/app/angular-material.module';
 import { ReportsRoutingModule } from './reports-routing.module';
 import { CashInHandComponent } from './cash-in-hand/cash-in-hand.component';
 import { ReportsBaseViewComponent } from './reports-base-view/reports-base-view.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: [ 
@@ -13,7 +17,11 @@ import { ReportsBaseViewComponent } from './reports-base-view/reports-base-view.
   imports: [
     CommonModule,
     AngularMaterialModule,
-    ReportsRoutingModule
+    ReportsRoutingModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    FlexLayoutModule
   ],
   providers: [],
   bootstrap: []

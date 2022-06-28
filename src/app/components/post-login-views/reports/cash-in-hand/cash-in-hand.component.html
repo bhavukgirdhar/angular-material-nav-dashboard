@@ -1,1 +1,65 @@
-<p>cash-in-hand works!</p>
+<div class="mat-elevation-z8">
+  <mat-card class="mb-10">
+    <mat-card-header>
+      <mat-card-title>
+        Cash in Hand
+        <div class="title-underline"></div>
+        <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu" xPosition="before">
+          <button mat-menu-item>Expand</button>
+          <button mat-menu-item>Remove</button>
+        </mat-menu>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="text-center">
+      <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="start" class="search-criteria">
+        <div>
+          <mat-form-field appearance="fill" [class]="(isHandset$ | async) ? 'date-field-hs' : 'mr-10'">
+            <mat-label>Choose a date</mat-label>
+            <input matInput [matDatepicker]="picker">         
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="fill"  [class]="(isHandset$ | async) ? 'date-field-hs' : 'mr-10'">
+            <mat-label>Choose a date</mat-label>
+            <input matInput [matDatepicker]="picker">         
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>   
+        </div>
+        <div>
+          <button mat-raised-button color="primary" [class]="(isHandset$ | async) ? 'width200' : ''">
+            Show
+          </button>   
+        </div>        
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <table mat-table class="full-width-table" matSort aria-label="Elements">
+    <!-- Id Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
+      <td mat-cell *matCellDef="let row">{{row.id}}</td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <td mat-cell *matCellDef="let row">{{row.name}}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator #paginator
+      [length]="dataSource?.data?.length"
+      [pageIndex]="0"
+      [pageSize]="10"
+      [pageSizeOptions]="[5, 10, 20]"
+      aria-label="Select page">
+  </mat-paginator>
+</div>

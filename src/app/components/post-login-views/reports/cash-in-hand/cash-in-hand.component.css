@@ -1,0 +1,22 @@
+.full-width-table {
+  width: 100%;
+}
+
+.more-button {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+}
+
+.search-criteria {
+  max-width: 52% !important;
+  justify-content: space-around !important;
+}
+
+.date-field-hs{
+  width: 290px;
+}
+
+.width200-hs{
+  width: 195% !important;
+}

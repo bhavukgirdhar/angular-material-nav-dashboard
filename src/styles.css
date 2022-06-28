@@ -2,3 +2,26 @@
 
 html, body { height: 100%; background: url(../src/assets/images/background-image.png) repeat 0 0 #d6d6d6;}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.container {
+    margin: 20px;
+}
+
+.mb-10{
+    margin-bottom: 10px;
+}
+
+.mr-10{
+    margin-right: 10px;
+}
+
+.text-center{
+    text-align: center;
+}
+
+.title-underline{
+    width: 50px;
+    height: 2px;
+    background: #ff6700;
+    margin-top: 2px;
+}
