@@ -136,6 +136,12 @@ export class MenuConstants {
           iconName: '',
           route: 'cashInHand',
           children: []
+        },
+        {
+          displayName: 'Overstock Report',
+          iconName: '',
+          route: 'overStockReport',
+          children: []
         }
       ]
     }

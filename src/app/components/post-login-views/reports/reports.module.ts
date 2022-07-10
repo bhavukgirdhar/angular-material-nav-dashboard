@@ -8,11 +8,14 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { OverstockReportComponent } from './overstock-report/overstock-report.component';
+import { CashInHandReportServiceService } from 'src/server';
 
 @NgModule({
   declarations: [ 
     ReportsBaseViewComponent,
-    CashInHandComponent
+    CashInHandComponent,
+    OverstockReportComponent
   ],
   imports: [
     CommonModule,
@@ -23,7 +26,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MatSortModule,
     FlexLayoutModule
   ],
-  providers: [],
+  providers: [
+    CashInHandReportServiceService
+  ],
   bootstrap: []
 })
 export class ReportsModule { }
