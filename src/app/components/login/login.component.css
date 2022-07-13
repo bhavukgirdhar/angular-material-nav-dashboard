@@ -1,0 +1,19 @@
+.login-container{
+    width: 70%;
+}
+
+.login-card-corners{
+    border-top-left-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+    border-top-right-radius: 5px !important;
+    border-bottom-right-radius: 5px !important;
+}
+
+.handset-login-card{
+    width: 90%;
+}
+
+.browser-login-card{
+    width: 30%;
+}
+

@@ -142,6 +142,18 @@ export class MenuConstants {
           iconName: '',
           route: 'overStockReport',
           children: []
+        },
+        {
+          displayName: 'Day Book',
+          iconName: '',
+          route: 'dayBook',
+          children: []
+        },
+        {
+          displayName: 'Ledger Book',
+          iconName: '',
+          route: 'ledgerBook',
+          children: []
         }
       ]
     }

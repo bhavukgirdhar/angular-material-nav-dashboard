@@ -1,29 +1,40 @@
-<div fxLayout="row" fxFlexFill fxLayoutAlign="center center">
-    <mat-card [fxFlex]="(isHandset$ | async) ? 100 : 25">
-        <mat-card-header>
-            <mat-card-title>Log in</mat-card-title>
-        </mat-card-header>
-        <form fxLayoutAlign="stretch" fxLayout="column"
-            [formGroup]="loginForm">
-            <mat-form-field appearance="outline">
-                <mat-label>Company Name</mat-label>
-                <input matInput placeholder="Company Id" formControlName="companyId"
-                    #companyid name="companyId" id="companyid">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Username</mat-label>
-                <input matInput placeholder="Username" formControlName="username"
-                #username name="username" id="username">
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-                <mat-label>Password</mat-label>
-                <input matInput placeholder="Password" type="password" formControlName="password"
-                #password name="password" id="password">
-            </mat-form-field>
-
-            <button mat-raised-button type="button" (click)="login()">
-                Login                
-            </button>
-        </form>
-    </mat-card>
+<div fxLayout="column" fxFlexFill fxLayoutAlign="center center">
+    <div class="logo">
+        <img src="assets/images/logo/logo.png" [attr.width]="'100%'" alt="" />
+    </div>
+    <div fxLayout="row" [class]="'login-container'">
+        <div [fxFlex]="60" class="market-banner">
+            <div class="market-text mrtop60">
+                 Online Billing, Accounting and Inventory Management software for small and medium business.
+            </div>
+        </div>
+        <mat-card [fxFlex]="40" class="login-card-corners" [class]="(isHandset$ | async) ? 'handset-login-card' : 'browser-login-card'">
+            <mat-card-header>
+                <mat-card-title>Log in</mat-card-title>
+            </mat-card-header>
+            <form fxLayoutAlign="stretch" fxLayout="column"
+                [formGroup]="loginForm">
+                <mat-form-field appearance="outline">
+                    <mat-label>Company Name</mat-label>
+                    <input matInput placeholder="Company Id" formControlName="companyId"
+                        #companyid name="companyId" id="companyid">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Username</mat-label>
+                    <input matInput placeholder="Username" formControlName="username"
+                    #username name="username" id="username">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Password</mat-label>
+                    <input matInput placeholder="Password" type="password" formControlName="password"
+                    #password name="password" id="password">
+                </mat-form-field>
+    
+                <button mat-raised-button type="button" color="primary" (click)="login()">
+                    Login                
+                </button>
+            </form>
+        </mat-card>
+    </div>
+    
 </div>

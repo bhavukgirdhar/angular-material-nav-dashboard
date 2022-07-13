@@ -10,12 +10,16 @@ import { MatSortModule } from '@angular/material/sort';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { OverstockReportComponent } from './overstock-report/overstock-report.component';
 import { CashInHandReportServiceService } from 'src/server';
+import { DayBookComponent } from './day-book/day-book.component';
+import { LedgerBookComponent } from './ledger-book/ledger-book.component';
 
 @NgModule({
   declarations: [ 
     ReportsBaseViewComponent,
     CashInHandComponent,
-    OverstockReportComponent
+    OverstockReportComponent,
+    DayBookComponent,
+    LedgerBookComponent
   ],
   imports: [
     CommonModule,
