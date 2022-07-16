@@ -1,43 +1,74 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; background: url(../src/assets/images/background-image.png) repeat 0 0 #f9f9f9;}
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+    height: 100%;
+    background: url(../src/assets/images/background-image.png) repeat 0 0 #f9f9f9;
+}
 
-.market-banner{
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.market-banner {
     background: url('../src/assets/images/logo/login.png') bottom center no-repeat #00458d;
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
 }
 
 .market-text {
-	color: #fff;
-	font-family: 'open_sansregular';
-	font-size: 20px;
-	text-align: center;
-	text-transform: capitalize;
-	margin-top: 20px;
-	line-height: 50px;
+    color: #fff;
+    font-family: 'open_sansregular';
+    font-size: 20px;
+    text-align: center;
+    text-transform: capitalize;
+    margin-top: 20px;
+    line-height: 50px;
 }
 
 .container {
-    margin: 20px;
+    margin: 5px;
 }
 
-.mb-10{
+.mb-10 {
     margin-bottom: 10px;
 }
 
-.mr-10{
+.mr-10 {
     margin-right: 10px;
 }
 
-.text-center{
+.text-center {
     text-align: center;
 }
 
-.title-underline{
+.title-underline {
     width: 50px;
     height: 2px;
     background: #ff6700;
     margin-top: 2px;
+}
+
+th.mat-header-cell {
+    color: #fff;
+    background-color: #3f51b5;
+}
+
+.mat-sort-header-container {
+    justify-content: center !important;
+}
+
+td,
+th {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.i-chip-box.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.i-chip .cdk-drop-list-dragging {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }

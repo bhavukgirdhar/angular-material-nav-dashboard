@@ -1,12 +1,10 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTable } from '@angular/material/table';
+import { MatTableDataSource, MatTable } from '@angular/material/table';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
-import { CashInHandDataSource } from './cash-in-hand-datasource';
 import { CashInHandReportInput, CashInHandReportLine, CashInHandReportServiceService } from 'src/server';
 
 @Component({
@@ -14,18 +12,13 @@ import { CashInHandReportInput, CashInHandReportLine, CashInHandReportServiceSer
   templateUrl: './cash-in-hand.component.html',
   styleUrls: ['./cash-in-hand.component.css']
 })
-export class CashInHandComponent implements OnInit, AfterViewInit {
+export class CashInHandComponent implements OnInit, AfterViewInit{
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
       map(result => result.matches),
       shareReplay()
   );
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatTable) table!: MatTable<CashInHandReportLine>;
-  dataSource: CashInHandDataSource;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['date', 
@@ -36,32 +29,46 @@ export class CashInHandComponent implements OnInit, AfterViewInit {
     'closingBalance'
   ];
 
+  /** Below section for variables in search criteria */
+  public startDate!: Date;
+  public endDate!: Date;
+  private cashInHandReportInput!: CashInHandReportInput;  
 
-  private cashInHandReportInput!: CashInHandReportInput;
+  public totalDebitAmount: number | undefined;
+  public  totalCreditAmount: number | undefined;
+  
+  dataSource = new MatTableDataSource<CashInHandReportLine>([]);
 
-  constructor(private breakpointObserver: BreakpointObserver, private cashInHandService : CashInHandReportServiceService) {
-    this.dataSource = new CashInHandDataSource();
+  @ViewChild(MatPaginator) paginator :any = MatPaginator;
+
+  constructor(private breakpointObserver: BreakpointObserver, private cashInHandService : CashInHandReportServiceService) {   
+    this.startDate = new Date();
+    this.endDate = new Date();
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
+   this.getCashInHandReport();
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
+
+  public getCashInHandReport() : void {
     this.cashInHandReportInput = {};
     
-    this.cashInHandReportInput.dateFrom = new Date();
-    this.cashInHandReportInput.dateTo = new Date();
+    this.cashInHandReportInput.dateFrom = this.startDate;
+    this.cashInHandReportInput.dateTo = this.endDate;
 
     this.cashInHandService.getReportArg(this.cashInHandReportInput)
       .subscribe({
-        next: (data) => {
-          this.table.dataSource = data?.reportLines || [];          
+        next: (data) => {          
+          this.dataSource.data = data.reportLines || [];
+          this.totalCreditAmount = data.totalCredit;  
+          this.totalDebitAmount = data.totalCredit; 
         },
         error: () => { }
       }
     );
-  }
-
-  ngAfterViewInit(): void {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-    this.table.dataSource = this.dataSource;
   }
 }

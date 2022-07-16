@@ -12,33 +12,52 @@
           <button mat-menu-item>Remove</button>
         </mat-menu>
       </mat-card-title>
-    </mat-card-header>
+    </mat-card-header>   
     <mat-card-content class="text-center">
       <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="start" [class]="(isHandset$ | async) ? '' : 'search-criteria'">
         <div>
           <mat-form-field appearance="outline" [class]="(isHandset$ | async) ? ' full-width-table' : 'mr-10'">
             <mat-label>Start date</mat-label>
-            <input matInput [matDatepicker]="pickerTo">         
+            <input matInput [matDatepicker]="pickerTo" [(ngModel)]="startDate">         
             <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
             <mat-datepicker #pickerTo></mat-datepicker>
           </mat-form-field>
           <mat-form-field appearance="outline"  [class]="(isHandset$ | async) ? ' full-width-table' : 'mr-10'">
             <mat-label>End date</mat-label>
-            <input matInput [matDatepicker]="pickerFrom">         
+            <input matInput [matDatepicker]="pickerFrom"  [(ngModel)]="endDate">         
             <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
             <mat-datepicker #pickerFrom></mat-datepicker>
           </mat-form-field>   
         </div>
         <div>
-          <button mat-raised-button color="primary" [class]="(isHandset$ | async) ? ' full-width-table' : ''">
+          <button mat-raised-button color="primary" [class]="(isHandset$ | async) ? ' full-width-table' : ''" (click)="getCashInHandReport()">
             Show
           </button>   
         </div>        
       </div>
+      <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="center">
+        <mat-chip-list
+          class="i-chip"
+          cdkDropList 
+          cdkDropListOrientation="horizontal">
+          <mat-chip
+            class="i-chip-box"
+            cdkDrag>
+            Total Debit : {{totalDebitAmount | number : '1.2-2' }}
+          </mat-chip>
+          <mat-chip
+            class="i-chip-box"
+            cdkDrag>
+            Total Credit : {{totalCreditAmount | number : '1.2-2' }}
+          </mat-chip>
+       </mat-chip-list> 
+      </div>
     </mat-card-content>
   </mat-card>
 
-  <table mat-table class="full-width-table" matSort aria-label="Elements">
+ 
+
+  <table mat-table class="full-width-table" [dataSource]="dataSource" matSort aria-label="Elements">
     <!-- Id Column -->
     <ng-container matColumnDef="date">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
@@ -76,10 +95,10 @@
   </table>
 
   <mat-paginator #paginator
-      [length]="dataSource?.data?.length"
-      [pageIndex]="0"
-      [pageSize]="10"
       [pageSizeOptions]="[5, 10, 20]"
+      showFirstLastButtons 
       aria-label="Select page">
-  </mat-paginator>
+  </mat-paginator> 
 </div>
+
+

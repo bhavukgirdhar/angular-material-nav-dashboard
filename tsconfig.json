@@ -6,6 +6,7 @@
     "outDir": "./dist/out-tsc",
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": false,
+    "strictPropertyInitialization": false,
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,

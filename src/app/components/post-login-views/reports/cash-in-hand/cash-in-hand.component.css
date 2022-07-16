@@ -9,6 +9,5 @@
 }
 
 .search-criteria {
-  max-width: 52% !important;
-  justify-content: space-around !important;
+  justify-content: left !important;
 }
