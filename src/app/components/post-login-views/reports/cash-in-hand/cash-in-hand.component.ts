@@ -6,8 +6,8 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
-import { CashInHandDataSource, CashInHandItem } from './cash-in-hand-datasource';
-import { CashInHandReportInput, CashInHandReportServiceService } from 'src/server';
+import { CashInHandDataSource } from './cash-in-hand-datasource';
+import { CashInHandReportInput, CashInHandReportLine, CashInHandReportServiceService } from 'src/server';
 
 @Component({
   selector: 'app-cash-in-hand',
@@ -24,11 +24,17 @@ export class CashInHandComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChild(MatTable) table!: MatTable<CashInHandItem>;
+  @ViewChild(MatTable) table!: MatTable<CashInHandReportLine>;
   dataSource: CashInHandDataSource;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['id', 'name'];
+  displayedColumns = ['date', 
+    'openingBalance', 
+    'debit', 
+    'credit',
+    'todayBalance',
+    'closingBalance'
+  ];
 
 
   private cashInHandReportInput!: CashInHandReportInput;
@@ -46,7 +52,7 @@ export class CashInHandComponent implements OnInit, AfterViewInit {
     this.cashInHandService.getReportArg(this.cashInHandReportInput)
       .subscribe({
         next: (data) => {
-          console.log(data);
+          this.table.dataSource = data?.reportLines || [];          
         },
         error: () => { }
       }
