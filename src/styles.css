@@ -41,3 +41,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     background: #ff6700;
     margin-top: 2px;
 }
+
+.innov-matFormField{
+    font-size: 0.8rem;
+}
+
+.more-button {
+    position: absolute !important;
+    top: 5px;
+    right: 10px;
+}

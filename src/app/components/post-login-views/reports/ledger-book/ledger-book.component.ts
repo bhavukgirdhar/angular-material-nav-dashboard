@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LedgerBookComponent implements OnInit {
 
+  options: string[] = ['One', 'Two', 'Three'];
+
   constructor() { }
 
   ngOnInit(): void {

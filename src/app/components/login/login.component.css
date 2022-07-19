@@ -1,5 +1,10 @@
 .login-container{
-    width: 70%;
+    width: 70%;    
+    box-shadow: 2px 2px 10px 5px grey;
+}
+
+.login-container-fixed-height{
+    min-height: 70%;
 }
 
 .login-card-corners{
@@ -14,6 +19,7 @@
 }
 
 .browser-login-card{
-    width: 30%;
+    width: 30%;    
 }
+
 
