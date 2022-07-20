@@ -1,0 +1,13 @@
+.full-width-table {
+    width: 100%;
+}
+
+.itemName-txtLeft{
+    text-align: left !important;    
+    width: 45%;
+}
+
+.button-group{    
+    margin: 0 8px 0 0;
+}
+

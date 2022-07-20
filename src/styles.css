@@ -50,6 +50,10 @@ body {
     margin-top: 2px;
 }
 
+.mat-card-header-text {
+    margin: 0 0px !important;
+}
+
 .innov-matFormField{
     font-size: 0.8rem;
 }
@@ -85,4 +89,8 @@ th {
 
 .calendar-component{
     font-size: 12px !important;
+}
+
+.masters-headers{
+    justify-content: space-between;
 }

@@ -6,26 +6,15 @@ export class MenuConstants {
     {
       displayName: 'Master',
       iconName: 'group',
-      route: 'master',
+      route: 'main/master',
       children: [
         {
-          displayName: 'Items',
+
+          displayName: 'All Item',
           iconName: '',
-          route: 'master/allItems',
-          children: [
-            {
-              displayName: 'All Item',
-              iconName: '',
-              route: 'master/allLedgers',
-              children: []
-            },
-            {
-              displayName: 'Add New Item',
-              iconName: '',
-              route: 'master/allLedgers',
-              children: []
-            }
-          ]
+          route: 'allItems',
+          children: []
+
         },
         {
           displayName: 'All Ledges',

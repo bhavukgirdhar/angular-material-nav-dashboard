@@ -9,6 +9,12 @@ const routes: Routes = [
         children: [
             { path: '', component: DashboardComponent },
             { 
+                path: 'master',
+                loadChildren: () => import(`./master/masters.module`).then(
+                  module => module.MastersModule
+                )
+            },
+            { 
                 path: 'report',
                 loadChildren: () => import(`./reports/reports.module`).then(
                   module => module.ReportsModule
