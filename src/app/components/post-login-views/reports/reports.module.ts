@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularMaterialModule } from 'src/app/angular-material.module';
 import { ReportsRoutingModule } from './reports-routing.module';
 import { CashInHandComponent } from './cash-in-hand/cash-in-hand.component';
@@ -12,6 +13,7 @@ import { OverstockReportComponent } from './overstock-report/overstock-report.co
 import { CashInHandReportServiceService } from 'src/server';
 import { DayBookComponent } from './day-book/day-book.component';
 import { LedgerBookComponent } from './ledger-book/ledger-book.component';
+import { LedgerServiceService } from 'src/server/api/ledgerService.service';
 
 @NgModule({
   declarations: [ 
@@ -23,6 +25,8 @@ import { LedgerBookComponent } from './ledger-book/ledger-book.component';
   ],
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     AngularMaterialModule,
     ReportsRoutingModule,
     MatTableModule,
@@ -31,7 +35,8 @@ import { LedgerBookComponent } from './ledger-book/ledger-book.component';
     FlexLayoutModule
   ],
   providers: [
-    CashInHandReportServiceService
+    CashInHandReportServiceService,
+    LedgerServiceService
   ],
   bootstrap: []
 })

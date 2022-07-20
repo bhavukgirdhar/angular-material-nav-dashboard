@@ -3,6 +3,7 @@ import { Configuration } from './configuration';
 import { HttpClient } from '@angular/common/http';
 
 import { CashInHandReportServiceService } from './api/cashInHandReportService.service';
+import { APIS } from './api/api';
 
 declare module "@angular/core" {
     interface ModuleWithProviders<T = any> {
@@ -16,7 +17,7 @@ declare module "@angular/core" {
   declarations: [],
   exports:      [],
   providers: [
-	CashInHandReportServiceService
+	APIS
   ]
 })
 export class ApiModule {

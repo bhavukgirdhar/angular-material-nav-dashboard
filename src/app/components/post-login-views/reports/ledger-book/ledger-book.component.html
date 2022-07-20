@@ -23,11 +23,12 @@
                      placeholder="Select Ledger" 
                      aria-label="Ledger"
                      matInput                    
-                     [matAutocomplete]="auto">
-                     <mat-icon class="search-icon">search</mat-icon>
+                     [matAutocomplete]="auto"
+                     [formControl]="autoCompleteInput">
+                     <mat-icon matSuffix class="search-icon">search</mat-icon>
               <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-                <mat-option *ngFor="let option of options" [value]="option">
-                  {{option}}
+                <mat-option *ngFor="let option of allLedgers  | async" [value]="option.name">
+                  {{option.name}}
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>

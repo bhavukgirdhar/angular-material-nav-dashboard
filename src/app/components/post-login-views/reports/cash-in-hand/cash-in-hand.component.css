@@ -3,6 +3,13 @@
 }
 
 .search-criteria {
-  max-width: 52% !important;
-  justify-content: space-around !important;
+  justify-content: left !important;
+}
+
+.pb-10{
+  padding-bottom: 10px !important;
+}
+
+.mat-chip-list-wrapper input.mat-input-element, .mat-chip-list-wrapper .mat-standard-chip {
+   margin: 0px !important; 
 }
