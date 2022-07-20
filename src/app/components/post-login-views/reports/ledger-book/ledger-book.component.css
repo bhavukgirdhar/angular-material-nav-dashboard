@@ -2,6 +2,15 @@
     width: 100%;
 }
 
+
+.search-ledger-area-wrapper{
+    width: 30%;
+}
+
+.search-ledger-area{
+    width: 98%;
+}
+
 search-icon {
     position: absolute;
     top: 7px;
