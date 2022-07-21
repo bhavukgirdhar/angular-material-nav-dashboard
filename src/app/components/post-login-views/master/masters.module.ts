@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AngularMaterialModule } from 'src/app/angular-material.module';
+import { AngularMaterialModule } from 'src/app/shared/modules/angular-material.module';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
@@ -11,6 +11,9 @@ import { AllItemsComponent } from './items/all-items/all-items.component';
 import { MastersRoutingModule } from './masters-routing.module';
 import { ItemServiceService } from 'src/server/api/itemService.service';
 import { MatTooltipDefaultOptions, MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip';
+import { ProgressSpinnerModule } from 'src/app/shared/modules/progress-spinner.module';
+import { AppOverlayModule } from 'src/app/shared/modules/overlay.module';
+
 
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
   showDelay: 0,
@@ -24,7 +27,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
       AllItemsComponent
   ],
   imports: [
-    CommonModule,
+    CommonModule,    
     FormsModule,
     ReactiveFormsModule,
     AngularMaterialModule,
@@ -32,7 +35,9 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
     MatPaginatorModule,
     MatSortModule,
     FlexLayoutModule,
-    MastersRoutingModule
+    MastersRoutingModule,
+    ProgressSpinnerModule,
+    AppOverlayModule
   ],
   providers: [
     ItemServiceService,

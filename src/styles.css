@@ -94,3 +94,7 @@ th {
 .masters-headers{
     justify-content: space-between;
 }
+
+.mat-progress-spinner circle, .mat-spinner circle {
+    stroke: blue; 
+}

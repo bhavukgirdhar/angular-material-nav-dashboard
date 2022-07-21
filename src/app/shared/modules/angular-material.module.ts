@@ -18,8 +18,6 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
-
-
 @NgModule({
   declarations: [
   ],
@@ -38,11 +36,13 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
     MatFormFieldModule,
     MatInputModule,
     MatListModule,
-    MatDatepickerModule,
+    MatDatepickerModule,    
     MatSelectModule,
     MatNativeDateModule
   ],
-  providers: [],
+  providers: [
+    
+  ],
   bootstrap: []
 })
 export class AngularMaterialModule { }

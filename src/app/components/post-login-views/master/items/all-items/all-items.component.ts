@@ -1,5 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ThemePalette } from '@angular/material/core';
 import { MatPaginator } from '@angular/material/paginator';
+import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { MatTableDataSource } from '@angular/material/table';
 import { GetObjectsArgument, PItemMaster } from 'src/server';
 import { ItemServiceService } from 'src/server/api/itemService.service';
@@ -10,6 +12,11 @@ import { ItemServiceService } from 'src/server/api/itemService.service';
   styleUrls: ['./all-items.component.css']
 })
 export class AllItemsComponent implements OnInit, AfterViewInit {
+
+  public color = 'primary' as ThemePalette;
+  public mode = 'indeterminate' as ProgressSpinnerMode;
+  public value = 50;
+  public displayProgressSpinner = false;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   public displayedColumns = ['name',
@@ -38,10 +45,13 @@ export class AllItemsComponent implements OnInit, AfterViewInit {
     this.getItemsByCriteria.startPageIndex = 0;
     this.getItemsByCriteria.genericSearch = false; 
 
+    this.displayProgressSpinner = true;
+
     this.itemServiceApi.getPItemMasterList(this.getItemsByCriteria).subscribe({
       next: (data) => {          
         this.dataSource.data = data.objects || [];
         this.filterInput.nativeElement.focus();
+        
       },
       error: () => { }
     });

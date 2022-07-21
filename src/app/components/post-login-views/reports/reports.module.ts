@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AngularMaterialModule } from 'src/app/angular-material.module';
+import { AngularMaterialModule } from 'src/app/shared/modules/angular-material.module';
 import { ReportsRoutingModule } from './reports-routing.module';
 import { CashInHandComponent } from './cash-in-hand/cash-in-hand.component';
 import { ReportsBaseViewComponent } from './reports-base-view/reports-base-view.component';

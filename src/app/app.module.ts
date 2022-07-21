@@ -12,7 +12,7 @@ import { NavService } from './services/nav.service';
 import { LoginComponent } from './components/login/login.component';
 import { AuthenticationService } from './services/authentication.service';
 import { RegistrationComponent } from './components/registration/registration.component';
-import { AngularMaterialModule } from './angular-material.module';
+import { AngularMaterialModule } from './shared/modules/angular-material.module';
 import { BASE_PATH,  } from 'src/server';
 import { environment } from 'src/environments/environment';
 import { HttpAuthInterceptor } from './services/http.interceptor';
