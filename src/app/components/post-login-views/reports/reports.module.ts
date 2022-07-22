@@ -5,7 +5,6 @@ import { AngularMaterialModule } from 'src/app/shared/modules/angular-material.m
 import { ReportsRoutingModule } from './reports-routing.module';
 import { CashInHandComponent } from './cash-in-hand/cash-in-hand.component';
 import { ReportsBaseViewComponent } from './reports-base-view/reports-base-view.component';
-import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -28,8 +27,7 @@ import { LedgerServiceService } from 'src/server/api/ledgerService.service';
     FormsModule,
     ReactiveFormsModule,
     AngularMaterialModule,
-    ReportsRoutingModule,
-    MatTableModule,
+    ReportsRoutingModule,    
     MatPaginatorModule,
     MatSortModule,
     FlexLayoutModule

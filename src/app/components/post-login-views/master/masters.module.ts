@@ -15,6 +15,7 @@ import { ProgressSpinnerModule } from 'src/app/shared/modules/progress-spinner.m
 import { AppOverlayModule } from 'src/app/shared/modules/overlay.module';
 import { NewItemComponent } from './new-item/new-item.component';
 import { UnitServiceService } from 'src/server/api/unitService.service';
+import { ItemGroupServiceService } from 'src/server/api/itemGroupService.service';
 
 
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
@@ -44,6 +45,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
   providers: [
     ItemServiceService,
     UnitServiceService,
+    ItemGroupServiceService,
     {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults}
   ],
   bootstrap: []

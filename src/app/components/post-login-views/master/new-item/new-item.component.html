@@ -41,11 +41,33 @@
                            [formControl]="autoCompleteItemUnit">
                            <mat-icon matSuffix class="search-icon">search</mat-icon>
                     <mat-autocomplete autoActiveFirstOption #autoUnit="matAutocomplete" (optionSelected)="onUnitSelectionChanged($event)">
-                      <mat-option *ngFor="let option of availableItemUnits  | async" [value]="option.displayName">
+                      <mat-option *ngFor="let option of itemUnits  | async" [value]="option.displayName">
                         {{option.displayName}}
                       </mat-option>
                     </mat-autocomplete>
                   </mat-form-field>
+            </div>
+            <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="space-around">                
+                <mat-form-field class="innov-matFormField mr-10" appearance="outline"  [fxFlex]="(isHandset$ | async) ? 100 : 50">
+                    <mat-label>Item Group</mat-label>
+                    <input type="text"
+                           placeholder="Select Item Group" 
+                           aria-label="itemGroup"
+                           matInput                    
+                           [matAutocomplete]="autoItemGroup"
+                           [formControl]="autoCompleteItemGroup">
+                           <mat-icon matSuffix class="search-icon">search</mat-icon>
+                    <mat-autocomplete autoActiveFirstOption #autoItemGroup="matAutocomplete">
+                      <mat-option *ngFor="let option of filteredItemGroups  | async" [value]="option.name">
+                        {{option.name}}
+                      </mat-option>
+                    </mat-autocomplete>
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="innov-matFormField mr-10" [fxFlex]="(isHandset$ | async) ? 100 : 50">
+                    <mat-label>M.R.P.</mat-label>
+                    <input matInput placeholder="Enter M.R.P."
+                        #hsnCode name="mrp" id="mrp">
+                </mat-form-field>
             </div>
         </mat-card-content>
     </mat-card>
