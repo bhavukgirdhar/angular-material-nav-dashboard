@@ -1,0 +1,52 @@
+<div class="mat-elevation-z8">
+    <mat-card class="mb-10">
+        <mat-card-header [class]="'masters-headers'">
+            <mat-card-title>
+                New Item
+                <div class="title-underline"></div>                
+              </mat-card-title>
+              <div>
+                <button mat-raised-button class="button-group"  matTooltip="Add New Item">
+                    <mat-icon>add_box</mat-icon>
+                </button>                
+              </div>
+        </mat-card-header>        
+
+        <mat-card-content  class="text-center">
+            <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="space-around">
+                <mat-form-field appearance="outline" class="innov-matFormField mr-10" [fxFlex]="(isHandset$ | async) ? 100 : 50">
+                    <mat-label>Name</mat-label>
+                    <input matInput placeholder="Enter Item Name"
+                        #itemName name="itemName" id="itemName">
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="innov-matFormField mr-10" [fxFlex]="(isHandset$ | async) ? 100 : 50">
+                    <mat-label>Product Code</mat-label>
+                    <input matInput placeholder="Enter Product Code"
+                        #productCode name="productCode" id="productCode">
+                </mat-form-field>
+            </div>
+            <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="space-around">
+                <mat-form-field appearance="outline" class="innov-matFormField mr-10" [fxFlex]="(isHandset$ | async) ? 100 : 50">
+                    <mat-label>HSN Code</mat-label>
+                    <input matInput placeholder="Enter HSN Code"
+                        #hsnCode name="hsnCode" id="hsnCode">
+                </mat-form-field>
+                <mat-form-field class="innov-matFormField mr-10" appearance="outline"  [fxFlex]="(isHandset$ | async) ? 100 : 50">
+                    <mat-label>Unit</mat-label>
+                    <input type="text"
+                           placeholder="Select Item Unit" 
+                           aria-label="unit"
+                           matInput                    
+                           [matAutocomplete]="autoUnit"
+                           [formControl]="autoCompleteItemUnit">
+                           <mat-icon matSuffix class="search-icon">search</mat-icon>
+                    <mat-autocomplete autoActiveFirstOption #autoUnit="matAutocomplete" (optionSelected)="onUnitSelectionChanged($event)">
+                      <mat-option *ngFor="let option of availableItemUnits  | async" [value]="option.displayName">
+                        {{option.displayName}}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

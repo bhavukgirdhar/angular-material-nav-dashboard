@@ -3,6 +3,7 @@ import { ThemePalette } from '@angular/material/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { GetObjectsArgument, PItemMaster } from 'src/server';
 import { ItemServiceService } from 'src/server/api/itemService.service';
 
@@ -37,7 +38,7 @@ export class AllItemsComponent implements OnInit, AfterViewInit {
   @ViewChild('filterInput') 
   filterInput: ElementRef;
 
-  constructor( private itemServiceApi : ItemServiceService) {
+  constructor(private router: Router, private itemServiceApi : ItemServiceService) {
 
   }
 
@@ -65,5 +66,11 @@ export class AllItemsComponent implements OnInit, AfterViewInit {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
+
+  addNewItem() : void {
+    this.router.navigate(['main/master/newItem']);
+  }
+
+
 
 }

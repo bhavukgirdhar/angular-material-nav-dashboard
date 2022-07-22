@@ -13,6 +13,8 @@ import { ItemServiceService } from 'src/server/api/itemService.service';
 import { MatTooltipDefaultOptions, MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip';
 import { ProgressSpinnerModule } from 'src/app/shared/modules/progress-spinner.module';
 import { AppOverlayModule } from 'src/app/shared/modules/overlay.module';
+import { NewItemComponent } from './new-item/new-item.component';
+import { UnitServiceService } from 'src/server/api/unitService.service';
 
 
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
@@ -24,7 +26,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
 @NgModule({
   declarations: [
       MasterBaseViewComponent, 
-      AllItemsComponent
+      AllItemsComponent, NewItemComponent
   ],
   imports: [
     CommonModule,    
@@ -41,6 +43,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
   ],
   providers: [
     ItemServiceService,
+    UnitServiceService,
     {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults}
   ],
   bootstrap: []
