@@ -13,13 +13,13 @@
               </div>
         </mat-card-header>        
 
-        <mat-card-content  class="text-center">
+        <mat-card-content  class="text-center" *ngIf="isFormLoaded">
             <form [formGroup]="itemForm">
                 <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="space-around">
                     <mat-form-field appearance="outline" class="innov-matFormField mr-10" [fxFlex]="(isHandset$ | async) ? 100 : 50">
                         <mat-label>Name</mat-label>
                         <input matInput placeholder="Enter Item Name"
-                            #itemName name="itemName" id="itemName"
+                            #name name="name" id="name"
                             formControlName="name">
                     </mat-form-field>
                     <mat-form-field appearance="outline" class="innov-matFormField mr-10" [fxFlex]="(isHandset$ | async) ? 100 : 50">

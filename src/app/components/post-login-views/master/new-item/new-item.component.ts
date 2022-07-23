@@ -48,6 +48,7 @@ export class NewItemComponent implements OnInit {
   filteredTaxClass : Observable<ITaxClass[]>;
 
   public itemForm!: FormGroup;
+  isFormLoaded : boolean = false;
   item: PItem;
 
   constructor(private breakpointObserver: BreakpointObserver,private route: ActivatedRoute, 
@@ -72,12 +73,14 @@ export class NewItemComponent implements OnInit {
               next: (data) => {
                 this.item = data;
                 this.initializeItemForm();
+                this.isFormLoaded = true;
               },
               error: () =>{}
             }
           );
       }else {
         this.initializeItemForm();
+        this.isFormLoaded = true;
       }
     });    
   }
