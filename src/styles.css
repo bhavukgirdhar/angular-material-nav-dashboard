@@ -43,6 +43,10 @@ body {
     text-align: center;
 }
 
+.text-left {
+    text-align: left;
+}
+
 .title-underline {
     width: 50px;
     height: 2px;

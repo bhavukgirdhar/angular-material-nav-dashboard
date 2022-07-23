@@ -46,7 +46,7 @@ export class AllItemsComponent implements OnInit, AfterViewInit {
     this.getItemsByCriteria.startPageIndex = 0;
     this.getItemsByCriteria.genericSearch = false; 
 
-    this.displayProgressSpinner = true;
+    //this.displayProgressSpinner = true;
 
     this.itemServiceApi.getPItemMasterList(this.getItemsByCriteria).subscribe({
       next: (data) => {          

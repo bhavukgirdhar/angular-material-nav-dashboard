@@ -16,6 +16,9 @@ import { AppOverlayModule } from 'src/app/shared/modules/overlay.module';
 import { NewItemComponent } from './new-item/new-item.component';
 import { UnitServiceService } from 'src/server/api/unitService.service';
 import { ItemGroupServiceService } from 'src/server/api/itemGroupService.service';
+import { LedgerGroupServiceService } from 'src/server/api/ledgerGroupService.service';
+import { LedgerServiceService } from 'src/server/api/ledgerService.service';
+import { TaxClassServiceService } from 'src/server/api/taxClassService.service';
 
 
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
@@ -46,6 +49,9 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
     ItemServiceService,
     UnitServiceService,
     ItemGroupServiceService,
+    LedgerGroupServiceService,
+    LedgerServiceService,
+    TaxClassServiceService,
     {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults}
   ],
   bootstrap: []

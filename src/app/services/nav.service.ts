@@ -1,10 +1,10 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import {EventEmitter, Injectable, ViewChild} from '@angular/core';
 import {Event, NavigationEnd, Router} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 
 @Injectable()
-export class NavService {
-  public appDrawer: any;
+export class NavService { 
+  public drawer: any;
   public currentUrl = new BehaviorSubject<string>('');
 
   constructor(private router: Router) {
@@ -16,10 +16,10 @@ export class NavService {
   }
 
   public closeNav() {
-    this.appDrawer.close();
+    //this.drawer.close();
   }
 
   public openNav() {
-    this.appDrawer.open();
+    this.drawer.open();
   }
 }
