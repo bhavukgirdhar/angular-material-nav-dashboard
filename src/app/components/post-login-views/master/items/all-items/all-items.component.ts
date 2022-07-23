@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
 import { ThemePalette } from '@angular/material/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatRow, MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { GetObjectsArgument, PItemMaster } from 'src/server';
 import { ItemServiceService } from 'src/server/api/itemService.service';
@@ -34,6 +34,7 @@ export class AllItemsComponent implements OnInit, AfterViewInit {
 
   public dataSource = new MatTableDataSource<PItemMaster>([]);
   @ViewChild(MatPaginator) paginator: any = MatPaginator;
+  selectedRowIndex = -1;
 
   @ViewChild('filterInput') 
   filterInput: ElementRef;
@@ -69,6 +70,14 @@ export class AllItemsComponent implements OnInit, AfterViewInit {
 
   addNewItem() : void {
     this.router.navigate(['main/master/newItem']);
+  }
+
+  public editItem() : void {
+    this.router.navigate(['main/master/editItem', this.selectedRowIndex]);
+  }
+
+  highlight(row : PItemMaster){
+    this.selectedRowIndex = row.id || -1;
   }
 
 

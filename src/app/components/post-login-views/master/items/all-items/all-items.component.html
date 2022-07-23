@@ -21,6 +21,9 @@
                 <button mat-raised-button class="button-group"  matTooltip="Add New Item" (click)="addNewItem()">
                     <mat-icon>add_box</mat-icon>
                 </button>
+                <button mat-raised-button class="button-group"  matTooltip="Edit Item" (click)="editItem()" [disabled]="selectedRowIndex == -1">
+                    <mat-icon>edit</mat-icon>
+                </button>
                 <button mat-raised-button class="button-group"  matTooltip="Delete Item">
                     <mat-icon>delete</mat-icon>
                 </button>
@@ -80,7 +83,10 @@
                 </ng-container>
     
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                    [ngClass]="{'highlight': selectedRowIndex == row.id}"
+                    (click)="highlight(row)">
+                </tr>
             </table>
             <mat-paginator #paginator
                 [pageSizeOptions]="[5, 10, 20]"

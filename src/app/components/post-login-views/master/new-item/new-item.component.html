@@ -107,7 +107,8 @@
                     <mat-form-field appearance="outline" class="innov-matFormField mr-10" [fxFlex]="(isHandset$ | async) ? 100 : 50">
                         <mat-label>Opening Stock</mat-label>
                         <input matInput placeholder="Enter Opening Stock"
-                            #openingStock name="openingStock" id="openingStock">
+                            #openingStock name="openingStock" id="openingStock"
+                            formControlName="openingStock">
                     </mat-form-field>
                     <mat-form-field class="innov-matFormField mr-10" appearance="outline"  [fxFlex]="(isHandset$ | async) ? 100 : 50">
                         <mat-label>Sale Accounts</mat-label>

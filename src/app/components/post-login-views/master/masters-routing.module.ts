@@ -9,7 +9,8 @@ const routes: Routes = [
         path: '', component: MasterBaseViewComponent,
         children: [
             { path: 'allItems', component: AllItemsComponent },
-            {path: 'newItem', component: NewItemComponent }
+            {path: 'newItem', component: NewItemComponent },
+            {path: 'editItem/:itemId', component: NewItemComponent }
         ]
     }
 ];

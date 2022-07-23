@@ -2,7 +2,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { filter, map, Observable, shareReplay } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
 import { GetObjectsArgument, IItemGroup, ILedger, ILedgerGroup, ITaxClass, IUnit, PItem } from 'src/server';
@@ -50,7 +50,9 @@ export class NewItemComponent implements OnInit {
   public itemForm!: FormGroup;
   item: PItem;
 
-  constructor(private breakpointObserver: BreakpointObserver,private router: Router,private formBuilder: FormBuilder, 
+  constructor(private breakpointObserver: BreakpointObserver,private route: ActivatedRoute, 
+    private router: Router,
+    private formBuilder: FormBuilder, 
     private unitService :  UnitServiceService,
     private itemService : ItemServiceService,
     private itemGroupService : ItemGroupServiceService,
@@ -64,7 +66,24 @@ export class NewItemComponent implements OnInit {
 
     this.item = {};
 
-    this.itemForm = this.formBuilder.group({   
+    this.route.params.subscribe(params => {
+      if (params['itemId']) {
+          this.itemService.getPItemFromId(params['itemId']).subscribe({
+              next: (data) => {
+                this.item = data;
+                this.initializeItemForm();
+              },
+              error: () =>{}
+            }
+          );
+      }else {
+        this.initializeItemForm();
+      }
+    });    
+  }
+  
+  private initializeItemForm() {
+    this.itemForm = this.formBuilder.group({
       id: [this.item.id],
       name: [this.item.name, Validators.required],
       productCode: [this.item.productCode],
@@ -87,17 +106,19 @@ export class NewItemComponent implements OnInit {
       ledgerSaleAccount: [this.item.ledgerSaleAccount, Validators.required],
       maintainStock: [true],
       openingStockEditable: [true],
-      service: [false]     
+      service: [false]
     });
 
-    this.getAvailableUnitsByCriteria.genericSearch = false;   
-    this.itemUnits = this.itemForm.controls["unitName"].valueChanges.pipe(startWith(''), switchMap(value => this._filterUnits(value)));
+    this.getAvailableUnitsByCriteria.genericSearch = false; 
+    //start with the value available in form i.e in New it will be null 
+    //and Edit it will be searched with actual item unit  
+    this.itemUnits = this.itemForm.controls["unitName"].valueChanges.pipe(startWith(this.itemForm.controls["unitName"].value), switchMap(value => this._filterUnits(value)));
 
     this.getItemGroups();
     this.getSalePurchaseAccounts();
     this.getTaxClasses();
   }
-  
+
   /**
    * This function is executed when the item unit is selected
    * The selected unit displayname is used to get the selected unit ID to set in the FormGroup.
@@ -195,7 +216,7 @@ export class NewItemComponent implements OnInit {
     this.itemGroupService.getObjects().subscribe({
       next: (data) => {          
          this.itemGroups = data;
-         this.filteredItemGroups = this.itemForm.controls["groupName"].valueChanges.pipe(startWith(''), map(value => this._filterItemGroups(value || '')));
+         this.filteredItemGroups = this.itemForm.controls["groupName"].valueChanges.pipe(startWith(this.itemForm.controls["groupName"].value), map(value => this._filterItemGroups(value || '')));
       },
       error: () =>{ }
     });
@@ -212,7 +233,7 @@ export class NewItemComponent implements OnInit {
           this.ledgerService.getLedgersFromGroup(purchaseAccountsLedgerGroup.id).subscribe({
             next: (data) => {
                 this.purchaseAccounts = data;
-                this.filteredPurchaseAccounts = this.itemForm.controls["ledgerPurchaseAccount"].valueChanges.pipe(startWith(''), map(value => this._filterPurchaseAccounts(value || '')));
+                this.filteredPurchaseAccounts = this.itemForm.controls["ledgerPurchaseAccount"].valueChanges.pipe(startWith(this.itemForm.controls["ledgerPurchaseAccount"].value), map(value => this._filterPurchaseAccounts(value || '')));
             },
             error: () => {}
           });
@@ -222,7 +243,7 @@ export class NewItemComponent implements OnInit {
           this.ledgerService.getLedgersFromGroup(saleAccountsLedgerGroup.id).subscribe({
             next: (data) => {
                 this.saleAccounts = data;
-                this.filteredSaleAccounts = this.itemForm.controls["ledgerSaleAccount"].valueChanges.pipe(startWith(''), map(value => this._filterSaleAccounts(value || '')));
+                this.filteredSaleAccounts = this.itemForm.controls["ledgerSaleAccount"].valueChanges.pipe(startWith(this.itemForm.controls["ledgerSaleAccount"].value), map(value => this._filterSaleAccounts(value || '')));
             },
             error: () => {}
           });
@@ -236,7 +257,7 @@ export class NewItemComponent implements OnInit {
     this.taxClassService.getObjects().subscribe({
       next: (data) => {
         this.taxClasses = data;
-        this.filteredTaxClass = this.itemForm.controls["taxClassName"].valueChanges.pipe(startWith(''), map(value => this._filterTaxClass(value || '')));
+        this.filteredTaxClass = this.itemForm.controls["taxClassName"].valueChanges.pipe(startWith(this.itemForm.controls["taxClassName"].value), map(value => this._filterTaxClass(value || '')));
       },
       error: () => {}
     });
@@ -247,8 +268,10 @@ export class NewItemComponent implements OnInit {
    * @param value Searched String.
    * @returns 
    */
-   private _filterUnits(value: string) : Observable<IUnit[]>{    
-    const filterValue = value.toLowerCase();
+   private _filterUnits(value: string) : Observable<IUnit[]>{  
+    
+    //filter value will be null in new and actual value in edit mode.
+    const filterValue = !!value ? value.toLowerCase() : '';
     this.getAvailableUnitsByCriteria.nameSearchText = filterValue;
 
     // Set the unit id as null when no unit is selected.
@@ -273,7 +296,9 @@ export class NewItemComponent implements OnInit {
    * @returns 
    */
    private _filterItemGroups(value: string): IItemGroup[] {
-    const filterValue = value.toLowerCase();
+
+    //filter value will be null in new and actual value in edit mode.
+    const filterValue = !!value ? value.toLowerCase() : '';
 
     if(filterValue.length == 0) {
       this.itemForm.patchValue({
@@ -285,12 +310,13 @@ export class NewItemComponent implements OnInit {
 
 
   private _filterSaleAccounts(value: string): IItemGroup[] {
-    const filterValue = value.toLowerCase();
+    
+    //filter value will be null in new and actual value in edit mode.
+    const filterValue = !!value ? value.toLowerCase() : '';
 
     if(filterValue.length == 0) {
       this.itemForm.patchValue({
-        ledgerSaleAccountId: null,
-        ledgerSaleAccount: null
+        ledgerSaleAccountId: null
       });
     }
         
@@ -298,12 +324,13 @@ export class NewItemComponent implements OnInit {
   }
 
   private _filterPurchaseAccounts(value: string): IItemGroup[] {
-    const filterValue = value.toLowerCase();
+    
+    //filter value will be null in new and actual value in edit mode.
+    const filterValue = !!value ? value.toLowerCase() : '';
 
     if(filterValue.length == 0) {
       this.itemForm.patchValue({
-        ledgerPurchaseAccountId: null,
-        ledgerPurchaseAccount: null
+        ledgerPurchaseAccountId: null
       });
     }
       
@@ -311,12 +338,13 @@ export class NewItemComponent implements OnInit {
   }
 
   private _filterTaxClass(value: string): ITaxClass[] {
-    const filterValue = value.toLowerCase();
+    
+    //filter value will be null in new and actual value in edit mode.
+    const filterValue = !!value ? value.toLowerCase() : '';
 
     if(filterValue.length == 0) {
       this.itemForm.patchValue({
-        taxClassId: null,
-        taxClassName: null
+        taxClassId: null
       });
     }
 
@@ -327,17 +355,14 @@ export class NewItemComponent implements OnInit {
     this.router.navigate(['main/master/allItems']);
   }
 
-  public saveItem() : void {
+  public saveItem() : void {    
     if(this.itemForm.valid) {
-      console.log(this.itemForm.value);
-
       this.itemService.savePItem(this.itemForm.value).subscribe({
         next: (data) => {
-          console.log(data);
+          this.viewAllItems();
         },
         error: () => {}
       });
-
     }    
   }
 }
