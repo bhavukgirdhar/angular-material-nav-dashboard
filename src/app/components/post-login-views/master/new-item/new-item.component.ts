@@ -104,8 +104,8 @@ export class NewItemComponent implements OnInit {
       ledgerPurchaseAccount: [this.item.ledgerPurchaseAccount, Validators.required],
       ledgerSaleAccountId: [this.item.ledgerSaleAccountId, Validators.required],
       ledgerSaleAccount: [this.item.ledgerSaleAccount, Validators.required],
-      maintainStock: [true],
-      openingStockEditable: [true],
+      maintainStock: [this.item.maintainStock],
+      openingStockEditable: [this.item.openingStockEditable],
       service: [false]
     });
 
