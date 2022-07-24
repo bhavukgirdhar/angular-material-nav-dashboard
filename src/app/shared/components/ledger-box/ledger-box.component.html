@@ -1,0 +1,13 @@
+<div>
+    <mat-form-field class="example-full-width" appearance="outline" [class]="'mr-10 search-ledger-area'">
+        <mat-label>Ledger</mat-label>
+        <input type="text" placeholder="Select Ledger" aria-label="Ledger" matInput [matAutocomplete]="auto"
+            [formControl]="autoCompleteInput">
+        <mat-icon matSuffix class="search-icon">search</mat-icon>
+        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="onLedgerGroupSelectionChanged($event)">
+            <mat-option *ngFor="let option of filteredLedgers  | async" [value]="option.name">
+                {{option.name}}
+            </mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
+</div>

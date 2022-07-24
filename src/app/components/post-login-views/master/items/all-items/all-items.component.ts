@@ -49,11 +49,15 @@ export class AllItemsComponent implements OnInit, AfterViewInit {
 
     //this.displayProgressSpinner = true;
 
+    this.getAllItems();
+  }
+
+  private getAllItems() {
     this.itemServiceApi.getPItemMasterList(this.getItemsByCriteria).subscribe({
-      next: (data) => {          
+      next: (data) => {
         this.dataSource.data = data.objects || [];
         this.filterInput.nativeElement.focus();
-        
+
       },
       error: () => { }
     });
@@ -74,6 +78,17 @@ export class AllItemsComponent implements OnInit, AfterViewInit {
 
   public editItem() : void {
     this.router.navigate(['main/master/editItem', this.selectedRowIndex]);
+  }
+
+  public deleteSelectedItem() : void {
+    if (window.confirm('Are you sure want to delete this item ?')) {
+        this.itemServiceApi._delete(this.selectedRowIndex).subscribe({
+          next: () => {
+            this.getAllItems();
+          },
+          error: () => {}
+        });
+    }
   }
 
   highlight(row : PItemMaster){

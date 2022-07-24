@@ -1,17 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AngularMaterialModule } from 'src/app/shared/modules/angular-material.module';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
+
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MasterBaseViewComponent } from './master-base-view/master-base-view.component';
 import { AllItemsComponent } from './items/all-items/all-items.component';
 import { MastersRoutingModule } from './masters-routing.module';
 import { ItemServiceService } from 'src/server/api/itemService.service';
 import { MatTooltipDefaultOptions, MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip';
-import { ProgressSpinnerModule } from 'src/app/shared/modules/progress-spinner.module';
+import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { AppOverlayModule } from 'src/app/shared/modules/overlay.module';
 import { NewItemComponent } from './new-item/new-item.component';
 import { UnitServiceService } from 'src/server/api/unitService.service';
@@ -19,6 +16,7 @@ import { ItemGroupServiceService } from 'src/server/api/itemGroupService.service
 import { LedgerGroupServiceService } from 'src/server/api/ledgerGroupService.service';
 import { LedgerServiceService } from 'src/server/api/ledgerService.service';
 import { TaxClassServiceService } from 'src/server/api/taxClassService.service';
+import { AngularMaterialModule } from 'src/app/shared/modules/angular-material.module';
 
 
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
@@ -36,13 +34,10 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
     CommonModule,    
     FormsModule,
     ReactiveFormsModule,
-    AngularMaterialModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
     FlexLayoutModule,
     MastersRoutingModule,
-    ProgressSpinnerModule,
+    SharedModule,
+    AngularMaterialModule,
     AppOverlayModule
   ],
   providers: [

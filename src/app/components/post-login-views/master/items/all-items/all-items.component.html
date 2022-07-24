@@ -24,7 +24,7 @@
                 <button mat-raised-button class="button-group"  matTooltip="Edit Item" (click)="editItem()" [disabled]="selectedRowIndex == -1">
                     <mat-icon>edit</mat-icon>
                 </button>
-                <button mat-raised-button class="button-group"  matTooltip="Delete Item">
+                <button mat-raised-button class="button-group"  matTooltip="Delete Item"  [disabled]="selectedRowIndex == -1" (click)="deleteSelectedItem()">
                     <mat-icon>delete</mat-icon>
                 </button>
               </div>

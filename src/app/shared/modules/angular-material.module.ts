@@ -18,6 +18,8 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 
 
 @NgModule({
@@ -39,6 +41,8 @@ import { MatTableModule } from '@angular/material/table';
     MatInputModule,
     MatListModule,
     MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
     MatDatepickerModule,    
     MatSelectModule,
     MatNativeDateModule

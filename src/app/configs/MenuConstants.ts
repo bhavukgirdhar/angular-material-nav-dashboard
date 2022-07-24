@@ -69,12 +69,12 @@ export class MenuConstants {
     {
       displayName: 'Transaction',
       iconName: 'currency_rupee',
-      route: 'transaction',
+      route: 'main/transaction',
       children: [
         {
           displayName: 'Payment',
           iconName: '',
-          route: 'transaction/payment',
+          route: 'payment',
           children: []
         },
         {
