@@ -12,13 +12,15 @@ import { VoucherNumberServiceService } from 'src/server/api/voucherNumberService
 import { VoucherComponent } from './voucher/voucher.component';
 import { ReceiptTxServiceService } from 'src/server/api/receiptTxService.service';
 import { PaymentTxServiceService } from 'src/server/api/paymentTxService.service';
+import { FormControlPipe } from 'src/app/shared/pipes/form-control.pipe';
 
 @NgModule({
     declarations: [
         TransactionBaseViewComponent,  
         VoucherComponent,      
         PaymentComponent,
-        ReceiptComponent
+        ReceiptComponent,
+        FormControlPipe
     ],
     imports: [
       CommonModule,    

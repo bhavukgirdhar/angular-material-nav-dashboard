@@ -32,8 +32,8 @@ export class ReceiptComponent extends VoucherComponent implements OnInit {
         this.voucherNumberService.getNextVoucherNumber(new Date().toISOString(), voucherClass, voucherSubType).subscribe({
             next: (data) => {
                 this.voucherForm.patchValue({
-                    vouchernumber: [data.voucherNumber],
-                    amount: [this.receiptTx.totalDebit]
+                    vouchernumber: data.voucherNumber,
+                    amount: this.receiptTx.totalDebit
                 });
                 this.isFormLoaded = true;
             },

@@ -1,7 +1,6 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, Inject, OnInit } from '@angular/core';
-import { inject } from '@angular/core/testing';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { map, Observable, shareReplay } from 'rxjs';
 import { ILedger, ILedgerDetailLine } from 'src/server';
@@ -39,22 +38,24 @@ export class VoucherComponent {
     
     this.voucherForm = this.formBuilder.group({
       jacksontype: [this.jacksonType],
-      transactiondate : [new Date()],
-      vouchernumber : [{value: '', disabled: true}],
-      referenceNo : [null],
-      description: [null],
-      amount: [null, Validators.required],
+      fromLedgerName : new FormControl('',  [ Validators.required]),
+      byLedgerName : new FormControl('Cash',  [ Validators.required]),
+      transactiondate : new FormControl(new Date()),
+      vouchernumber : new FormControl( {value:"", disabled: true}, [ Validators.required]),
+      referenceNo : new FormControl(''),
+      description: new FormControl(''),
+      amount: new FormControl('', [ Validators.required ]),
       fromLedgerDetailLine : this.formBuilder.group({
         jacksontype: ["LedgerDetailLineImpl"], 
-        ledgerId: [null],
-        ledgerName: [null],
-        credit: [null]
+        ledgerId: new FormControl(''),
+        ledgerName: new FormControl(''),
+        credit: new FormControl('')
       }),
       byLedgerDetailLine : this.formBuilder.group({
         jacksontype: ["LedgerDetailLineImpl"], 
-        ledgerId: [null],
-        ledgerName: [null],
-        debit: [null]
+        ledgerId: new FormControl(''),
+        ledgerName: new FormControl(''),
+        debit: new FormControl('')
       })
     });
 
@@ -106,14 +107,14 @@ export class VoucherComponent {
         if(this.jacksonType == "PaymentTxImpl") {
           this.paymentTxService.save(voucherForSave.value).subscribe({
             next: (data) => {
-    
+                this.initializeVoucherForm();
             },
             error: () => {}
           });
         }else if(this.jacksonType = "ReceiptTxImpl") {
           this.receiptTxService.save(voucherForSave.value).subscribe({
             next: (data) => {
-
+              this.initializeVoucherForm();
             },
             error: () => { }
           });

@@ -16,29 +16,19 @@ export class OverstockReportComponent implements OnInit {
     .pipe(
       map(result => result.matches),
       shareReplay()
-  );
+    );
 
-  summaryDate : Date;
-  private overstockReportInput!: OverStockReportArgument;
+  public summaryDate!: Date;
 
-  constructor(private breakpointObserver: BreakpointObserver, private overstockReportService: OverstockReportServiceService) { 
+  constructor(private breakpointObserver: BreakpointObserver,private overstockReportService: OverstockReportServiceService) {
     this.summaryDate = new Date();
   }
 
   ngOnInit(): void {
+    this.getOverstockReport();
   }
+  
+  getOverstockReport() : void{
 
-  public getOverstockReport() : void{
-    this.overstockReportInput = {}; // Initialize the object
-
-    this.overstockReportInput.date = this.summaryDate;
-
-    this.overstockReportService.getReportArg(this.overstockReportInput).subscribe({
-      next: (data) => {
-        
-      },
-      error: () => {}
-    });
   }
-
 }

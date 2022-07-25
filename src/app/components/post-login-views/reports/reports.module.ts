@@ -12,6 +12,7 @@ import { LedgerBookComponent } from './ledger-book/ledger-book.component';
 import { LedgerServiceService } from 'src/server/api/ledgerService.service';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { AngularMaterialModule } from 'src/app/shared/modules/angular-material.module';
+import { OverstockReportServiceService } from 'src/server/api/overstockReportService.service';
 
 @NgModule({
   declarations: [ 
@@ -32,7 +33,8 @@ import { AngularMaterialModule } from 'src/app/shared/modules/angular-material.m
   ],
   providers: [
     CashInHandReportServiceService,
-    LedgerServiceService
+    LedgerServiceService,
+    OverstockReportServiceService
   ],
   bootstrap: []
 })

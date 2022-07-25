@@ -13,20 +13,18 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 })
 export class LedgerBoxComponent implements OnInit {
 
-
-  @Input("ledgerName")
-  ledgerName?: string;
-
   @Input("ledgerBoxTitle")
   ledgerBoxTitle? : string = "Ledger";
 
   @Input("filterLedgersByGroupNames")
   filterLedgersByGroupNames : string[];
+
+  @Input("ledgerFormControl")
+  autoCompleteInput : FormControl = new FormControl();
   
   @Output("onLedgerSelection") 
   onLedgerSelection = new EventEmitter<ILedger>();
 
-  autoCompleteInput = new FormControl();
   allLedgers : ILedger[];
   filteredLedgers:  Observable<ILedger[]>;
 
@@ -48,16 +46,16 @@ export class LedgerBoxComponent implements OnInit {
 
           // Works in edit mode to display value in input field (by FormControl)
           let ledgerInEditMode : ILedger[] = [];
-          if(!!this.ledgerName && this.ledgerName.length > 0) {
-            ledgerInEditMode = this._filterLedgers(this.ledgerName);
+          if(!!this.autoCompleteInput.value && this.autoCompleteInput.value.length > 0) {
+            ledgerInEditMode = this._filterLedgers(this.autoCompleteInput.value);
             this.autoCompleteInput.setValue(ledgerInEditMode[0].name);
           }
 
-          this.filteredLedgers = this.autoCompleteInput.valueChanges.pipe(startWith(this.ledgerName), map(value => this._filterLedgers(value)));
+          this.filteredLedgers = this.autoCompleteInput.valueChanges.pipe(startWith(this.autoCompleteInput.value), map(value => this._filterLedgers(value)));
 
           // Return ledger object in case if ledgerName is provided
           // This works with default ledger name and in edit mode.         
-          if(this.ledgerName && this.ledgerName.length > 0) {
+          if(this.autoCompleteInput.value && this.autoCompleteInput.value.length > 0) {
             this.onLedgerSelection.emit(ledgerInEditMode[0]);
           }
                    
