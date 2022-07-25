@@ -2,6 +2,8 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
+import { OverStockReportArgument } from 'src/server';
+import { OverstockReportServiceService } from 'src/server/api/overstockReportService.service';
 
 @Component({
   selector: 'app-overstock-report',
@@ -16,11 +18,27 @@ export class OverstockReportComponent implements OnInit {
       shareReplay()
   );
 
-  constructor(private breakpointObserver: BreakpointObserver) { 
-    
+  summaryDate : Date;
+  private overstockReportInput!: OverStockReportArgument;
+
+  constructor(private breakpointObserver: BreakpointObserver, private overstockReportService: OverstockReportServiceService) { 
+    this.summaryDate = new Date();
   }
 
   ngOnInit(): void {
+  }
+
+  public getOverstockReport() : void{
+    this.overstockReportInput = {}; // Initialize the object
+
+    this.overstockReportInput.date = this.summaryDate;
+
+    this.overstockReportService.getReportArg(this.overstockReportInput).subscribe({
+      next: (data) => {
+        
+      },
+      error: () => {}
+    });
   }
 
 }

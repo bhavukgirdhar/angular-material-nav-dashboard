@@ -16,18 +16,21 @@ export class LedgerBoxComponent implements OnInit {
 
   @Input("ledgerName")
   ledgerName?: string;
+
+  @Input("ledgerBoxTitle")
+  ledgerBoxTitle? : string = "Ledger";
+
+  @Input("filterLedgersByGroupNames")
+  filterLedgersByGroupNames : string[];
   
   @Output("onLedgerSelection") 
   onLedgerSelection = new EventEmitter<ILedger>();
-
 
   autoCompleteInput = new FormControl();
   allLedgers : ILedger[];
   filteredLedgers:  Observable<ILedger[]>;
 
-  getLedgersByCriteria : GetObjectsArgument = {}
-
-  
+  getLedgersByCriteria : GetObjectsArgument = {};  
   
   constructor(private ledgerServiceApi : LedgerServiceService) { }
 
@@ -44,12 +47,20 @@ export class LedgerBoxComponent implements OnInit {
           this.allLedgers = data.objects;
 
           // Works in edit mode to display value in input field (by FormControl)
+          let ledgerInEditMode : ILedger[] = [];
           if(!!this.ledgerName && this.ledgerName.length > 0) {
-            let ledgerInEditMode = this._filterLedgers(this.ledgerName);
+            ledgerInEditMode = this._filterLedgers(this.ledgerName);
             this.autoCompleteInput.setValue(ledgerInEditMode[0].name);
           }
 
           this.filteredLedgers = this.autoCompleteInput.valueChanges.pipe(startWith(this.ledgerName), map(value => this._filterLedgers(value)));
+
+          // Return ledger object in case if ledgerName is provided
+          // This works with default ledger name and in edit mode.         
+          if(this.ledgerName && this.ledgerName.length > 0) {
+            this.onLedgerSelection.emit(ledgerInEditMode[0]);
+          }
+                   
         }
       },
       error: () => {}
@@ -61,7 +72,15 @@ export class LedgerBoxComponent implements OnInit {
   private _filterLedgers(value: string) : ILedger[]{
     const filterValue = !!value ? value.toLowerCase() : '';
 
-    return this.allLedgers?.filter(option => option.name?.toLowerCase().includes(filterValue));    
+    let ledgers : ILedger[] = this.allLedgers;
+
+    // In case if filter of ledgers is required by some ledger group names.
+    if(!!this.filterLedgersByGroupNames && this.filterLedgersByGroupNames.length > 0) {
+      ledgers =  this.allLedgers.filter((ledger) => !!ledger.ledgerGroupName && 
+                      this.filterLedgersByGroupNames.includes(ledger.ledgerGroupName));
+    }
+
+    return ledgers?.filter(option => option.name?.toLowerCase().includes(filterValue));    
   }
 
   public onLedgerGroupSelectionChanged(event : MatAutocompleteSelectedEvent) {

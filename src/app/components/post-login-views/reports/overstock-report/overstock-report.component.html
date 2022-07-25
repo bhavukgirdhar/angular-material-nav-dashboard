@@ -18,13 +18,13 @@
           <div>
             <mat-form-field appearance="outline"  [class]="(isHandset$ | async) ? ' full-width-table' : 'mr-10'">
               <mat-label>Choose a date</mat-label>
-              <input matInput [matDatepicker]="pickerFrom">         
+              <input matInput [matDatepicker]="pickerFrom" [(ngModel)]="summaryDate">         
               <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
               <mat-datepicker #pickerFrom></mat-datepicker>
             </mat-form-field>   
           </div>
           <div>
-            <button mat-raised-button color="primary" [class]="(isHandset$ | async) ? ' full-width-table' : ''">
+            <button mat-raised-button color="primary" [class]="(isHandset$ | async) ? ' full-width-table' : ''" (click)="getOverstockReport()">
               Show
             </button>   
           </div>        

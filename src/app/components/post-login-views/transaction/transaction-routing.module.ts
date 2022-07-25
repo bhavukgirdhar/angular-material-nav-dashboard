@@ -1,15 +1,17 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { PaymentComponent } from './payment/payment.component';
 import { TransactionBaseViewComponent } from './transaction-base-view/transaction-base-view.component';
+import { PaymentComponent } from './voucher/payment/payment.component';
+import { ReceiptComponent } from './voucher/receipt/receipt.component';
+
 
 const routes: Routes = [
     {
         path: '', component: TransactionBaseViewComponent,
         children: [
-            { path: 'payment', component: PaymentComponent},
+            { path: 'newVoucher/Payment', component: PaymentComponent},
+            { path: 'newVoucher/Receipt', component: ReceiptComponent},
         ]
-
     }
 ];
 

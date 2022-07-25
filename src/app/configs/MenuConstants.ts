@@ -74,13 +74,13 @@ export class MenuConstants {
         {
           displayName: 'Payment',
           iconName: '',
-          route: 'payment',
+          route: 'newVoucher/Payment',
           children: []
         },
         {
           displayName: 'Receipt',
           iconName: '',
-          route: 'transaction/receipt',
+          route: 'newVoucher/Receipt',
           children: []
         },
         {
