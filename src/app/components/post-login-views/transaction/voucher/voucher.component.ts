@@ -46,25 +46,25 @@ export class VoucherComponent {
       amount: [null, Validators.required],
       fromLedgerDetailLine : this.formBuilder.group({
         jacksontype: ["LedgerDetailLineImpl"], 
-        ledgerId: [],
-        ledgerName: [],
-        credit: []
+        ledgerId: [null],
+        ledgerName: [null],
+        credit: [null]
       }),
       byLedgerDetailLine : this.formBuilder.group({
         jacksontype: ["LedgerDetailLineImpl"], 
-        ledgerId: [],
-        ledgerName: [],
-        debit: []
+        ledgerId: [null],
+        ledgerName: [null],
+        debit: [null]
       })
     });
 
     this.voucherForm.controls["amount"].valueChanges.subscribe({
       next: (data) => {
         this.voucherForm.controls["fromLedgerDetailLine"].patchValue({          
-          credit: [data]
+          credit: data
         });
         this.voucherForm.controls["byLedgerDetailLine"].patchValue({          
-          debit: [data]
+          debit: data
         });
       }
     });
@@ -73,15 +73,15 @@ export class VoucherComponent {
 
   onFromLedgerSelection(selectedLedger : ILedger) {
     this.voucherForm.controls["fromLedgerDetailLine"].patchValue({
-      ledgerId: [selectedLedger.id],
-      ledgerName: [selectedLedger.name]
+      ledgerId: selectedLedger.id,
+      ledgerName: selectedLedger.name
     });
   }
 
   onByLedgerSelection(selectedLedger : ILedger) {
     this.voucherForm.controls["byLedgerDetailLine"].patchValue({
-      ledgerId: [selectedLedger.id],
-      ledgerName: [selectedLedger.name]
+      ledgerId: selectedLedger.id,
+      ledgerName: selectedLedger.name
     });
   }
   
@@ -93,22 +93,24 @@ export class VoucherComponent {
         ledgerDetailsLines.push(this.voucherForm.controls["byLedgerDetailLine"].value);
 
         let voucherForSave = this.formBuilder.group({
-            jacksontype: [this.voucherForm.controls["jacksontype"].value],
-            transactiondate: [this.voucherForm.controls["transactiondate"].value],
-            vouchernumber: [this.voucherForm.controls["vouchernumber"].value],
-            referenceNo: [this.voucherForm.controls["referenceNo"].value],
-            description: [this.voucherForm.controls["description"].value],
-            ledgerDetailsLines: ledgerDetailsLines
+            jacksontype: this.voucherForm.controls["jacksontype"].value,
+            transactiondate: this.voucherForm.controls["transactiondate"].value,
+            vouchernumber: this.voucherForm.controls["vouchernumber"].value,
+            referenceNo: this.voucherForm.controls["referenceNo"].value,
+            description: this.voucherForm.controls["description"].value,
+            ledgerDetailLines: [
+              ledgerDetailsLines
+            ]
         });
 
-        if(this.jacksonType == "Payment") {
+        if(this.jacksonType == "PaymentTxImpl") {
           this.paymentTxService.save(voucherForSave.value).subscribe({
             next: (data) => {
     
             },
             error: () => {}
           });
-        }else if(this.jacksonType = "Receipt") {
+        }else if(this.jacksonType = "ReceiptTxImpl") {
           this.receiptTxService.save(voucherForSave.value).subscribe({
             next: (data) => {
 
