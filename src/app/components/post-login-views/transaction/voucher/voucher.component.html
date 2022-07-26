@@ -16,7 +16,7 @@
             <form [formGroup]="voucherForm">
                 <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="space-around">
 
-                    <Ledger-Box [fxFlex]="(isHandset$ | async) ? 100 : 50"
+                    <Ledger-Box [fxFlex]="(isHandset$ | async) ? 100 : 50"                        
                         [ledgerFormControl]="voucherForm.controls['fromLedgerName'] | convertToFormControl"
                         [ledgerBoxTitle]="'From Ledger'"
                         (onLedgerSelection)="onFromLedgerSelection($event)">

@@ -35,12 +35,20 @@ body {
     margin-bottom: 10px;
 }
 
+.mb-5 {
+    margin-bottom: 5px;
+}
+
 .mr-10 {
     margin-right: 10px;
 }
 
 .ml-10 {
-    margin-left: 10px;
+    margin-left: 10px !important;
+}
+
+.align-items-center{
+    align-items: center !important;
 }
 
 .text-center {
@@ -105,4 +113,8 @@ th {
 
 .mat-progress-spinner circle, .mat-spinner circle {
     stroke: blue; 
+}
+
+.full-width-table {
+    width: 100%;
 }

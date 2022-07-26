@@ -86,7 +86,7 @@ export class MenuConstants {
         {
           displayName: 'Journal',
           iconName: '',
-          route: '',
+          route: 'journal',
           children: []
         },
         {

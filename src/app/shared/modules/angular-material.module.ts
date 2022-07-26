@@ -20,7 +20,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
-
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -45,6 +45,7 @@ import { MatSortModule } from '@angular/material/sort';
     MatSortModule,
     MatDatepickerModule,    
     MatSelectModule,
+    MatSlideToggleModule,
     MatNativeDateModule
   ],
   providers: [

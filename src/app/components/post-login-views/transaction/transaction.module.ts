@@ -13,6 +13,7 @@ import { VoucherComponent } from './voucher/voucher.component';
 import { ReceiptTxServiceService } from 'src/server/api/receiptTxService.service';
 import { PaymentTxServiceService } from 'src/server/api/paymentTxService.service';
 import { FormControlPipe } from 'src/app/shared/pipes/form-control.pipe';
+import { JournalComponent } from './journal/journal.component';
 
 @NgModule({
     declarations: [
@@ -20,7 +21,8 @@ import { FormControlPipe } from 'src/app/shared/pipes/form-control.pipe';
         VoucherComponent,      
         PaymentComponent,
         ReceiptComponent,
-        FormControlPipe
+        FormControlPipe,
+        JournalComponent
     ],
     imports: [
       CommonModule,    
