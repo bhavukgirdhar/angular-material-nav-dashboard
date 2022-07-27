@@ -1,8 +1,9 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatTableDataSource } from '@angular/material/table';
 import { debounceTime, map, Observable, shareReplay } from 'rxjs';
-import { ILedger } from 'src/server';
+import { ILedger, ILedgerDetailLine } from 'src/server';
 
 @Component({
   selector: 'app-journal',
@@ -18,11 +19,23 @@ export class JournalComponent implements OnInit {
   );
 
   public journalForm!: FormGroup;
+  public entryForm!: FormGroup;
+
   isFormLoaded : boolean = false;
   txTypeLabel: string = 'Debit';
 
+    /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
+    displayedColumns = [
+    'ledgerName',
+    'description',
+    'debit', 
+    'credit'
+  ];
+
+  dataSource = new MatTableDataSource<ILedgerDetailLine>([]);
+
   constructor(private breakpointObserver: BreakpointObserver, private formBuilder : FormBuilder) { 
-    this.initalizeJournalForm();
+    this.initalizeJournalForm();  
   }
 
   ngOnInit(): void {
@@ -37,14 +50,11 @@ export class JournalComponent implements OnInit {
       referenceNo: new FormControl(),
       chequedate: new FormControl(new Date()),
       chequenumber : new FormControl(),
-      entryForm : this.formBuilder.group({
-        selectedLedgerName: new FormControl(""),
-        selectedLedgerId: new FormControl(""),
-        lineAmount: new FormControl(),
-        txType: new FormControl(false),
-        description: new FormControl()
-      })      
+      ledgerDetailLines:  new FormArray([       
+      ])
     });
+
+    this.initializeEntryForm();
 
     this.journalForm.get('entryForm.txType')?.valueChanges.subscribe({
       next: (data) => {
@@ -55,16 +65,42 @@ export class JournalComponent implements OnInit {
         }
       }
     });
+
+    this.dataSource.data = this.journalForm.get("ledgerDetailLines")?.value;
+
   }
 
-  onLedgerSelectionChange(selectedLedger : ILedger) : void {
-    this.journalForm.patchValue({
-      selectedLedgerId: selectedLedger.id,
-      selectedLedgerName: selectedLedger.name
+  private initializeEntryForm() {
+    this.entryForm = this.formBuilder.group({
+      ledgerName: new FormControl(null, [Validators.required]),
+      ledgerId: new FormControl(null),
+      lineAmount: new FormControl(null, [Validators.required]),
+      txType: new FormControl(false),
+      description: new FormControl()
     });
   }
 
-  getFormControl(name: string) {
-    return this.journalForm.get(name) as FormControl;
+  onLedgerSelectionChange(selectedLedger : ILedger) : void {
+    console.log(selectedLedger);
+  }
+
+  addJounralEntry() : void {
+    if(this.entryForm.valid) {
+
+      
+      let ledgerDetailLines = this.journalForm.get("ledgerDetailLines")?.value;
+
+      ledgerDetailLines.push({
+        jacksontype: 'LedgerDetailLineImpl',
+        ledgerName: 'Bhavuk Girdhar'
+      });
+  
+      this.initializeEntryForm();
+      this.dataSource.data = this.journalForm.get("ledgerDetailLines")?.value as Array<ILedgerDetailLine>;       
+    }    
+  }
+
+  getEntryFormControl(name: string) {
+    return this.entryForm.get(name) as FormControl;
   }
 }

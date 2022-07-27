@@ -58,52 +58,85 @@
                 </div>
             </mat-card-content>
         </mat-card>
+    </form>
 
-        <mat-card>
+    <form [formGroup]="entryForm" (ngSubmit)="addJounralEntry()">
+        <mat-card class="mb-5">
             <mat-card-header [class]="'mat-card-headers'">
-                <mat-card-subtitle>Add Entry</mat-card-subtitle>
+                <mat-card-subtitle>Add Entry (You can add multiple entries from here)</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content class="text-center">
 
-                <div formGroupName="entryForm">
+                <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="space-around">
 
-                    <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="space-around">
-
-                        <Ledger-Box [fxFlex]="(isHandset$ | async) ? 100 : 30"                        
-                            [ledgerFormControl]="getFormControl('entryForm.selectedLedgerName')"
-                            [ledgerBoxTitle]="'Ledger'"
-                            (onLedgerSelection)="onLedgerSelectionChange($event)">
-                        </Ledger-Box>
+                    <Ledger-Box [fxFlex]="(isHandset$ | async) ? 100 : 30"                        
+                        [ledgerFormControl]="getEntryFormControl('ledgerName')"
+                        [ledgerBoxTitle]="'Ledger'"
+                        (onLedgerSelection)="onLedgerSelectionChange($event)">
+                    </Ledger-Box>
 
 
-                        <mat-form-field appearance="outline" [class]="(isHandset$ | async) ? 'innov-matFormField full-width-table' : 'innov-matFormField ml-10'"
-                            [fxFlex]="(isHandset$ | async) ? 100 : 30">
-                            <mat-label>Credit/Debit Amount</mat-label>
-                            <input matInput placeholder="Enter Amount (Toggle to switch Tx. type)"
-                                #lineAmount name="lineAmount" id="lineAmount" 
-                                formControlName="lineAmount">
-                            <mat-slide-toggle matSuffix color="primary" formControlName="txType">
-                                {{txTypeLabel}}
-                            </mat-slide-toggle>
-                        </mat-form-field>
+                    <mat-form-field appearance="outline" [class]="(isHandset$ | async) ? 'innov-matFormField full-width-table' : 'innov-matFormField ml-10'"
+                        [fxFlex]="(isHandset$ | async) ? 100 : 30">
+                        <mat-label>Credit/Debit Amount</mat-label>
+                        <input matInput placeholder="Enter Amount (Toggle to switch Tx. type)"
+                            #lineAmount name="lineAmount" id="lineAmount" 
+                            formControlName="lineAmount">
+                        <mat-slide-toggle matSuffix color="primary" formControlName="txType">
+                            {{txTypeLabel}}
+                        </mat-slide-toggle>
+                    </mat-form-field>
 
-                        <mat-form-field appearance="outline" [class]="(isHandset$ | async) ? 'innov-matFormField full-width-table' : 'innov-matFormField ml-10'"
-                            [fxFlex]="(isHandset$ | async) ? 100 : 30">
-                            <mat-label>Description</mat-label>
-                            <input matInput placeholder="Enter Description"
-                                #description name="description" id="description" 
-                                formControlName="description">                            
-                        </mat-form-field>
+                    <mat-form-field appearance="outline" [class]="(isHandset$ | async) ? 'innov-matFormField full-width-table' : 'innov-matFormField ml-10'"
+                        [fxFlex]="(isHandset$ | async) ? 100 : 30">
+                        <mat-label>Description</mat-label>
+                        <input matInput placeholder="Enter Description"
+                            #description name="description" id="description" 
+                            formControlName="description">                            
+                    </mat-form-field>
 
-                        <div [fxLayout]="'row'" fxflexfill fxLayoutAlign="start" [class]="(isHandset$ | async) ? '' : 'align-items-center'">                    
-                            <div [fxFlex]="(isHandset$ | async) ? 100 : 10">                        
-                                <button type="submit" mat-raised-button  [class]="(isHandset$ | async) ? 'full-width-table' : 'ml-10'" color="primary">
-                                    Add Entry
-                                </button>
-                            </div>
+                    <div [fxLayout]="'row'" fxflexfill fxLayoutAlign="start" [class]="(isHandset$ | async) ? '' : 'align-items-center'">                    
+                        <div [fxFlex]="(isHandset$ | async) ? 100 : 10">                        
+                            <button mat-raised-button  [class]="(isHandset$ | async) ? 'full-width-table' : 'ml-10'" color="primary">
+                                Add Entry
+                            </button>
                         </div>
                     </div>
 
+                </div>                               
+            </mat-card-content>
+        </mat-card>
+    </form>
+
+    <form [formGroup]="journalForm">
+        <mat-card>           
+            <mat-card-content class="text-center">
+                <div>
+                    <table mat-table class="full-width-table" [dataSource]="dataSource" matSort aria-label="Elements">
+
+                        <ng-container matColumnDef="ledgerName">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Ledger</th>
+                            <td mat-cell *matCellDef="let row">{{row.ledgerName}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="debit">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Debit</th>
+                            <td mat-cell *matCellDef="let row">{{row.debit}}</td>
+                        </ng-container>
+                    
+                        <ng-container matColumnDef="credit">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Credit</th>
+                            <td mat-cell *matCellDef="let row">{{row.credit}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="description">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Description</th>
+                            <td mat-cell *matCellDef="let row">{{row.description}}</td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                    </table>
                 </div>                
             </mat-card-content>
         </mat-card>
