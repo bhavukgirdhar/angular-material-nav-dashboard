@@ -63,7 +63,7 @@
     <form [formGroup]="entryForm" (ngSubmit)="addJounralEntry()">
         <mat-card class="mb-5">
             <mat-card-header [class]="'mat-card-headers'">
-                <mat-card-subtitle>Add Entry (You can add multiple entries from here)</mat-card-subtitle>
+                <mat-card-subtitle>Add Single/Multiple Entries</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content class="text-center">
 
@@ -137,7 +137,28 @@
                         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                     </table>
-                </div>                
+
+                    <mat-paginator #paginator
+                        [pageSizeOptions]="[5, 10, 20]"
+                        showFirstLastButtons 
+                        aria-label="Select page">
+                    </mat-paginator> 
+                </div>
+                <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxLayoutAlign="space-between">
+                    <div class="pb-10">
+                        <b>Total Credit</b> : {{totalCredit | number : '1.2-2'}}
+                        |
+                        <b>Total Debit</b> : {{totalDebit | number : '1.2-2'}}
+                    </div>                    
+                    <div>                        
+                        <button mat-raised-button class="button-group" [fxFlex]="50">
+                            Cancel
+                        </button>
+                        <button mat-raised-button class="button-group"  color="primary" [fxFlex]="50" (click)="saveJournalTx()">
+                            Save
+                        </button>
+                    </div>
+                </div>               
             </mat-card-content>
         </mat-card>
     </form>

@@ -15,9 +15,13 @@ export class WelcomeComponent {
     .pipe(
       map(result => result.matches),
       shareReplay()
-    );
+  );
 
-  constructor(private breakpointObserver: BreakpointObserver) { }
+  userName: string;
+
+  constructor(private breakpointObserver: BreakpointObserver) {
+    this.userName = localStorage.getItem("userName") || '';
+   }
 
   navItems = MenuConstants.MENUS;
 

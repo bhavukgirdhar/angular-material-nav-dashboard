@@ -47,6 +47,10 @@ body {
     margin-left: 10px !important;
 }
 
+.pb-10 {
+    padding-bottom: 10px !important;
+}
+
 .align-items-center{
     align-items: center !important;
 }
@@ -87,6 +91,10 @@ th.mat-header-cell {
 
 .mat-sort-header-container {
     justify-content: center !important;
+}
+
+.justify-space-between{
+    justify-content: space-between;
 }
 
 td,
