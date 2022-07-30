@@ -4,8 +4,9 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
 import { map, Observable, shareReplay } from 'rxjs';
-import { ILedger, ILedgerDetailLine } from 'src/server';
+import { PLedgerMaster, ILedgerDetailLine, IJournalTx } from 'src/server';
 import { JournalTxServiceService } from 'src/server/api/journalTxService.service';
 import { VoucherNumberServiceService } from 'src/server/api/voucherNumberService.service';
 
@@ -29,11 +30,13 @@ export class JournalComponent implements OnInit , AfterViewInit{
 
   isFormLoaded : boolean = false;
   txTypeLabel: string = 'Debit';
-  selectedLedger: ILedger;
+  selectedLedger: PLedgerMaster;
   selectedLedgerDetailLine : any;
 
+  // EDIT MODE VARIABLES
+  editJournalTxData: IJournalTx | undefined;
 
-    /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
+  /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = [
     'ledgerName',
     'description',
@@ -48,39 +51,95 @@ export class JournalComponent implements OnInit , AfterViewInit{
   totalCredit: number;
   totalDebit: number;
 
-  constructor(private breakpointObserver: BreakpointObserver, private formBuilder : FormBuilder, 
+  constructor(private breakpointObserver: BreakpointObserver, private formBuilder : FormBuilder, private route: ActivatedRoute,
     public voucherNumberService: VoucherNumberServiceService,private journalTxService: JournalTxServiceService, private _snackBar: MatSnackBar) {     
-    this.initalizeJournalForm();     
+     
   }
 
-  ngOnInit(): void {    
-    this.getNewVoucherNo();
+  ngOnInit(): void {
+    
+    this.route.params.subscribe(params => {
+      if (params['journalId']) {
+          this.journalTxService.findById(params['journalId']).subscribe({
+              next: (data) => {
+                this.editJournalTxData = data;
+                this.initalizeJournalForm(); 
+                this.isFormLoaded = true;                 
+              },
+              error: () =>{}
+            }
+          );
+      }else {
+        this.initalizeJournalForm();  
+        this.getNewVoucherNo();
+      }
+    });    
+
+   
   } 
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
 
-  initalizeJournalForm() : void {
+  /**
+   * This function initializes the journal form which is actually bind to the Form in template.
+   * This function works in both new and edit mode.
+   */
+  initalizeJournalForm() : void {    
+
+    let editLedgerDetailLines : Array<any> = []; // Will be saved in Journal form ledger detail lines in **only** edit mode.
+    let chequeDate: Date | undefined; // Will be saved in Journal form ledger detail lines in **only** edit mode.
+
+    if(!!this.editJournalTxData) {
+      let ledgerDetailLinesEditMode = this.editJournalTxData.ledgerDetailLines; //Ledger detail lines coming in edit mode.
+
+      if(!!ledgerDetailLinesEditMode && ledgerDetailLinesEditMode.length > 0){
+
+        editLedgerDetailLines = new Array<any>();
+
+        ledgerDetailLinesEditMode.forEach((_element) => {
+          editLedgerDetailLines.push({
+            jacksontype: 'LedgerDetailLineImpl',
+            id: _element.id,
+            ledgerName: _element.ledgerName,
+            ledgerId: _element.ledgerId,
+            chequeDate: _element.chequeDate,
+            description:  _element.description,
+            debit: _element.debit,
+            credit: _element.credit
+          });
+        })
+
+        chequeDate = ledgerDetailLinesEditMode[0].chequeDate;
+      }
+    }
+
+
     this.journalForm = this.formBuilder.group({
       jacksontype: 'JournalTxImpl',
-      vouchernumber : new FormControl( {value:"", disabled: true}, [ Validators.required]),
-      transactiondate : new FormControl(new Date()),
-      referenceNo: new FormControl(),
-      chequedate: new FormControl({value : new Date(), disabled: true}),
+      id: new FormControl(this.editJournalTxData?.id ? this.editJournalTxData?.id : null),
+      vouchernumber : new FormControl( {value: this.editJournalTxData?.vouchernumber ? this.editJournalTxData?.vouchernumber : null, disabled: true}, [ Validators.required]),
+      transactiondate : new FormControl(this.editJournalTxData?.transactiondate ? this.editJournalTxData?.transactiondate : new Date()),
+      referenceNo: new FormControl(this.editJournalTxData?.referenceNo ? this.editJournalTxData?.referenceNo : null),
+      // Updated if the Journal is being Edited
+      chequedate: new FormControl({value : !!chequeDate ?  new Date(chequeDate) : new Date(), disabled: true}),
+      // Updated if the Journal is being Edited
       chequeNo : new FormControl(),
-      ledgerDetailLines:  new FormArray([       
-      ])
+      // Updated if the Journal is being Edited
+      ledgerDetailLines:  !!editLedgerDetailLines ? [editLedgerDetailLines] : []
     });
 
-    this.totalCredit = 0;
-    this.totalDebit = 0; 
+    this.calculateTotalAmounts();
 
     this.initializeEntryForm();
 
     this.dataSource.data = this.journalForm.get("ledgerDetailLines")?.value;
   }
 
+  /**
+   * This method initializes the nested form for addition of journal entries.
+   */
   private initializeEntryForm() {
     this.entryForm = this.formBuilder.group({
       ledgerName: new FormControl(null, [Validators.required]),
@@ -101,6 +160,10 @@ export class JournalComponent implements OnInit , AfterViewInit{
     });
   }
 
+
+  /**
+   * This function fetches new Journal voucher number.
+   */
   private getNewVoucherNo() : void {
     this.voucherNumberService.getNextVoucherNumber(new Date().toISOString(), "in.solpro.nucleus.accounting.model.IJournalTx", 0).subscribe({
       next: (data) => {
@@ -113,6 +176,10 @@ export class JournalComponent implements OnInit , AfterViewInit{
     });
   }
 
+  /**
+   * This function is called after addition of journal entry.
+   * This will reset the nested form for journal entry.
+   */
   private resetEntryForm() : void {
     this.entryForm.patchValue({
       ledgerName: null,
@@ -123,6 +190,9 @@ export class JournalComponent implements OnInit , AfterViewInit{
     });
   }
 
+  /**
+   * This function is called in edit mode when user decides to cancel the editing of an entry.
+   */
   public cancelEditMode() : void {
     this.entryForm.patchValue({
       ledgerName: null,
@@ -137,13 +207,17 @@ export class JournalComponent implements OnInit , AfterViewInit{
     this.isEntryEditModeEnabled = false;
   }
 
-  //This will also executed in edit of any added entry.
-  onLedgerSelectionChange(selectedLedger : ILedger) : void {
+  //This will also executed in edit of any new added entry only.
+  onLedgerSelectionChange(selectedLedger : PLedgerMaster) : void {
+    console.log("");
     this.selectedLedger = selectedLedger;
   }
 
+  /**
+   * This function is called when user add/edit journal entry from Ledger detail line form.
+   */
   addJounralEntry() : void {
-    if(this.entryForm.valid) {      
+    if(this.entryForm.valid) {
       let ledgerDetailLines = this.journalForm.get("ledgerDetailLines")?.value;
 
       //Check the txType and add the amount in corresponding tx type.
@@ -158,8 +232,8 @@ export class JournalComponent implements OnInit , AfterViewInit{
 
       if(this.isEntryEditModeEnabled) {
 
-        this.selectedLedgerDetailLine["ledgerName"] = this.selectedLedger.name;
-        this.selectedLedgerDetailLine["ledgerId"] = this.selectedLedger.id;
+        this.selectedLedgerDetailLine["ledgerName"] = this.entryForm.controls["ledgerName"].value;
+        this.selectedLedgerDetailLine["ledgerId"] = this.entryForm.controls["ledgerId"].value;
         this.selectedLedgerDetailLine["debit"] = debit;
         this.selectedLedgerDetailLine["credit"] = credit;
         this.selectedLedgerDetailLine["description"] = this.entryForm.controls["description"].value;
@@ -193,6 +267,9 @@ export class JournalComponent implements OnInit , AfterViewInit{
     }    
   }
 
+  /**
+   * This function is used to calculate the final journal amounts i.e. total credit and total debit.   * 
+   */
   calculateTotalAmounts() : void {
     let addedLedgerDetailLines = this.journalForm.get("ledgerDetailLines")?.value;
 
@@ -210,6 +287,10 @@ export class JournalComponent implements OnInit , AfterViewInit{
     this.totalDebit = totalDebit;
   }
 
+  /**
+   * This function is executed when user wants to edit the added ledger detail line.
+   * Also, this function populates the selected ledger detail line into entry form.
+   */
   prepareForEditEntryLine(): void {
     let addedLedgerDetailLines = this.journalForm.get("ledgerDetailLines")?.value;
 
@@ -228,7 +309,7 @@ export class JournalComponent implements OnInit , AfterViewInit{
 
       this.entryForm.patchValue({
         ledgerName: this.selectedLedgerDetailLine?.ledgerName,
-        ledgerId: this.selectedLedgerDetailLine?.ledgerName,
+        ledgerId: this.selectedLedgerDetailLine?.ledgerId,
         lineAmount: selectedLineAmount,
         txType: selectedTxType,
         description: this.selectedLedgerDetailLine?.description
@@ -260,6 +341,7 @@ export class JournalComponent implements OnInit , AfterViewInit{
       addedLedgerDetailLines.forEach((_element: any) => {
         let ledgerDetailLine = {
           jacksontype: "LedgerDetailLineImpl",
+          id: _element["id"],
           chequeDate: this.journalForm.get("chequedate")?.value,
           chequeNo: this.journalForm.get("chequeNo")?.value,
           ledgerId: _element["ledgerId"],
@@ -274,6 +356,7 @@ export class JournalComponent implements OnInit , AfterViewInit{
 
       let journalFormForSave = this.formBuilder.group({
         jacksontype: 'JournalTxImpl',
+        id: this.journalForm.get("id")?.value,
         transactiondate : this.journalForm.get("transactiondate")?.value,
         vouchernumber : this.journalForm.get("vouchernumber")?.value,        
         referenceNo: this.journalForm.get("referenceNo")?.value,        
@@ -282,15 +365,26 @@ export class JournalComponent implements OnInit , AfterViewInit{
         ledgerDetailLines:  [ledgerDetailLinesForSave]
       });
 
-      this.journalTxService.save(journalFormForSave.value).subscribe({
-        next: (data) => {
-          this.initalizeJournalForm();
-          this.getNewVoucherNo();
-        },  
-        error: () => { }
-      });
+      if(!!this.editJournalTxData) {
 
-    }
-    
+        this.journalTxService.update(journalFormForSave.value).subscribe({
+          next: (data) => {
+            this.initalizeJournalForm();
+            this.getNewVoucherNo();
+          },  
+          error: () => { }
+        });
+      }else{
+        this.journalTxService.save(journalFormForSave.value).subscribe({
+          next: (data) => {
+            this.initalizeJournalForm();
+            this.getNewVoucherNo();
+          },  
+          error: () => { }
+        });
+      }
+
+      
+    }    
   }
 }

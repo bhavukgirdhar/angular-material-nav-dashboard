@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { GetObjectsArgument, ILedger } from 'src/server';
+import { GetObjectsArgument, PLedgerMaster } from 'src/server';
 import { LedgerServiceService } from 'src/server/api/ledgerService.service';
-import { startWith, switchMap } from 'rxjs/operators';
-import { filter, map, Observable } from 'rxjs';
+import { startWith } from 'rxjs/operators';
+import { map, Observable } from 'rxjs';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
@@ -23,10 +23,10 @@ export class LedgerBoxComponent implements OnInit, OnChanges {
   autoCompleteInput : FormControl = new FormControl();
   
   @Output("onLedgerSelection") 
-  onLedgerSelection = new EventEmitter<ILedger>();
+  onLedgerSelection = new EventEmitter<PLedgerMaster>();
 
-  allLedgers : ILedger[];
-  filteredLedgers:  Observable<ILedger[]>;
+  allLedgers : PLedgerMaster[];
+  filteredLedgers:  Observable<PLedgerMaster[]>;
 
   getLedgersByCriteria : GetObjectsArgument = {};  
   
@@ -36,9 +36,16 @@ export class LedgerBoxComponent implements OnInit, OnChanges {
     this.fetchLedgersFromServer();
   }
 
+  /**
+   * This function is executed when we pass any default value in autoCompleteInput
+   * This works in edit mode on page load **only**
+   * @param changes 
+   */
   ngOnChanges(changes: SimpleChanges): void {
     this.filteredLedgers = this.autoCompleteInput.valueChanges
           .pipe(startWith(this.autoCompleteInput.value), map(value => this._filterLedgers(value)));
+
+    console.log("**** Ledger input has been changed *********");
   }
 
   private fetchLedgersFromServer() {
@@ -48,13 +55,15 @@ export class LedgerBoxComponent implements OnInit, OnChanges {
 
     this.allLedgers = [];
 
-    this.ledgerServiceApi.getObjectsSearchArg(this.getLedgersByCriteria).subscribe({
+    this.ledgerServiceApi.getPLedgerMasterList(this.getLedgersByCriteria).subscribe({
       next: (data) => {
         if (!!data && data.count! > 0 && data.objects!.length > 0 && !!data.objects) {
           this.allLedgers = data.objects;
 
           // Works in edit mode to display value in input field (by FormControl)
-          let ledgerInEditMode: ILedger[] = [];
+          // Only when the default value is being provided.
+          // Not works when user select any ledger after page load.
+          let ledgerInEditMode: PLedgerMaster[] = [];
           if (!!this.autoCompleteInput.value && this.autoCompleteInput.value.length > 0) {
             ledgerInEditMode = this._filterLedgers(this.autoCompleteInput.value);
             this.autoCompleteInput.setValue(ledgerInEditMode[0].name);
@@ -74,10 +83,10 @@ export class LedgerBoxComponent implements OnInit, OnChanges {
     });
   }
 
-  private _filterLedgers(value: string) : ILedger[]{
+  private _filterLedgers(value: string) : PLedgerMaster[]{
     const filterValue = !!value ? value.toLowerCase() : '';
 
-    let ledgers : ILedger[] = this.allLedgers;
+    let ledgers : PLedgerMaster[] = this.allLedgers;
 
     // In case if filter of ledgers is required by some ledger group names.
     if(!!this.filterLedgersByGroupNames && this.filterLedgersByGroupNames.length > 0) {

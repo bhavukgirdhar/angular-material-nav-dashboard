@@ -1,6 +1,6 @@
-<div class="mat-elevation-z8">
+<div class="mat-elevation-z8" *ngIf="isFormLoaded">
     <form [formGroup]="journalForm">
-        <mat-card class="mb-5" *ngIf="isFormLoaded">
+        <mat-card class="mb-5" >
             <mat-card-header [class]="'mat-card-headers'">
                 <mat-card-title>
                     New Journal
@@ -115,7 +115,7 @@
         </mat-card>
     </form>
 
-    <form [formGroup]="journalForm">
+    <form [formGroup]="journalForm" >
         <mat-card>           
             <mat-card-content class="text-center">
                 <div class="jorunal-entry-actions">

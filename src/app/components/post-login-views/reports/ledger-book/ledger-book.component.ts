@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ILedger } from 'src/server';
+import { PLedgerMaster } from 'src/server';
 
 
 @Component({
@@ -15,7 +15,7 @@ export class LedgerBookComponent implements OnInit {
   
   }
 
-  onLedgerSelection(selectedLedger : ILedger) {
+  onLedgerSelection(selectedLedger : PLedgerMaster) {
     console.log(selectedLedger);
   }
 

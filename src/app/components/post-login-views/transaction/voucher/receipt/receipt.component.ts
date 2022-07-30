@@ -2,6 +2,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ILedgerDetailLine, IReceiptTx, ReceiptTxImpl } from 'src/server';
+import { LedgerServiceService } from 'src/server/api/ledgerService.service';
 import { PaymentTxServiceService } from 'src/server/api/paymentTxService.service';
 import { ReceiptTxServiceService } from 'src/server/api/receiptTxService.service';
 import { VoucherNumberServiceService } from 'src/server/api/voucherNumberService.service';
@@ -18,8 +19,8 @@ export class ReceiptComponent extends VoucherComponent implements OnInit {
 
     constructor(private receiptBreakpointObserver: BreakpointObserver, private receiptFormBuilder: FormBuilder,
         private voucherNumberService: VoucherNumberServiceService,  private paymentService: PaymentTxServiceService, 
-        private receiptService: ReceiptTxServiceService) {
-        super(receiptBreakpointObserver, receiptFormBuilder, "ReceiptTxImpl", paymentService, receiptService);
+        private receiptService: ReceiptTxServiceService, private  receiptLedgerService : LedgerServiceService) {
+        super(receiptBreakpointObserver, receiptFormBuilder, "ReceiptTxImpl", paymentService, receiptService, receiptLedgerService);
         this.headerTitle = "Receipt";
     }
 

@@ -13,6 +13,7 @@ const routes: Routes = [
             { path: 'newVoucher/Payment', component: PaymentComponent},
             { path: 'newVoucher/Receipt', component: ReceiptComponent},
             { path: 'journal', component: JournalComponent},
+            { path: 'edit-journal/:journalId', component: JournalComponent},
         ]
     }
 ];
