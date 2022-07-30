@@ -1,83 +1,77 @@
 <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav #drawer class="sidenav" fixedInViewport
-        [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-        [mode]="(isHandset$ | async) ? 'over' : 'side'"
-        [opened]="(isHandset$ | async) === false">
-      <mat-toolbar>
-        <div class="logo">
-            <img src="assets/images/logo/logo.png" [attr.width]="'100%'" alt="" />
-        </div>
-      </mat-toolbar>
-      <mat-nav-list>
-        <app-menu-list-item *ngFor="let item of navItems" [item]="item"></app-menu-list-item>
-      </mat-nav-list>
-    </mat-sidenav>
-    <mat-sidenav-content>
-      
-      <mat-toolbar color="primary">
-        <mat-toolbar-row class="justify-space-between">
-          <button mat-icon-button>
-            <button
-            type="button"
-            aria-label="Toggle sidenav"
-            mat-icon-button
-            (click)="drawer.toggle()">
-            <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+  <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+    [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
+    <mat-toolbar>
+      <div class="logo">
+        <img src="assets/images/logo/logo.png" [attr.width]="'100%'" alt="" />
+      </div>
+    </mat-toolbar>
+    <mat-nav-list>
+      <app-menu-list-item *ngFor="let item of navItems" [item]="item"></app-menu-list-item>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+
+  <mat-toolbar color="primary">
+    <mat-toolbar-row class="justify-space-between">
+      <button mat-icon-button>
+        <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
+          <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+        </button>
+      </button>
+      <span class="menu-spacer"></span>
+      <div>
+        <button mat-button [matMenuTriggerFor]="customer" [style]="(isHandset$ | async) ? 'display:none' : ''">
+          <mat-icon>person</mat-icon>
+          Customer
+        </button>
+        <mat-menu #customer="matMenu" xPosition="before">
+          <button mat-menu-item>
+            <mat-icon>person_add</mat-icon>
+            New Customer
           </button>
-          </button>          
-          <span class="menu-spacer"></span>
-          <div >
-            <button mat-button [matMenuTriggerFor]="customer" [style]="(isHandset$ | async) ? 'display:none' : ''">
-              <mat-icon>person</mat-icon>
-                Customer
-              </button>
-            <mat-menu #customer="matMenu" xPosition="before">
-              <button mat-menu-item>
-                <mat-icon>person_add</mat-icon>
-                New Customer
-              </button>              
-            </mat-menu>
-            
-            <button mat-button [matMenuTriggerFor]="supplier"  [style]="(isHandset$ | async) ? 'display:none' : ''">
-              <mat-icon>supervisor_account</mat-icon>
-              Supplier
-            </button>
-            <mat-menu #supplier="matMenu" xPosition="before">
-              <button mat-menu-item>Item 1</button>              
-            </mat-menu>
+        </mat-menu>
 
-            <button mat-button [matMenuTriggerFor]="accounting"  [style]="(isHandset$ | async) ? 'display:none' : ''">
-              <mat-icon>account_balance</mat-icon>
-              Accounting
-            </button>
-            <mat-menu #accounting="matMenu" xPosition="before">
-              <button mat-menu-item>Item 1</button>              
-            </mat-menu>
+        <button mat-button [matMenuTriggerFor]="supplier" [style]="(isHandset$ | async) ? 'display:none' : ''">
+          <mat-icon>supervisor_account</mat-icon>
+          Supplier
+        </button>
+        <mat-menu #supplier="matMenu" xPosition="before">
+          <button mat-menu-item>Item 1</button>
+        </mat-menu>
 
-            <button mat-button [matMenuTriggerFor]="inventory"  [style]="(isHandset$ | async) ? 'display:none' : ''">
-              <mat-icon> bar_chart</mat-icon>
-              Inventory
-            </button>
-            <mat-menu #inventory="matMenu" xPosition="before">
-              <button mat-menu-item>Item 1</button>              
-            </mat-menu> 
-            
-            <button mat-button [matMenuTriggerFor]="profile">                           
-              <mat-icon>account_circle</mat-icon>
-              {{userName}}
-            </button>
-            <mat-menu #profile="matMenu" xPosition="before">
-              <button mat-menu-item> 
-                <mat-icon>exit_to_app</mat-icon>
-                Logout
-              </button>              
-            </mat-menu> 
-            
-          </div>
-        </mat-toolbar-row>
-      </mat-toolbar>
-      
-      <router-outlet></router-outlet>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
-  
+        <button mat-button [matMenuTriggerFor]="accounting" [style]="(isHandset$ | async) ? 'display:none' : ''">
+          <mat-icon>account_balance</mat-icon>
+          Accounting
+        </button>
+        <mat-menu #accounting="matMenu" xPosition="before">
+          <button mat-menu-item>Item 1</button>
+        </mat-menu>
+
+        <button mat-button [matMenuTriggerFor]="inventory" [style]="(isHandset$ | async) ? 'display:none' : ''">
+          <mat-icon> bar_chart</mat-icon>
+          Inventory
+        </button>
+        <mat-menu #inventory="matMenu" xPosition="before">
+          <button mat-menu-item>Item 1</button>
+        </mat-menu>
+
+        <button mat-button [matMenuTriggerFor]="profile">
+          <mat-icon>account_circle</mat-icon>
+          {{userName}}
+        </button>
+        <mat-menu #profile="matMenu" xPosition="before">
+          <button mat-menu-item>
+            <mat-icon>exit_to_app</mat-icon>
+            Logout
+          </button>
+        </mat-menu>
+
+      </div>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <router-outlet></router-outlet> 
+
+  </mat-sidenav-content>
+</mat-sidenav-container>

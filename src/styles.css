@@ -126,3 +126,7 @@ th {
 .full-width-table {
     width: 100%;
 }
+
+.highlight{  
+    background: #dddddd;
+}

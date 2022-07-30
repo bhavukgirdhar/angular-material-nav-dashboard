@@ -10,7 +10,8 @@ import { OverstockReportServiceService } from "./overstockReportService.service"
 import { VoucherNumberServiceService } from "./voucherNumberService.service";
 import { PaymentTxServiceService } from "./paymentTxService.service";
 import { ReceiptTxServiceService } from "./receiptTxService.service";
+import { JournalTxServiceService } from "./journalTxService.service";
 
 export const APIS = [CashInHandReportServiceService, LedgerServiceService, ItemServiceService, UnitServiceService, 
     ItemGroupServiceService, LedgerGroupServiceService, TaxClassServiceService, OverstockReportServiceService,
-    VoucherNumberServiceService,PaymentTxServiceService, ReceiptTxServiceService];
+    VoucherNumberServiceService,PaymentTxServiceService, ReceiptTxServiceService, JournalTxServiceService];

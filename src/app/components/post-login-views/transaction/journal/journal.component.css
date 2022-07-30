@@ -9,4 +9,10 @@
 
 .button-group{    
     margin: 0 8px 0 0;
+    height: 35px;
+}
+
+.jorunal-entry-actions{
+    text-align: right;
+    margin-bottom: 5px;
 }
