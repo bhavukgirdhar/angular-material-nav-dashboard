@@ -29,8 +29,7 @@ export class JournalComponent implements OnInit , AfterViewInit{
   public isEntryEditModeEnabled : boolean = false;
 
   isFormLoaded : boolean = false;
-  txTypeLabel: string = 'Debit';
-  selectedLedger: PLedgerMaster;
+  txTypeLabel: string = 'Debit';  
   selectedLedgerDetailLine : any;
 
   // EDIT MODE VARIABLES
@@ -202,15 +201,16 @@ export class JournalComponent implements OnInit , AfterViewInit{
       description: null
     });
 
-    this.selectedRowIndex = 0; //Reset to original state.
-    this.selectedLedger = {}; // Reset to original state.
+    this.selectedRowIndex = 0; //Reset to original state.   
     this.isEntryEditModeEnabled = false;
   }
 
   //This will also executed in edit of any new added entry only.
   onLedgerSelectionChange(selectedLedger : PLedgerMaster) : void {
-    console.log("");
-    this.selectedLedger = selectedLedger;
+    this.entryForm.patchValue({
+      ledgerName: selectedLedger.name,
+      ledgerId: selectedLedger.id
+    });
   }
 
   /**
@@ -246,8 +246,8 @@ export class JournalComponent implements OnInit , AfterViewInit{
         ledgerDetailLines.push({
           id : this.entryRowId,
           jacksontype: 'LedgerDetailLineImpl',
-          ledgerName: this.selectedLedger.name,
-          ledgerId: this.selectedLedger.id,
+          ledgerName: this.entryForm.controls["ledgerName"].value,
+          ledgerId: this.entryForm.controls["ledgerId"].value,
           chequeDate: this.journalForm.controls["chequedate"].value,
           description: this.entryForm.controls["description"].value,
           debit: debit as number,
