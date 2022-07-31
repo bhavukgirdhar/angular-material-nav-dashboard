@@ -13,6 +13,7 @@ import { LedgerServiceService } from 'src/server/api/ledgerService.service';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { AngularMaterialModule } from 'src/app/shared/modules/angular-material.module';
 import { OverstockReportServiceService } from 'src/server/api/overstockReportService.service';
+import { BalanceSheetComponent } from './balance-sheet/balance-sheet.component';
 
 @NgModule({
   declarations: [ 
@@ -20,7 +21,8 @@ import { OverstockReportServiceService } from 'src/server/api/overstockReportSer
     CashInHandComponent,
     OverstockReportComponent,
     DayBookComponent,
-    LedgerBookComponent
+    LedgerBookComponent,
+    BalanceSheetComponent
   ],
   imports: [
     CommonModule,

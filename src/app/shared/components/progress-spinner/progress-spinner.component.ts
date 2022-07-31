@@ -1,5 +1,5 @@
 import { OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
-import { Component, Input, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, DoCheck, Input, OnInit, TemplateRef, ViewChild, ViewContainerRef } from '@angular/core';
 import { ThemePalette } from '@angular/material/core';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { OverlayService } from 'src/app/services/overlay.service';
@@ -9,18 +9,18 @@ import { OverlayService } from 'src/app/services/overlay.service';
   templateUrl: './progress-spinner.component.html',
   styleUrls: ['./progress-spinner.component.css']
 })
-export class ProgressSpinnerComponent implements OnInit {
+export class ProgressSpinnerComponent implements OnInit  {
 
-  @Input() color?: ThemePalette;
-  @Input() diameter?: number = 100;
-  @Input() mode: ProgressSpinnerMode;
-  @Input() strokeWidth?: number;
-  @Input() value?: number;
-  @Input() backdropEnabled = true;
-  @Input() positionGloballyCenter = true;
-  @Input() displayProgressSpinner: boolean;
+  color?: ThemePalette = 'primary' as ThemePalette;;
+  diameter?: number = 100;
+  mode: ProgressSpinnerMode = 'indeterminate' as ProgressSpinnerMode;
+  strokeWidth?: number;
+  value?: number = 50;
+  backdropEnabled = true;
+  positionGloballyCenter = true;
+  displayProgressSpinner: boolean;
 
-  @ViewChild('progressSpinnerRef')
+  @ViewChild('progressSpinnerRef', {static: true})
   private progressSpinnerRef: TemplateRef<any>;
 
   private progressSpinnerOverlayConfig: OverlayConfig;
@@ -38,14 +38,18 @@ export class ProgressSpinnerComponent implements OnInit {
     }
     // Create Overlay for progress spinner
     this.overlayRef = this.overlayService.createOverlay(this.progressSpinnerOverlayConfig);
+
+    this.overlayService.displayProgressSpinner$.subscribe({
+      next: (data) => {        
+        if (data && !this.overlayRef.hasAttached()) {
+          this.overlayService.attachTemplatePortal(this.overlayRef, this.progressSpinnerRef, this.vcRef);
+        } else if (!data && this.overlayRef.hasAttached()) {
+          this.overlayRef.detach();
+        }
+      }
+    });
+
   }
-  ngDoCheck() {
-    // Based on status of displayProgressSpinner attach/detach overlay to progress spinner template
-    if (this.displayProgressSpinner && !this.overlayRef.hasAttached()) {
-      this.overlayService.attachTemplatePortal(this.overlayRef, this.progressSpinnerRef, this.vcRef);
-    } else if (!this.displayProgressSpinner && this.overlayRef.hasAttached()) {
-      this.overlayRef.detach();
-    }
-  }
+  
 
 }

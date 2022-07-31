@@ -1,9 +1,8 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ThemePalette } from '@angular/material/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
-import { MatRow, MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { OverlayService } from 'src/app/services/overlay.service';
 import { GetObjectsArgument, PItemMaster } from 'src/server';
 import { ItemServiceService } from 'src/server/api/itemService.service';
 
@@ -13,11 +12,6 @@ import { ItemServiceService } from 'src/server/api/itemService.service';
   styleUrls: ['./all-items.component.css']
 })
 export class AllItemsComponent implements OnInit, AfterViewInit {
-
-  public color = 'primary' as ThemePalette;
-  public mode = 'indeterminate' as ProgressSpinnerMode;
-  public value = 50;
-  public displayProgressSpinner = false;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   public displayedColumns = ['name',
@@ -39,15 +33,14 @@ export class AllItemsComponent implements OnInit, AfterViewInit {
   @ViewChild('filterInput') 
   filterInput: ElementRef;
 
-  constructor(private router: Router, private itemServiceApi : ItemServiceService) {
-
+  constructor(private router: Router, private itemServiceApi : ItemServiceService, private overlayService : OverlayService) {    
   }
 
   ngOnInit(): void {
     this.getItemsByCriteria.startPageIndex = 0;
     this.getItemsByCriteria.genericSearch = false; 
 
-    //this.displayProgressSpinner = true;
+    this.overlayService.enableProgressSpinner();
 
     this.getAllItems();
   }
@@ -58,8 +51,9 @@ export class AllItemsComponent implements OnInit, AfterViewInit {
         this.dataSource.data = data.objects || [];
         this.filterInput.nativeElement.focus();
 
+        this.overlayService.disableProgressSpinner();
       },
-      error: () => { }
+      error: () => { this.overlayService.disableProgressSpinner(); }
     });
   }
 

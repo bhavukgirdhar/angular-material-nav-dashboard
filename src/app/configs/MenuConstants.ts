@@ -143,6 +143,12 @@ export class MenuConstants {
           iconName: '',
           route: 'ledgerBook',
           children: []
+        },
+        {
+          displayName: 'Balance Sheet',
+          iconName: '',
+          route: 'balanceSheet',
+          children: []
         }
       ]
     }

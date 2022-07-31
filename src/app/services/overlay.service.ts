@@ -3,6 +3,7 @@ import { Injectable, TemplateRef, ViewContainerRef } from '@angular/core';
 //cdk
 import { Overlay, OverlayConfig, OverlayRef, PositionStrategy } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
+import { BehaviorSubject } from 'rxjs';
 
 //rxjs
 
@@ -11,9 +12,13 @@ import { TemplatePortal } from '@angular/cdk/portal';
 })
 export class OverlayService {
 
-    constructor(
-        private overlay: Overlay
-    ) { }
+    private displayProgressSpinnerSubject = new BehaviorSubject<any>(false);
+    public displayProgressSpinner$ = this.displayProgressSpinnerSubject.asObservable();
+
+    constructor(private overlay: Overlay) {
+
+    }
+
     createOverlay(config: OverlayConfig): OverlayRef {
         return this.overlay.create(config);
     }
@@ -26,5 +31,13 @@ export class OverlayService {
             .global()
             .centerHorizontally()
             .centerVertically();
+    }
+
+    enableProgressSpinner() : void{
+        this.displayProgressSpinnerSubject.next(true);
+    }
+
+    disableProgressSpinner() : void{
+        this.displayProgressSpinnerSubject.next(false);
     }
 }
