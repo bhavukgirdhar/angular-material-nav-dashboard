@@ -1,6 +1,7 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { OverlayService } from 'src/app/services/overlay.service';
 import { ILedgerDetailLine, IPaymentTx } from 'src/server';
 import { LedgerServiceService } from 'src/server/api/ledgerService.service';
 import { PaymentTxServiceService } from 'src/server/api/paymentTxService.service';
@@ -17,10 +18,10 @@ export class PaymentComponent extends VoucherComponent implements OnInit {
 
   paymentTx :  IPaymentTx;
 
-  constructor(private paymentBreakpointObserver: BreakpointObserver, private paymentFormBuilder : FormBuilder, 
+  constructor(private paymentBreakpointObserver: BreakpointObserver, private paymentOverlayService : OverlayService, private paymentFormBuilder : FormBuilder, 
     private voucherNumberService: VoucherNumberServiceService,
     private paymentService : PaymentTxServiceService, private receiptService: ReceiptTxServiceService, private  paymentLedgerService : LedgerServiceService) {
-      super(paymentBreakpointObserver, paymentFormBuilder, "PaymentTxImpl", paymentService, receiptService, paymentLedgerService);
+      super(paymentBreakpointObserver, paymentOverlayService, paymentFormBuilder, "PaymentTxImpl", paymentService, receiptService, paymentLedgerService);
       this.headerTitle = "Payment";
   }
 

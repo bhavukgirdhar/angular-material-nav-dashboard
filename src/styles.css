@@ -115,6 +115,10 @@ th {
     font-size: 12px !important;
 }
 
+.mat-form-component{
+    font-size: 12px !important;
+}
+
 .mat-card-headers{
     justify-content: space-between;
 }
@@ -130,3 +134,9 @@ th {
 .highlight{  
     background: #dddddd;
 }
+
+.showbutton {
+    margin-left: 10px;
+    margin-top: 10px;
+}
+  

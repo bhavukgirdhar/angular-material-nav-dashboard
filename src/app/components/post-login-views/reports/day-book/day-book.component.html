@@ -20,7 +20,7 @@
         <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="start"
           [class]="(isHandset$ | async) ? '' : 'search-criteria'">
           <div>
-            <mat-form-field appearance="outline" [class]="(isHandset$ | async) ? ' full-width-table' : 'mr-10'">
+            <mat-form-field appearance="outline" [class]="(isHandset$ | async) ? 'calendar-component  full-width-table' : 'calendar-component mr-10'">
               <mat-label>Start Date</mat-label>
               <input matInput [matDatepicker]="pickerTo">
               <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
@@ -28,7 +28,7 @@
             </mat-form-field>
           </div>
           <div>
-            <mat-form-field appearance="outline" [class]="(isHandset$ | async) ? ' full-width-table' : 'mr-10'">
+            <mat-form-field appearance="outline" [class]="(isHandset$ | async) ? 'calendar-component full-width-table' : 'calendar-component mr-10'">
               <mat-label>End Date</mat-label>
               <input matInput [matDatepicker]="pickerFrom">
               <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
@@ -37,7 +37,7 @@
           </div>
 
           <div>
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline"[class]="(isHandset$ | async) ? 'mat-form-component full-width-table' : 'mat-form-component mr-10'">
               <mat-label>Format</mat-label>
               <mat-select>
                 <mat-option>
@@ -73,5 +73,11 @@
 
       </mat-card-content>
     </div>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-content>
+    
+    </mat-card-content>
   </mat-card>
 </div>

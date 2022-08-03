@@ -16,25 +16,31 @@
         <mat-card-content>
             <div fxflexfill fxLayout="row" fxLayoutAlign="start" >
               <div>
-                <mat-form-field appearance="outline" >
+                <mat-form-field appearance="outline" class="mr-10">
                   <mat-label>Start date</mat-label>
-                  <input matInput [matDatepicker]="pickerTo" >         
+                  <input matInput [matDatepicker]="pickerTo"  [(ngModel)]="startDate">         
                   <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
                   <mat-datepicker #pickerTo></mat-datepicker>
                 </mat-form-field>
-                <mat-form-field appearance="outline" >
+                <mat-form-field appearance="outline" class="mr-10">
                   <mat-label>End date</mat-label>
-                  <input matInput [matDatepicker]="pickerFrom" >         
+                  <input matInput [matDatepicker]="pickerFrom"  [(ngModel)]="endDate">         
                   <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
                   <mat-datepicker #pickerFrom></mat-datepicker>
                 </mat-form-field>   
               </div>
-              <div>
-                <button mat-raised-button color="primary" >
+              <div  fxflexfill fxLayout="column">
+                <mat-checkbox>Show account with Zero Balance</mat-checkbox>
+                <mat-checkbox>Show only Ledger Groups</mat-checkbox>
+              </div>
+    
+              <div class="showbutton">
+                <button mat-raised-button color="primary" (click)="getBalancesheetReport()" >
                   Show
                 </button>   
               </div>  
-            </div>      
+            </div>   
+
           </mat-card-content>
     </mat-card>
 </div>

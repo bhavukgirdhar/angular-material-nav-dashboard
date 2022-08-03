@@ -3,6 +3,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { map, Observable, shareReplay } from 'rxjs';
+import { OverlayService } from 'src/app/services/overlay.service';
 import { ILedger, ILedgerDetailLine, PLedgerMaster } from 'src/server';
 import { LedgerServiceService } from 'src/server/api/ledgerService.service';
 import { PaymentTxServiceService } from 'src/server/api/paymentTxService.service';
@@ -27,7 +28,7 @@ export class VoucherComponent {
   isFormLoaded : boolean = false;
   filterLedgersByGroupNames: string[];
 
-  constructor(private breakpointObserver: BreakpointObserver, private formBuilder : FormBuilder, 
+  constructor(private breakpointObserver: BreakpointObserver, private overlayService : OverlayService, private formBuilder : FormBuilder, 
     @Inject(String) private jacksonType : String, private paymentTxService: PaymentTxServiceService, 
     private receiptTxService: ReceiptTxServiceService, private  ledgerService : LedgerServiceService) { 
     this.headerTitle = "";
@@ -36,6 +37,8 @@ export class VoucherComponent {
   }
 
   initializeVoucherForm(): void {
+
+    this.overlayService.enableProgressSpinner();
 
     //To fetch the cash ledger as a default ***by ledger***
     this.ledgerService.getCashLedger().subscribe({
@@ -74,8 +77,10 @@ export class VoucherComponent {
             });
           }
         });
+
+        this.overlayService.disableProgressSpinner();
       },
-      error: () => {}
+      error: () => {this.overlayService.disableProgressSpinner();}
     });
    
   }
@@ -113,18 +118,26 @@ export class VoucherComponent {
         });
 
         if(this.jacksonType == "PaymentTxImpl") {
+
+          this.overlayService.enableProgressSpinner();
+          
           this.paymentTxService.save(voucherForSave.value).subscribe({
             next: (data) => {
                 this.initializeVoucherForm();
+                this.overlayService.disableProgressSpinner();
             },
-            error: () => {}
+            error: () => {this.overlayService.disableProgressSpinner();}
           });
         }else if(this.jacksonType = "ReceiptTxImpl") {
+          
+          this.overlayService.enableProgressSpinner();
+
           this.receiptTxService.save(voucherForSave.value).subscribe({
             next: (data) => {
               this.initializeVoucherForm();
+              this.overlayService.disableProgressSpinner();
             },
-            error: () => { }
+            error: () => {this.overlayService.disableProgressSpinner(); }
           });
         }
        

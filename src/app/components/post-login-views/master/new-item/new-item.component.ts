@@ -3,8 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, map, Observable, shareReplay } from 'rxjs';
+import { filter, forkJoin, map, Observable, shareReplay } from 'rxjs';
 import { startWith, switchMap } from 'rxjs/operators';
+import { OverlayService } from 'src/app/services/overlay.service';
 import { GetObjectsArgument, IItemGroup, ILedger, ILedgerGroup, ITaxClass, IUnit, PItem } from 'src/server';
 import { ItemGroupServiceService } from 'src/server/api/itemGroupService.service';
 import { ItemServiceService } from 'src/server/api/itemService.service';
@@ -54,6 +55,7 @@ export class NewItemComponent implements OnInit {
   constructor(private breakpointObserver: BreakpointObserver,private route: ActivatedRoute, 
     private router: Router,
     private formBuilder: FormBuilder, 
+    private overlayService : OverlayService,
     private unitService :  UnitServiceService,
     private itemService : ItemServiceService,
     private itemGroupService : ItemGroupServiceService,
@@ -67,13 +69,15 @@ export class NewItemComponent implements OnInit {
 
     this.item = {};
 
+    this.overlayService.enableProgressSpinner();
+
     this.route.params.subscribe(params => {
       if (params['itemId']) {
           this.itemService.getPItemFromId(params['itemId']).subscribe({
               next: (data) => {
                 this.item = data;
                 this.initializeItemForm();
-                this.isFormLoaded = true;
+                this.isFormLoaded = true;                
               },
               error: () =>{}
             }
@@ -117,9 +121,71 @@ export class NewItemComponent implements OnInit {
     //and Edit it will be searched with actual item unit  
     this.itemUnits = this.itemForm.controls["unitName"].valueChanges.pipe(startWith(this.itemForm.controls["unitName"].value), switchMap(value => this._filterUnits(value)));
 
-    this.getItemGroups();
-    this.getSalePurchaseAccounts();
-    this.getTaxClasses();
+    this.onPageLoadHttpRequests().subscribe({
+      next: (data) => {
+        this.getItemGroups(data[0]);
+        this.getSalePurchaseAccounts(data[1]);
+        this.getTaxClasses(data[2]);
+        this.overlayService.disableProgressSpinner();
+      },
+      error: () => {
+        this.overlayService.disableProgressSpinner();
+      }
+    });
+   
+  }
+
+  /**
+   * This function returns all the observables required on page load.
+   * @returns 
+   */
+  public onPageLoadHttpRequests(): Observable<any[]> {
+    let itemGroupObject$ :  Observable<IItemGroup[]> = this.itemGroupService.getObjects();
+    let ledgerGroupObjects$ : Observable<ILedgerGroup[]>  = this.ledgerGroupService.getObjects();
+    let taxClassObjects$ : Observable<ITaxClass[]>  =  this.taxClassService.getObjects();
+
+    return forkJoin([itemGroupObject$, ledgerGroupObjects$, taxClassObjects$]);
+  }
+
+  /**
+   * This function get all the available item groups
+   * And bind the auto-complete textbox with the valueChanges event.
+   */
+   private getItemGroups(data : IItemGroup[]) : void {
+    this.itemGroups = data;
+    this.filteredItemGroups = this.itemForm.controls["groupName"].valueChanges.pipe(startWith(this.itemForm.controls["groupName"].value), map(value => this._filterItemGroups(value || '')));
+  }
+
+  
+  private getSalePurchaseAccounts(data : ILedgerGroup[]) : void {
+    
+    let purchaseAccountsLedgerGroup = data.find((ledgerGroup) => ledgerGroup.name == 'Purchase Accounts');
+    let saleAccountsLedgerGroup = data.find((ledgerGroup) => ledgerGroup.name == 'Sale Accounts');
+
+    if(!!purchaseAccountsLedgerGroup) {
+      this.ledgerService.getLedgersFromGroup(purchaseAccountsLedgerGroup.id).subscribe({
+        next: (data) => {
+            this.purchaseAccounts = data;
+            this.filteredPurchaseAccounts = this.itemForm.controls["ledgerPurchaseAccount"].valueChanges.pipe(startWith(this.itemForm.controls["ledgerPurchaseAccount"].value), map(value => this._filterPurchaseAccounts(value || '')));            
+        },
+        error: () => { }
+      });
+    }
+
+    if(!!saleAccountsLedgerGroup) {
+      this.ledgerService.getLedgersFromGroup(saleAccountsLedgerGroup.id).subscribe({
+        next: (data) => {
+            this.saleAccounts = data;
+            this.filteredSaleAccounts = this.itemForm.controls["ledgerSaleAccount"].valueChanges.pipe(startWith(this.itemForm.controls["ledgerSaleAccount"].value), map(value => this._filterSaleAccounts(value || '')));
+        },
+        error: () => { }
+      });
+    }
+  }
+
+  private getTaxClasses(data : ITaxClass[]) : void {    
+    this.taxClasses = data;
+    this.filteredTaxClass = this.itemForm.controls["taxClassName"].valueChanges.pipe(startWith(this.itemForm.controls["taxClassName"].value), map(value => this._filterTaxClass(value || '')));
   }
 
   /**
@@ -211,60 +277,7 @@ export class NewItemComponent implements OnInit {
     }
   }
 
-  /**
-   * This function get all the available item groups
-   * And bind the auto-complete textbox with the valueChanges event.
-   */
-  private getItemGroups() : void {
-    this.itemGroupService.getObjects().subscribe({
-      next: (data) => {          
-         this.itemGroups = data;
-         this.filteredItemGroups = this.itemForm.controls["groupName"].valueChanges.pipe(startWith(this.itemForm.controls["groupName"].value), map(value => this._filterItemGroups(value || '')));
-      },
-      error: () =>{ }
-    });
-  }
-
   
-  private getSalePurchaseAccounts() : void {
-    this.ledgerGroupService.getObjects().subscribe({
-      next: (data) => {
-        let purchaseAccountsLedgerGroup = data.find((ledgerGroup) => ledgerGroup.name == 'Purchase Accounts');
-        let saleAccountsLedgerGroup = data.find((ledgerGroup) => ledgerGroup.name == 'Sale Accounts');
-
-        if(!!purchaseAccountsLedgerGroup) {
-          this.ledgerService.getLedgersFromGroup(purchaseAccountsLedgerGroup.id).subscribe({
-            next: (data) => {
-                this.purchaseAccounts = data;
-                this.filteredPurchaseAccounts = this.itemForm.controls["ledgerPurchaseAccount"].valueChanges.pipe(startWith(this.itemForm.controls["ledgerPurchaseAccount"].value), map(value => this._filterPurchaseAccounts(value || '')));
-            },
-            error: () => {}
-          });
-        }
-
-        if(!!saleAccountsLedgerGroup) {
-          this.ledgerService.getLedgersFromGroup(saleAccountsLedgerGroup.id).subscribe({
-            next: (data) => {
-                this.saleAccounts = data;
-                this.filteredSaleAccounts = this.itemForm.controls["ledgerSaleAccount"].valueChanges.pipe(startWith(this.itemForm.controls["ledgerSaleAccount"].value), map(value => this._filterSaleAccounts(value || '')));
-            },
-            error: () => {}
-          });
-        }
-      },
-      error: () => {}
-    });
-  }
-
-  private getTaxClasses() : void {
-    this.taxClassService.getObjects().subscribe({
-      next: (data) => {
-        this.taxClasses = data;
-        this.filteredTaxClass = this.itemForm.controls["taxClassName"].valueChanges.pipe(startWith(this.itemForm.controls["taxClassName"].value), map(value => this._filterTaxClass(value || '')));
-      },
-      error: () => {}
-    });
-  }
 
   /**
    * This function filters the units on key input
@@ -360,11 +373,13 @@ export class NewItemComponent implements OnInit {
 
   public saveItem() : void {    
     if(this.itemForm.valid) {
+      this.overlayService.enableProgressSpinner();
       this.itemService.savePItem(this.itemForm.value).subscribe({
         next: (data) => {
+          this.overlayService.disableProgressSpinner();
           this.viewAllItems();
         },
-        error: () => {}
+        error: () => {this.overlayService.disableProgressSpinner();}
       });
     }    
   }

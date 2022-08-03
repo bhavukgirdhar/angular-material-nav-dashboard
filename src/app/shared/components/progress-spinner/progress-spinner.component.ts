@@ -20,7 +20,7 @@ export class ProgressSpinnerComponent implements OnInit  {
   positionGloballyCenter = true;
   displayProgressSpinner: boolean;
 
-  @ViewChild('progressSpinnerRef', {static: true})
+  @ViewChild('progressSpinnerRef', {static: true})// static true in case if want to access in ngOnInit of any other component.
   private progressSpinnerRef: TemplateRef<any>;
 
   private progressSpinnerOverlayConfig: OverlayConfig;

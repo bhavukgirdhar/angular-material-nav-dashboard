@@ -11,7 +11,8 @@ import { VoucherNumberServiceService } from "./voucherNumberService.service";
 import { PaymentTxServiceService } from "./paymentTxService.service";
 import { ReceiptTxServiceService } from "./receiptTxService.service";
 import { JournalTxServiceService } from "./journalTxService.service";
+import { BalanceSheetReportServiceService } from "./balanceSheetReportService.service";
 
-export const APIS = [CashInHandReportServiceService, LedgerServiceService, ItemServiceService, UnitServiceService, 
+export const APIS = [CashInHandReportServiceService, BalanceSheetReportServiceService, LedgerServiceService, ItemServiceService, UnitServiceService, 
     ItemGroupServiceService, LedgerGroupServiceService, TaxClassServiceService, OverstockReportServiceService,
     VoucherNumberServiceService,PaymentTxServiceService, ReceiptTxServiceService, JournalTxServiceService];
