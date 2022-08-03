@@ -77,7 +77,7 @@
 
   <mat-card>
     <mat-card-content>
-    
+      <db-angular-tree-grid #angularGrid [data]="data" [configs]="configs" (rowselect)="rowSelected($event)"></db-angular-tree-grid>
     </mat-card-content>
   </mat-card>
 </div>

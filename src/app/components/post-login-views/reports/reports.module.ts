@@ -15,6 +15,8 @@ import { AngularMaterialModule } from 'src/app/shared/modules/angular-material.m
 import { OverstockReportServiceService } from 'src/server/api/overstockReportService.service';
 import { BalanceSheetComponent } from './balance-sheet/balance-sheet.component';
 
+import {AngularTreeGridModule} from 'angular-tree-grid';
+
 @NgModule({
   declarations: [ 
     ReportsBaseViewComponent,
@@ -31,7 +33,8 @@ import { BalanceSheetComponent } from './balance-sheet/balance-sheet.component';
     ReportsRoutingModule,  
     FlexLayoutModule,
     SharedModule,
-    AngularMaterialModule
+    AngularMaterialModule,
+    AngularTreeGridModule
   ],
   providers: [
     CashInHandReportServiceService,

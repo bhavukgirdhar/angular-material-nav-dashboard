@@ -60,7 +60,7 @@ body {
 }
 
 .text-left {
-    text-align: left;
+    text-align: left !important;
 }
 
 .title-underline {
@@ -87,6 +87,24 @@ body {
 th.mat-header-cell {
     color: #fff;
     background-color: #3f51b5;
+}
+
+.angular-tree-grid-header{    
+    background-color: #3f51b5 !important;
+}
+
+tr.angular-tree-grid-header > th{
+    color: #fff !important;
+    font-weight: 500 !important;
+    font-size: 0.75rem !important;
+}
+
+db-tree-cell-view{
+    font-size: 14px !important;
+}
+
+span.expand-icon-container span.inbuild-icon {
+    font-size: 20px !important;
 }
 
 .mat-sort-header-container {
