@@ -4,6 +4,8 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
+import { getData } from './data';
+
 @Component({  
   selector: 'app-day-book',
   templateUrl: './day-book.component.html',
@@ -23,7 +25,13 @@ export class DayBookComponent implements OnInit {
       shareReplay()
   );
 
+  columnDefs = [
+    {headerName  : 'Make' , field : 'make'},
+    {headerName  : 'Model' , field : 'model'},
+    {headerName  : 'Price' , field : 'price'}
+  ];
 
+  public rowData: any[] | null = getData();
 
   constructor(private breakpointObserver: BreakpointObserver) { }
 

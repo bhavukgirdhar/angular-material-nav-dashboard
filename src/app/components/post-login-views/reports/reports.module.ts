@@ -14,7 +14,8 @@ import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { AngularMaterialModule } from 'src/app/shared/modules/angular-material.module';
 import { OverstockReportServiceService } from 'src/server/api/overstockReportService.service';
 import { BalanceSheetComponent } from './balance-sheet/balance-sheet.component';
-
+import {AgGridModule} from 'ag-grid-angular';
+import { BalanceSheetReportServiceService } from 'src/server/api/balanceSheetReportService.service';
 @NgModule({
   declarations: [ 
     ReportsBaseViewComponent,
@@ -31,12 +32,14 @@ import { BalanceSheetComponent } from './balance-sheet/balance-sheet.component';
     ReportsRoutingModule,  
     FlexLayoutModule,
     SharedModule,
-    AngularMaterialModule
+    AngularMaterialModule,
+    AgGridModule
   ],
   providers: [
     CashInHandReportServiceService,
     LedgerServiceService,
-    OverstockReportServiceService
+    OverstockReportServiceService,
+    BalanceSheetReportServiceService
   ],
   bootstrap: []
 })

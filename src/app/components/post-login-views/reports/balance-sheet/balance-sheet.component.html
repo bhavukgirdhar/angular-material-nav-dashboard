@@ -30,8 +30,8 @@
                 </mat-form-field>   
               </div>
               <div  fxflexfill fxLayout="column">
-                <mat-checkbox>Show account with Zero Balance</mat-checkbox>
-                <mat-checkbox>Show only Ledger Groups</mat-checkbox>
+                <mat-checkbox  [(ngModel)]="zeroBalrequired">Show account with Zero Balance</mat-checkbox>
+                <mat-checkbox  [(ngModel)]="ledgerrequired">Show only Ledger Groups</mat-checkbox>
               </div>
     
               <div class="showbutton">
