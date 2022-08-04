@@ -5,21 +5,28 @@ import { ProgressSpinnerComponent } from '../components/progress-spinner/progres
 import { LedgerBoxComponent } from '../components/ledger-box/ledger-box.component';
 import { LedgerServiceService } from 'src/server/api/ledgerService.service';
 import { AngularMaterialModule } from './angular-material.module';
+import { ITreeTableComponent } from '../components/i-tree-table/i-tree-table.component';
+import { AngularTreeGridModule } from 'angular-tree-grid';
+
 
 @NgModule({
     declarations: [
         ProgressSpinnerComponent,
-        LedgerBoxComponent
+        LedgerBoxComponent,
+        ITreeTableComponent
     ],
     imports: [
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        AngularMaterialModule        
+        AngularMaterialModule,
+        AngularTreeGridModule,
+        
     ],
     exports: [
         ProgressSpinnerComponent,
-        LedgerBoxComponent
+        LedgerBoxComponent,
+        ITreeTableComponent
     ],
     providers: [
         LedgerServiceService

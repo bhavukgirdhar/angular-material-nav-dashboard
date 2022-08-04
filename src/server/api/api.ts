@@ -1,5 +1,6 @@
 export * from './cashInHandReportService.service';
 import { CashInHandReportServiceService } from './cashInHandReportService.service';
+import { DayBookServiceService } from './dayBookService.service';
 import { LedgerServiceService } from './ledgerService.service';
 import { ItemServiceService } from "./itemService.service";
 import { UnitServiceService } from "./unitService.service";
@@ -13,6 +14,6 @@ import { ReceiptTxServiceService } from "./receiptTxService.service";
 import { JournalTxServiceService } from "./journalTxService.service";
 import { BalanceSheetReportServiceService } from "./balanceSheetReportService.service";
 
-export const APIS = [CashInHandReportServiceService, BalanceSheetReportServiceService, LedgerServiceService, ItemServiceService, UnitServiceService, 
+export const APIS = [CashInHandReportServiceService, DayBookServiceService, BalanceSheetReportServiceService, LedgerServiceService, ItemServiceService, UnitServiceService, 
     ItemGroupServiceService, LedgerGroupServiceService, TaxClassServiceService, OverstockReportServiceService,
     VoucherNumberServiceService,PaymentTxServiceService, ReceiptTxServiceService, JournalTxServiceService];

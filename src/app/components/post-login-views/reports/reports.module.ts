@@ -14,14 +14,9 @@ import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { AngularMaterialModule } from 'src/app/shared/modules/angular-material.module';
 import { OverstockReportServiceService } from 'src/server/api/overstockReportService.service';
 import { BalanceSheetComponent } from './balance-sheet/balance-sheet.component';
-<<<<<<< HEAD
-import {AgGridModule} from 'ag-grid-angular';
 import { BalanceSheetReportServiceService } from 'src/server/api/balanceSheetReportService.service';
-=======
+import { DayBookServiceService } from 'src/server/api/dayBookService.service';
 
-import {AngularTreeGridModule} from 'angular-tree-grid';
-
->>>>>>> 645970f529a11c63a04d1f7259efe77c8d438eb9
 @NgModule({
   declarations: [ 
     ReportsBaseViewComponent,
@@ -38,11 +33,12 @@ import {AngularTreeGridModule} from 'angular-tree-grid';
     ReportsRoutingModule,  
     FlexLayoutModule,
     SharedModule,
-    AngularMaterialModule,
-    AngularTreeGridModule
+    AngularMaterialModule
+    
   ],
   providers: [
     CashInHandReportServiceService,
+    DayBookServiceService,
     LedgerServiceService,
     OverstockReportServiceService,
     BalanceSheetReportServiceService

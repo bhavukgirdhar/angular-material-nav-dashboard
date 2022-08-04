@@ -62,6 +62,9 @@ body {
 .text-left {
     text-align: left !important;
 }
+.text-right {
+    text-align: right !important;
+}
 
 .title-underline {
     width: 100%;
