@@ -15,6 +15,9 @@ const routes: Routes = [
             { path: 'journal', component: JournalComponent},
             { path: 'edit-journal/:journalId', component: JournalComponent},
         ]
+    },
+    {
+        path: 'editTx/:txType/:txId', component : TransactionBaseViewComponent
     }
 ];
 

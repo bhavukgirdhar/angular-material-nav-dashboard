@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-transaction-base-view',
@@ -7,9 +8,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TransactionBaseViewComponent implements OnInit {
 
-  constructor() { }
+  constructor(private router: Router, private route: ActivatedRoute) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void { 
+
+    //In Case of Edit a transaction
+    this.route.params.subscribe(params => {
+      if (params['txType'] && params['txId'])  {
+          switch(params['txType']) {
+            case "Journal" :
+              this.router.navigate(['/main/transaction/edit-journal', params['txId']]);
+              break;
+            
+          }      
+      }
+    });    
   }
 
 }

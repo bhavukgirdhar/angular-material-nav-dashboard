@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
+
+
 import { ReportsRoutingModule } from './reports-routing.module';
 import { CashInHandComponent } from './cash-in-hand/cash-in-hand.component';
 import { ReportsBaseViewComponent } from './reports-base-view/reports-base-view.component';
@@ -16,6 +19,8 @@ import { OverstockReportServiceService } from 'src/server/api/overstockReportSer
 import { BalanceSheetComponent } from './balance-sheet/balance-sheet.component';
 import { BalanceSheetReportServiceService } from 'src/server/api/balanceSheetReportService.service';
 import { DayBookServiceService } from 'src/server/api/dayBookService.service';
+
+
 
 @NgModule({
   declarations: [ 
@@ -41,7 +46,7 @@ import { DayBookServiceService } from 'src/server/api/dayBookService.service';
     DayBookServiceService,
     LedgerServiceService,
     OverstockReportServiceService,
-    BalanceSheetReportServiceService
+    BalanceSheetReportServiceService    
   ],
   bootstrap: []
 })

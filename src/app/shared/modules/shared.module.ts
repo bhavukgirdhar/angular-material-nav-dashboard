@@ -7,6 +7,7 @@ import { LedgerServiceService } from 'src/server/api/ledgerService.service';
 import { AngularMaterialModule } from './angular-material.module';
 import { ITreeTableComponent } from '../components/i-tree-table/i-tree-table.component';
 import { AngularTreeGridModule } from 'angular-tree-grid';
+import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { AngularTreeGridModule } from 'angular-tree-grid';
         ITreeTableComponent
     ],
     providers: [
-        LedgerServiceService
+        LedgerServiceService,
+        CustomDateAdapterService
     ]
 })
 export class SharedModule { }

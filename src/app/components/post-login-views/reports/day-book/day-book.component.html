@@ -1,5 +1,5 @@
 <div class="mat-elevation-z8">
-  <mat-card class="mb-10">
+  <mat-card class="mb-5 pb-2">
     <mat-card-header>
       <mat-card-title>
         Day Book
@@ -22,7 +22,7 @@
           <div>
             <mat-form-field appearance="outline" [class]="(isHandset$ | async) ? 'calendar-component  full-width-table' : 'calendar-component mr-10'">
               <mat-label>Start Date</mat-label>
-              <input matInput [matDatepicker]="pickerFrom" [(ngModel)]="inputModel.from">
+              <input matInput [matDatepicker]="pickerFrom" [(ngModel)]="fromDate">
               <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
               <mat-datepicker #pickerFrom></mat-datepicker>
             </mat-form-field>
@@ -30,7 +30,7 @@
           <div>
             <mat-form-field appearance="outline" [class]="(isHandset$ | async) ? 'calendar-component full-width-table' : 'calendar-component mr-10'">
               <mat-label>End Date</mat-label>
-              <input matInput [matDatepicker]="pickerTo" [(ngModel)]="inputModel.to">
+              <input matInput [matDatepicker]="pickerTo" [(ngModel)]="toDate">
               <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
               <mat-datepicker #pickerTo></mat-datepicker>
             </mat-form-field>
@@ -72,13 +72,23 @@
           </div>
         </div>
 
+        <div [fxLayout]="'row'" fxflexfill fxLayoutAlign="end">
+          <div>
+            <b>Total Credit</b> : {{totalCreditAmount | number : '1.2-2'}}
+            |
+            <b>Total Debit</b> : {{totalDebitAmount | number : '1.2-2'}}
+          </div>         
+        </div>
+
       </mat-card-content>
     </div>
   </mat-card>
 
   <mat-card>
     <mat-card-content>
-      <i-tree-table [columnDefs]="columns" [data]="data"></i-tree-table>
+      <i-tree-table [columnDefs]="columns" [data]="data"
+       (onRowSelection)="onRowSelection($event)"
+       (onRowEdit)="onRowEdit()"></i-tree-table>
       <mat-paginator [length]="100"
               [pageSize]="200"
               [pageSizeOptions]="[100, 200, 500]"

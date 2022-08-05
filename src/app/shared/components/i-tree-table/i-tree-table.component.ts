@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { AngularTreeGridComponent } from 'angular-tree-grid';
 
 /**
@@ -50,6 +50,14 @@ export class ITreeTableComponent implements OnInit {
   @Input("data")
   public data! : Array<any>;
 
+  @Output("onRowSelection") 
+  onRowSelection = new EventEmitter<any>();
+
+  @Output("onRowEdit") 
+  onRowEdit = new EventEmitter<any>();
+
+  public isRowSelected : boolean = false;
+
   configs: any;
 
   constructor() { }
@@ -67,10 +75,16 @@ export class ITreeTableComponent implements OnInit {
       },
       columns: this.columnsDefs
     };
+
   }
 
-  rowSelected(event: any) : void{
-    console.log(event);
+  rowSelected(event: any) : void{ 
+    this.isRowSelected = true;   
+    this.onRowSelection.emit(event);
+  }
+
+  editRow(): void{
+    this.onRowEdit.emit();
   }
 
   expandAll() {
