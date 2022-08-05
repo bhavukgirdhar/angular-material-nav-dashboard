@@ -15,7 +15,7 @@ import { VoucherComponent } from '../voucher.component';
     styleUrls: ['../voucher.component.css']
 })
 export class ReceiptComponent extends VoucherComponent implements OnInit {
-
+   
     receiptTx: IReceiptTx;
 
     constructor(private receiptBreakpointObserver: BreakpointObserver, private receiptOverlayService : OverlayService, private receiptFormBuilder: FormBuilder,
@@ -28,6 +28,10 @@ export class ReceiptComponent extends VoucherComponent implements OnInit {
     ngOnInit(): void {
         this.receiptTx = {};
 
+        this.getNextVoucherNumber();
+    }
+
+    public getNextVoucherNumber(): void {
         let voucherClass = "in.solpro.nucleus.accounting.model.IReceiptTx";
         let voucherSubType = 0;
 

@@ -19,7 +19,7 @@ import { JournalTxServiceService } from 'src/server/api/journalTxService.service
 @NgModule({
     declarations: [
         TransactionBaseViewComponent,  
-        VoucherComponent,      
+        //VoucherComponent,      
         PaymentComponent,
         ReceiptComponent,
         FormControlPipe,

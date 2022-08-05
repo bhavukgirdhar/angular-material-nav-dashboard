@@ -9,28 +9,23 @@ import { LedgerServiceService } from 'src/server/api/ledgerService.service';
 import { PaymentTxServiceService } from 'src/server/api/paymentTxService.service';
 import { ReceiptTxServiceService } from 'src/server/api/receiptTxService.service';
 
-@Component({
-  selector: 'app-voucher',
-  templateUrl: './voucher.component.html',
-  styleUrls: ['./voucher.component.css']
-})
-export class VoucherComponent {
+export abstract class VoucherComponent {
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
-  .pipe(
-    map(result => result.matches),
-    shareReplay()
-  );
+    .pipe(
+      map(result => result.matches),
+      shareReplay()
+    );
 
-  headerTitle : string;
+  headerTitle: string;
 
   public voucherForm!: FormGroup;
-  isFormLoaded : boolean = false;
+  isFormLoaded: boolean = false;
   filterLedgersByGroupNames: string[];
 
-  constructor(private breakpointObserver: BreakpointObserver, private overlayService : OverlayService, private formBuilder : FormBuilder, 
-    @Inject(String) private jacksonType : String, private paymentTxService: PaymentTxServiceService, 
-    private receiptTxService: ReceiptTxServiceService, private  ledgerService : LedgerServiceService) { 
+  constructor(private breakpointObserver: BreakpointObserver, private overlayService: OverlayService, private formBuilder: FormBuilder,
+    @Inject(String) private jacksonType: String, private paymentTxService: PaymentTxServiceService,
+    private receiptTxService: ReceiptTxServiceService, private ledgerService: LedgerServiceService) {
     this.headerTitle = "";
     this.initializeVoucherForm();
     this.filterLedgersByGroupNames = ["Cash-in-hand", "Bank Accounts", "Bank OD A/c", "Bank OCC A/c"];
@@ -46,33 +41,33 @@ export class VoucherComponent {
 
         this.voucherForm = this.formBuilder.group({
           jacksontype: [this.jacksonType],
-          fromLedgerName : new FormControl('',  [ Validators.required]),
-          byLedgerName : new FormControl(data.name,  [ Validators.required]),
-          transactiondate : new FormControl(new Date()),
-          vouchernumber : new FormControl( {value:"", disabled: true}, [ Validators.required]),
-          referenceNo : new FormControl(''),
+          fromLedgerName: new FormControl('', [Validators.required]),
+          byLedgerName: new FormControl(data.name, [Validators.required]),
+          transactiondate: new FormControl(new Date()),
+          vouchernumber: new FormControl({ value: "", disabled: true }, [Validators.required]),
+          referenceNo: new FormControl(''),
           description: new FormControl(''),
-          amount: new FormControl('', [ Validators.required ]),
-          fromLedgerDetailLine : this.formBuilder.group({
-            jacksontype: ["LedgerDetailLineImpl"], 
+          amount: new FormControl('', [Validators.required]),
+          fromLedgerDetailLine: this.formBuilder.group({
+            jacksontype: ["LedgerDetailLineImpl"],
             ledgerId: new FormControl(data.id),
             ledgerName: new FormControl(data.name),
             credit: new FormControl('')
           }),
-          byLedgerDetailLine : this.formBuilder.group({
-            jacksontype: ["LedgerDetailLineImpl"], 
+          byLedgerDetailLine: this.formBuilder.group({
+            jacksontype: ["LedgerDetailLineImpl"],
             ledgerId: new FormControl(data.id),
             ledgerName: new FormControl(data.name),
             debit: new FormControl('')
           })
         });
-    
+
         this.voucherForm.controls["amount"].valueChanges.subscribe({
           next: (data) => {
-            this.voucherForm.controls["fromLedgerDetailLine"].patchValue({          
+            this.voucherForm.controls["fromLedgerDetailLine"].patchValue({
               credit: data
             });
-            this.voucherForm.controls["byLedgerDetailLine"].patchValue({          
+            this.voucherForm.controls["byLedgerDetailLine"].patchValue({
               debit: data
             });
           }
@@ -80,70 +75,71 @@ export class VoucherComponent {
 
         this.overlayService.disableProgressSpinner();
       },
-      error: () => {this.overlayService.disableProgressSpinner();}
+      error: () => { this.overlayService.disableProgressSpinner(); }
     });
-   
+
   }
 
-  onFromLedgerSelection(selectedLedger : PLedgerMaster) {
+  onFromLedgerSelection(selectedLedger: PLedgerMaster) {
     this.voucherForm.controls["fromLedgerDetailLine"].patchValue({
       ledgerId: selectedLedger.id,
       ledgerName: selectedLedger.name
     });
   }
 
-  onByLedgerSelection(selectedLedger : PLedgerMaster) {     
+  onByLedgerSelection(selectedLedger: PLedgerMaster) {
     this.voucherForm.controls["byLedgerDetailLine"].patchValue({
       ledgerId: selectedLedger.id,
       ledgerName: selectedLedger.name
     });
   }
-  
+
   public saveVoucher(): void {
     if (this.voucherForm.valid) {
 
-        let ledgerDetailsLines: ILedgerDetailLine[] = [];
-        ledgerDetailsLines.push(this.voucherForm.controls["fromLedgerDetailLine"].value);
-        ledgerDetailsLines.push(this.voucherForm.controls["byLedgerDetailLine"].value);
+      let ledgerDetailsLines: ILedgerDetailLine[] = [];
+      ledgerDetailsLines.push(this.voucherForm.controls["fromLedgerDetailLine"].value);
+      ledgerDetailsLines.push(this.voucherForm.controls["byLedgerDetailLine"].value);
 
-        let voucherForSave = this.formBuilder.group({
-            jacksontype: this.voucherForm.controls["jacksontype"].value,
-            transactiondate: this.voucherForm.controls["transactiondate"].value,
-            vouchernumber: this.voucherForm.controls["vouchernumber"].value,
-            referenceNo: this.voucherForm.controls["referenceNo"].value,
-            description: this.voucherForm.controls["description"].value,
-            ledgerDetailLines: [
-              ledgerDetailsLines
-            ]
+      let voucherForSave = this.formBuilder.group({
+        jacksontype: this.voucherForm.controls["jacksontype"].value,
+        transactiondate: this.voucherForm.controls["transactiondate"].value,
+        vouchernumber: this.voucherForm.controls["vouchernumber"].value,
+        referenceNo: this.voucherForm.controls["referenceNo"].value,
+        description: this.voucherForm.controls["description"].value,
+        ledgerDetailLines: [
+          ledgerDetailsLines
+        ]
+      });
+
+      if (this.jacksonType == "PaymentTxImpl") {
+
+        this.overlayService.enableProgressSpinner();
+
+        this.paymentTxService.save(voucherForSave.value).subscribe({
+          next: (data) => {
+            this.initializeVoucherForm();
+            this.overlayService.disableProgressSpinner();
+          },
+          error: () => { this.overlayService.disableProgressSpinner(); }
         });
+      } else if (this.jacksonType = "ReceiptTxImpl") {
 
-        if(this.jacksonType == "PaymentTxImpl") {
+        this.overlayService.enableProgressSpinner();
 
-          this.overlayService.enableProgressSpinner();
-          
-          this.paymentTxService.save(voucherForSave.value).subscribe({
-            next: (data) => {
-                this.initializeVoucherForm();
-                this.overlayService.disableProgressSpinner();
-            },
-            error: () => {this.overlayService.disableProgressSpinner();}
-          });
-        }else if(this.jacksonType = "ReceiptTxImpl") {
-          
-          this.overlayService.enableProgressSpinner();
+        this.receiptTxService.save(voucherForSave.value).subscribe({
+          next: (data) => {
+            this.initializeVoucherForm();
+            this.overlayService.disableProgressSpinner();
+          },
+          error: () => { this.overlayService.disableProgressSpinner(); }
+        });
+      }
 
-          this.receiptTxService.save(voucherForSave.value).subscribe({
-            next: (data) => {
-              this.initializeVoucherForm();
-              this.overlayService.disableProgressSpinner();
-            },
-            error: () => {this.overlayService.disableProgressSpinner(); }
-          });
-        }
-       
     }
-}
+  }
 
+  public abstract getNextVoucherNumber() : void;
 
 }
 

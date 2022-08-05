@@ -28,20 +28,24 @@ export class PaymentComponent extends VoucherComponent implements OnInit {
   ngOnInit(): void {
 
     this.paymentTx = {};
+    this.getNextVoucherNumber();
+    
+    this.isFormLoaded = true;      
+  }
+
+  public getNextVoucherNumber() {
     let voucherClass = "in.solpro.nucleus.accounting.model.IPaymentTx";
     let voucherSubType = 0;
 
     this.voucherNumberService.getNextVoucherNumber(new Date().toISOString(), voucherClass, voucherSubType).subscribe({
       next: (data) => {
-          this.voucherForm.patchValue({
-              vouchernumber : data.voucherNumber,
-              amount: this.paymentTx.totalCredit
-          });
-          this.isFormLoaded = true; 
+        this.voucherForm.patchValue({
+          vouchernumber: data.voucherNumber,
+          amount: this.paymentTx.totalCredit
+        });
+        this.isFormLoaded = true;
       },
-      error: () => {}
+      error: () => { }
     });
-    
-    this.isFormLoaded = true;      
   }
 }
