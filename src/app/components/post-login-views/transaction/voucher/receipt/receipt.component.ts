@@ -1,6 +1,8 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
 import { OverlayService } from 'src/app/services/overlay.service';
 import { ILedgerDetailLine, IReceiptTx, ReceiptTxImpl } from 'src/server';
 import { LedgerServiceService } from 'src/server/api/ledgerService.service';
@@ -18,17 +20,31 @@ export class ReceiptComponent extends VoucherComponent implements OnInit {
    
     receiptTx: IReceiptTx;
 
-    constructor(private receiptBreakpointObserver: BreakpointObserver, private receiptOverlayService : OverlayService, private receiptFormBuilder: FormBuilder,
+    constructor(private receiptBreakpointObserver: BreakpointObserver,private route: ActivatedRoute,  private receiptOverlayService : OverlayService, private receiptFormBuilder: FormBuilder,
         private voucherNumberService: VoucherNumberServiceService,  private paymentService: PaymentTxServiceService, 
-        private receiptService: ReceiptTxServiceService, private  receiptLedgerService : LedgerServiceService) {
-        super(receiptBreakpointObserver,receiptOverlayService,  receiptFormBuilder, "ReceiptTxImpl", paymentService, receiptService, receiptLedgerService);
+        private receiptService: ReceiptTxServiceService, private  receiptLedgerService : LedgerServiceService,
+        private receiptDateAdapterService  : CustomDateAdapterService) {
+        super(receiptBreakpointObserver,receiptOverlayService,  receiptFormBuilder, "ReceiptTxImpl", paymentService, receiptService, receiptLedgerService,receiptDateAdapterService);
         this.headerTitle = "Receipt";
     }
 
     ngOnInit(): void {
         this.receiptTx = {};
 
-        this.getNextVoucherNumber();
+        this.route.params.subscribe(params => {
+            if (params['receiptId'])  {
+                this.receiptService.findById(params['receiptId']).subscribe({
+                  next: (data) => {
+                    console.log(data);
+                    //Initialize voucher form with the returned data
+                    this.initializeVocherFormInEditCase(undefined, data);
+                  },
+                  error: () =>{}
+                });
+            }else {
+                this.initializeNewVoucherForm();               
+            }
+        });  
     }
 
     public getNextVoucherNumber(): void {

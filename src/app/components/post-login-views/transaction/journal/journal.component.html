@@ -10,14 +10,10 @@
             <mat-card-content class="text-center">
 
                 <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="space-around">
-
-                    <mat-form-field appearance="outline" [fxFlex]="(isHandset$ | async) ? 100 : 33"
-                        [class]="(isHandset$ | async) ? 'innov-matFormField full-width-table' : 'innov-matFormField'">
-                        <mat-label>Date</mat-label>
-                        <input matInput [matDatepicker]="pickerDate" formControlName="transactiondate">
-                        <mat-datepicker-toggle matSuffix [for]="pickerDate"></mat-datepicker-toggle>
-                        <mat-datepicker #pickerDate></mat-datepicker>
-                    </mat-form-field>
+                   
+                    <div [class]="(isHandset$ | async) ? '' : ''" [fxFlex]="(isHandset$ | async) ? 100 : 50">
+                        <i-mat-datepicker [label]="'Date'" [dateFormControl]="journalForm.controls['transactiondate'] | convertToFormControl"></i-mat-datepicker>
+                    </div>
 
                     <mat-form-field appearance="outline"
                         [class]="(isHandset$ | async) ? 'innov-matFormField full-width-table' : 'innov-matFormField ml-10'"
@@ -39,13 +35,9 @@
 
                 <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="space-around">
 
-                    <mat-form-field appearance="outline" [fxFlex]="(isHandset$ | async) ? 100 : 50"
-                        [class]="(isHandset$ | async) ? 'innov-matFormField full-width-table' : 'innov-matFormField'">
-                        <mat-label>Cheque Date</mat-label>
-                        <input matInput [matDatepicker]="pickerChequeDate" formControlName="chequedate">
-                        <mat-datepicker-toggle matSuffix [for]="pickerChequeDate"></mat-datepicker-toggle>
-                        <mat-datepicker #pickerChequeDate></mat-datepicker>
-                    </mat-form-field>
+                    <div [class]="(isHandset$ | async) ? '' : ''" [fxFlex]="(isHandset$ | async) ? 100 : 50">
+                        <i-mat-datepicker [label]="'Cheque Date'" [dateFormControl]="journalForm.controls['chequedate'] | convertToFormControl"></i-mat-datepicker>
+                    </div>
 
                     <mat-form-field appearance="outline"
                         [class]="(isHandset$ | async) ? 'innov-matFormField full-width-table' : 'innov-matFormField ml-10'"

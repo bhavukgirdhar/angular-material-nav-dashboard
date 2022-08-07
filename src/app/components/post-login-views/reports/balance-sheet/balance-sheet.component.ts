@@ -13,7 +13,10 @@ export class BalanceSheetComponent implements OnInit {
   public zeroBalrequired!: boolean;
   public ledgerrequired!: boolean;
   private balanceSheetReportInput: BalanceSheetReportArgument;
-  dataSource: any;
+
+  columns : Object[];
+  liabilitiesData : Object[];
+  assetsData : Object[];
 
   constructor(private balancesheetReportService: BalanceSheetReportServiceService) { 
     this.startDate = new Date();
@@ -23,6 +26,16 @@ export class BalanceSheetComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    
+    this.columns =  [
+      {name: 'name', header: 'Name', css_class: 'text-left' },
+      {name: 'balance', header: 'Balance', css_class: 'text-left'},
+      {name: 'groupBalance', header: 'Group Balance' }
+    ];
+
+    this.liabilitiesData = [];
+    this.assetsData = [];
+
     this.getBalancesheetReport();
   }
   getBalancesheetReport(): void {
@@ -38,7 +51,7 @@ export class BalanceSheetComponent implements OnInit {
     .subscribe({
       next: (data) => {          
        console.log(data);
-      this.dataSource.data = data.assetsReportLines || [];
+      
       },
       error: () => { }
     });

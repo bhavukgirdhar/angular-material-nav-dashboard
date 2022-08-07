@@ -11,7 +11,9 @@ const routes: Routes = [
         path: '', component: TransactionBaseViewComponent,
         children: [
             { path: 'newVoucher/Payment', component: PaymentComponent},
+            { path: 'edit-payment/:paymentId', component: PaymentComponent},
             { path: 'newVoucher/Receipt', component: ReceiptComponent},
+            { path: 'edit-receipt/:receiptId', component: ReceiptComponent},
             { path: 'journal', component: JournalComponent},
             { path: 'edit-journal/:journalId', component: JournalComponent},
         ]

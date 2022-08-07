@@ -4,8 +4,9 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { map, Observable, shareReplay } from 'rxjs';
+import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
 import { PLedgerMaster, ILedgerDetailLine, IJournalTx } from 'src/server';
 import { JournalTxServiceService } from 'src/server/api/journalTxService.service';
 import { VoucherNumberServiceService } from 'src/server/api/voucherNumberService.service';
@@ -50,8 +51,10 @@ export class JournalComponent implements OnInit , AfterViewInit{
   totalCredit: number;
   totalDebit: number;
 
-  constructor(private breakpointObserver: BreakpointObserver, private formBuilder : FormBuilder, private route: ActivatedRoute,
-    public voucherNumberService: VoucherNumberServiceService,private journalTxService: JournalTxServiceService, private _snackBar: MatSnackBar) {     
+  constructor(private breakpointObserver: BreakpointObserver, private customDateAdapterService  : CustomDateAdapterService, private formBuilder : FormBuilder, 
+    private route: ActivatedRoute,private router: Router,
+    public voucherNumberService: VoucherNumberServiceService,private journalTxService: JournalTxServiceService,
+    private _snackBar: MatSnackBar) {     
      
   }
 
@@ -119,10 +122,14 @@ export class JournalComponent implements OnInit , AfterViewInit{
       jacksontype: 'JournalTxImpl',
       id: new FormControl(this.editJournalTxData?.id ? this.editJournalTxData?.id : null),
       vouchernumber : new FormControl( {value: this.editJournalTxData?.vouchernumber ? this.editJournalTxData?.vouchernumber : null, disabled: true}, [ Validators.required]),
-      transactiondate : new FormControl(this.editJournalTxData?.transactiondate ? this.editJournalTxData?.transactiondate : new Date()),
+      transactiondate : new FormControl(this.editJournalTxData?.transactiondate 
+        ? this.editJournalTxData?.transactiondate 
+        : this.customDateAdapterService.createDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDate())),
       referenceNo: new FormControl(this.editJournalTxData?.referenceNo ? this.editJournalTxData?.referenceNo : null),
       // Updated if the Journal is being Edited
-      chequedate: new FormControl({value : !!chequeDate ?  new Date(chequeDate) : new Date(), disabled: true}),
+      chequedate: new FormControl({value : !!chequeDate 
+        ?  chequeDate
+        : this.customDateAdapterService.createDate(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()), disabled: true}),
       // Updated if the Journal is being Edited
       chequeNo : new FormControl(),
       // Updated if the Journal is being Edited
@@ -369,8 +376,7 @@ export class JournalComponent implements OnInit , AfterViewInit{
 
         this.journalTxService.update(journalFormForSave.value).subscribe({
           next: (data) => {
-            this.initalizeJournalForm();
-            this.getNewVoucherNo();
+            this.router.navigate(['/main/transaction/journal']);
           },  
           error: () => { }
         });

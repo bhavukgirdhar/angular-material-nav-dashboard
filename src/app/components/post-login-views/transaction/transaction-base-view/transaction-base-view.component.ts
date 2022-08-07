@@ -19,7 +19,12 @@ export class TransactionBaseViewComponent implements OnInit {
             case "Journal" :
               this.router.navigate(['/main/transaction/edit-journal', params['txId']]);
               break;
-            
+            case "Payment" :
+              this.router.navigate(['/main/transaction/edit-payment', params['txId']]);
+              break;
+            case "Receipt" :
+              this.router.navigate(['/main/transaction/edit-receipt', params['txId']]);
+              break;
           }      
       }
     });    

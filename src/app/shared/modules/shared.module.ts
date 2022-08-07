@@ -8,26 +8,29 @@ import { AngularMaterialModule } from './angular-material.module';
 import { ITreeTableComponent } from '../components/i-tree-table/i-tree-table.component';
 import { AngularTreeGridModule } from 'angular-tree-grid';
 import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
+import { IMatDatepickerComponent } from '../components/i-mat-datepicker/i-mat-datepicker.component';
+
 
 
 @NgModule({
     declarations: [
         ProgressSpinnerComponent,
         LedgerBoxComponent,
-        ITreeTableComponent
+        ITreeTableComponent,
+        IMatDatepickerComponent
     ],
     imports: [
         CommonModule,
         FormsModule,
-        ReactiveFormsModule,
+        ReactiveFormsModule,        
         AngularMaterialModule,
-        AngularTreeGridModule,
-        
+        AngularTreeGridModule        
     ],
     exports: [
         ProgressSpinnerComponent,
         LedgerBoxComponent,
-        ITreeTableComponent
+        ITreeTableComponent,
+        IMatDatepickerComponent
     ],
     providers: [
         LedgerServiceService,

@@ -44,6 +44,9 @@ export class ITreeTableComponent implements OnInit {
 
   @ViewChild('angularGrid', {static: true}) angularGrid: AngularTreeGridComponent;
 
+  @Input("tableLabel")
+  public tableLabel : string;
+
   @Input("columnDefs")
   public columnsDefs : Array<any>;
 

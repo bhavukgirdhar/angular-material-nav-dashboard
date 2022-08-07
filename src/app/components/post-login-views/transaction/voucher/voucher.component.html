@@ -26,13 +26,10 @@
                         (onLedgerSelection)="onFromLedgerSelection($event)">
                     </Ledger-Box>
 
-                    <mat-form-field appearance="outline" [fxFlex]="(isHandset$ | async) ? 100 : 50"
-                        [class]="(isHandset$ | async) ? 'innov-matFormField full-width-table' : 'innov-matFormField ml-10'">
-                        <mat-label>Date</mat-label>
-                        <input matInput [matDatepicker]="pickerDate" formControlName="transactiondate">         
-                        <mat-datepicker-toggle matSuffix [for]="pickerDate"></mat-datepicker-toggle>
-                        <mat-datepicker #pickerDate></mat-datepicker>
-                    </mat-form-field>
+                    <div [class]="(isHandset$ | async) ? '' : 'ml-10'" [fxFlex]="(isHandset$ | async) ? 100 : 50">
+                        <i-mat-datepicker [label]="'Date'" [dateFormControl]="voucherForm.controls['transactiondate'] | convertToFormControl"></i-mat-datepicker>
+                    </div>
+                    
                 </div>
                 <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="space-around">
                     <mat-form-field appearance="outline" class="innov-matFormField" [fxFlex]="(isHandset$ | async) ? 100 : 50">

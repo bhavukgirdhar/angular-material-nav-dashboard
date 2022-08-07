@@ -1,5 +1,6 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
@@ -21,11 +22,12 @@ export class DayBookComponent implements OnInit {
     );
 
   columns : Object[];
-
   //Parent data will have  parent = 0
   data : Object[];
-  fromDate : Date;
-  toDate : Date;
+
+  fromDate : FormControl;
+  toDate : FormControl;
+  showCashTx : boolean;
 
   public inputModel : DayBookReportArgument;
   public totalDebitAmount: number | undefined;
@@ -33,17 +35,15 @@ export class DayBookComponent implements OnInit {
   private selectedTxId : string;
   private selectedTxType : string;
 
-  constructor(private breakpointObserver: BreakpointObserver,private router: Router, private customDateAdapterService  : CustomDateAdapterService, private dayBookService : DayBookServiceService) { }
+  constructor(private breakpointObserver: BreakpointObserver,private router: Router, private customDateAdapterService  : CustomDateAdapterService, private dayBookService : DayBookServiceService) { 
+    let txDate = new Date();
 
-  ngOnInit(): void {
-    this.fromDate  = new Date();
-    this.toDate = new Date();
-    
-    this.inputModel = {};   
-    this.inputModel.from = this.customDateAdapterService.createDate(this.fromDate.getFullYear(), this.fromDate.getMonth(), this.fromDate.getDate());
-    this.inputModel.to = this.customDateAdapterService.createDate(this.toDate.getFullYear(), this.toDate.getMonth(), this.toDate.getDate());
-    this.inputModel.isShowCashTx = true;
-    this.inputModel.format = "Detailed";
+    this.fromDate = new FormControl(this.customDateAdapterService.createDate(txDate.getFullYear(),txDate.getMonth(), txDate.getDate()));
+    this.toDate = new FormControl(this.customDateAdapterService.createDate(txDate.getFullYear(),txDate.getMonth(), txDate.getDate()));
+    this.showCashTx = true;
+  }
+
+  ngOnInit(): void {  
 
     this.columns =  [
       {name: 'date', header: 'Date', css_class: 'text-left' },
@@ -62,11 +62,17 @@ export class DayBookComponent implements OnInit {
     this.getDayBookReport();
   }
 
-
   getDayBookReport() : void {
 
-    this.inputModel.from = this.customDateAdapterService.createDate(this.fromDate.getFullYear(), this.fromDate.getMonth(), this.fromDate.getDate());
-    this.inputModel.to = this.customDateAdapterService.createDate(this.toDate.getFullYear(), this.toDate.getMonth(), this.toDate.getDate());
+    this.inputModel = {};   
+    this.inputModel.from = this.fromDate.value;
+    this.inputModel.to = this.toDate.value;    
+    this.inputModel.isShowCashTx = this.showCashTx;
+    this.inputModel.format = "Detailed"; 
+
+    this.data = [];
+    this.totalCreditAmount = 0;
+    this.totalDebitAmount = 0;
 
     this.dayBookService.getReportArg(this.inputModel).subscribe({
       next: (data) => {
@@ -92,9 +98,7 @@ export class DayBookComponent implements OnInit {
       let splittedTxIdType = selectedTxIdType.split("-");
 
       this.selectedTxType = splittedTxIdType[0];
-      this.selectedTxId = splittedTxIdType[1];
-
-      
+      this.selectedTxId = splittedTxIdType[1];      
     }
 
   }
@@ -103,11 +107,7 @@ export class DayBookComponent implements OnInit {
     this.router.navigate(['/main/transaction/editTx', this.selectedTxType, this.selectedTxId]);
   }
 
-  private prepareTreeGridData(dayBookData : Array<DayBook>) : void {
-
-    this.data = [];
-    this.totalCreditAmount = 0;
-    this.totalDebitAmount = 0;
+  private prepareTreeGridData(dayBookData : Array<DayBook>) : void {  
 
     let rowData : Array<DayBookGridLine> = [];
 
