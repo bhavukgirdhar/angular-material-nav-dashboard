@@ -6,6 +6,8 @@ import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
 import { CashInHandReportInput, CashInHandReportLine, CashInHandReportServiceService } from 'src/server';
+import { FormControl } from '@angular/forms';
+import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
 
 @Component({
   selector: 'app-cash-in-hand',
@@ -30,8 +32,8 @@ export class CashInHandComponent implements OnInit, AfterViewInit{
   ];
 
   /** Below section for variables in search criteria */
-  public startDate!: Date;
-  public endDate!: Date;
+  public startDate!: FormControl;
+  public endDate!: FormControl;
   private cashInHandReportInput!: CashInHandReportInput;  
 
   public totalDebitAmount: number | undefined;
@@ -41,9 +43,14 @@ export class CashInHandComponent implements OnInit, AfterViewInit{
 
   @ViewChild(MatPaginator) paginator :any = MatPaginator;
 
-  constructor(private breakpointObserver: BreakpointObserver, private cashInHandService : CashInHandReportServiceService) {   
-    this.startDate = new Date();
-    this.endDate = new Date();
+  constructor(private breakpointObserver: BreakpointObserver, private cashInHandService : CashInHandReportServiceService, 
+    private customDateAdapterService  : CustomDateAdapterService) {   
+
+    let txDate = new Date();
+
+    this.startDate = new FormControl(this.customDateAdapterService.createDate(txDate.getFullYear(),txDate.getMonth(), txDate.getDate()));
+    this.endDate = new FormControl(this.customDateAdapterService.createDate(txDate.getFullYear(),txDate.getMonth(), txDate.getDate()));
+
   }
 
   ngOnInit(): void {    
@@ -57,8 +64,8 @@ export class CashInHandComponent implements OnInit, AfterViewInit{
   public getCashInHandReport() : void {
     this.cashInHandReportInput = {};
     
-    this.cashInHandReportInput.dateFrom = this.startDate;
-    this.cashInHandReportInput.dateTo = this.endDate;
+    this.cashInHandReportInput.dateFrom = this.startDate.value;
+    this.cashInHandReportInput.dateTo = this.endDate.value;
 
     this.cashInHandService.getReportArg(this.cashInHandReportInput)
       .subscribe({
