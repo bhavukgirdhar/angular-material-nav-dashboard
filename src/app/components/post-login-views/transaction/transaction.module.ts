@@ -9,21 +9,27 @@ import { TransactionBaseViewComponent } from './transaction-base-view/transactio
 import { PaymentComponent } from './voucher/payment/payment.component';
 import { ReceiptComponent } from './voucher/receipt/receipt.component';
 import { VoucherNumberServiceService } from 'src/server/api/voucherNumberService.service';
-import { VoucherComponent } from './voucher/voucher.component';
 import { ReceiptTxServiceService } from 'src/server/api/receiptTxService.service';
 import { PaymentTxServiceService } from 'src/server/api/paymentTxService.service';
 import { FormControlPipe } from 'src/app/shared/pipes/form-control.pipe';
 import { JournalComponent } from './journal/journal.component';
 import { JournalTxServiceService } from 'src/server/api/journalTxService.service';
 
+import { SaleComponent } from './order/sale/sale.component';
+import { PurchaseComponent } from './order/purchase/purchase.component';
+import { SaleOrderComponent } from './order/sale-order/sale-order.component';
+import { ItemServiceService } from 'src/server/api/itemService.service';
+
 @NgModule({
     declarations: [
-        TransactionBaseViewComponent,  
-        //VoucherComponent,      
+        TransactionBaseViewComponent,          
         PaymentComponent,
         ReceiptComponent,
         FormControlPipe,
-        JournalComponent
+        JournalComponent,        
+        SaleComponent,
+        PurchaseComponent,
+        SaleOrderComponent
     ],
     imports: [
       CommonModule,    
@@ -38,7 +44,8 @@ import { JournalTxServiceService } from 'src/server/api/journalTxService.service
       VoucherNumberServiceService,
       ReceiptTxServiceService,
       PaymentTxServiceService,
-      JournalTxServiceService 
+      JournalTxServiceService,
+      ItemServiceService
     ],
     bootstrap: []
   })

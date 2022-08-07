@@ -17,12 +17,11 @@ import { BASE_PATH,  } from 'src/server';
 import { environment } from 'src/environments/environment';
 import { HttpAuthInterceptor } from './services/http.interceptor';
 
-
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    RegistrationComponent
+    RegistrationComponent    
   ],
   imports: [
     BrowserModule,

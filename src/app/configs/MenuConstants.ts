@@ -92,19 +92,19 @@ export class MenuConstants {
         {
           displayName: 'Sale',
           iconName: '',
-          route: '',
+          route: 'newOrder/sale',
           children: []
         },
         {
           displayName: 'Purchase',
           iconName: '',
-          route: '',
+          route: 'newOrder/purchase',
           children: []
         },
         {
           displayName: 'Sale Order',
           iconName: '',
-          route: '',
+          route: 'newOrder/saleOrder',
           children: []
         },
         {

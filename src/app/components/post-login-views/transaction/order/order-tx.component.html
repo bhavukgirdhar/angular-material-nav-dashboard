@@ -1,0 +1,128 @@
+<div class="mat-elevation-z8" *ngIf="isFormLoaded">
+    <form [formGroup]="orderTxForm">
+        <mat-card class="mb-5">
+            <mat-card-header [class]="'mat-card-headers'">
+                <mat-card-title>
+                    {{ headerTitle}}
+                    <div class="title-underline"></div>
+                </mat-card-title>
+            </mat-card-header>
+        
+            <mat-card-content class="text-center">
+                <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="space-around">                    
+                    
+                    <div [class]="(isHandset$ | async) ? '' : ''" [fxFlex]="(isHandset$ | async) ? 100 : 50">
+                        <i-mat-datepicker [label]="'Date'" [dateFormControl]="orderTxForm.controls['transactiondate'] | convertToFormControl"></i-mat-datepicker>
+                    </div>
+    
+
+                    <div [fxLayout]="'row'" [fxFlex]="(isHandset$ | async) ? 100 : 50">
+
+                        <mat-form-field appearance="outline"
+                            [class]="(isHandset$ | async) ? 'innov-matFormField pr-5' : 'innov-matFormField pr-5 ml-10'"
+                            [fxFlex]="50">
+                            <mat-label>Voucher No.</mat-label>
+                            <input matInput placeholder="Enter Voucher No." #vouchernumber name="vouchernumber"
+                                id="vouchernumber" formControlName="vouchernumber">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline"
+                            [class]="'innov-matFormField'"
+                            [fxFlex]="50">
+                            <mat-label>Reference No.</mat-label>
+                            <input matInput placeholder="Enter Reference No." #referenceNo name="referenceNo"
+                                id="referenceNo" formControlName="referenceNo">
+                        </mat-form-field>
+                    </div>
+
+                </div>
+
+                <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="space-around">
+                    
+                    <Ledger-Box [fxFlex]="(isHandset$ | async) ? 100 : 50"                        
+                        [ledgerFormControl]="getOrderFormControl('ledgerName')"
+                        [ledgerBoxTitle]="'Ledger'"
+                        (onLedgerSelection)="onLedgerSelectionChange($event)">
+                    </Ledger-Box>
+                    
+                    <mat-form-field appearance="outline"                        
+                        [class]="(isHandset$ | async) ? 'innov-matFormField' : 'innov-matFormField ml-10'"
+                        [fxFlex]="(isHandset$ | async) ? 100 : 50">
+                        <mat-label>Name on Bill</mat-label>
+                        <input matInput placeholder="Enter Bill Name" #referenceNo name="billName"
+                            id="billName" formControlName="billName">
+                    </mat-form-field>
+                    
+                </div>
+
+            </mat-card-content>
+        </mat-card>
+    </form>
+
+    <form [formGroup]="itemForm">
+        <mat-card>
+            <mat-card-header [class]="'mat-card-headers'">
+                <mat-card-subtitle>
+                    Add Item(s)                    
+                </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+
+                <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="start">
+
+                    <div [class]="(isHandset$ | async) ? 'innov-matFormField' : 'innov-matFormField'" 
+                        [fxFlex]="(isHandset$ | async) ? 100 : 50">
+                        <item-box   [itemFormControl]="getItemFormControl('itemName')"
+                            (onItemSelection)="onItemSelectionChange($event)">
+                        </item-box>
+                    </div>
+
+                    <div [fxLayout]="'row'" [fxFlex]="(isHandset$ | async) ? 100 : 50">
+
+                        <mat-form-field appearance="outline"
+                            [class]="(isHandset$ | async) ? 'innov-matFormField pr-5' : 'innov-matFormField pr-5 ml-10'" 
+                            [fxFlex]="50">
+                            <mat-label>Product Code</mat-label>
+                            <input matInput placeholder="Product Code" #referenceNo name="productCode"
+                                id="productCode" formControlName="productCode">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline"
+                            [class]="'innov-matFormField'"
+                            [fxFlex]="50">
+                            <mat-label>M.R.P.</mat-label>
+                            <input matInput placeholder="mrp" #referenceNo name="mrp"
+                                id="mrp" formControlName="mrp">
+                        </mat-form-field>
+                    </div>
+                    
+                </div>
+
+                <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="start">
+                    
+                    <div [fxLayout]="'row'" [fxFlex]="(isHandset$ | async) ? 100 : 50">
+
+                        <mat-form-field appearance="outline"
+                            [class]="(isHandset$ | async) ? 'innov-matFormField pr-5' : 'innov-matFormField pr-5'"
+                            [fxFlex]="50">
+                            <mat-label>Quantity</mat-label>
+                            <input matInput placeholder="Quantity" #quantity name="quantity"
+                                id="quantity" formControlName="quantity">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline"
+                            [class]="(isHandset$ | async) ? 'innov-matFormField' : 'innov-matFormField ml-10'"
+                            [fxFlex]="50">
+                            <mat-label>Unit</mat-label>
+                            <input matInput placeholder="Unit" #referenceNo name="unitName"
+                                id="unitName" formControlName="unitName">
+                        </mat-form-field>
+                        
+                    </div>
+                    
+                </div>
+                
+            </mat-card-content>           
+        </mat-card>
+    </form>
+</div>

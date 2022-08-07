@@ -9,6 +9,7 @@ import { ITreeTableComponent } from '../components/i-tree-table/i-tree-table.com
 import { AngularTreeGridModule } from 'angular-tree-grid';
 import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
 import { IMatDatepickerComponent } from '../components/i-mat-datepicker/i-mat-datepicker.component';
+import { ItemBoxComponent } from '../components/item-box/item-box.component';
 
 
 
@@ -16,6 +17,7 @@ import { IMatDatepickerComponent } from '../components/i-mat-datepicker/i-mat-da
     declarations: [
         ProgressSpinnerComponent,
         LedgerBoxComponent,
+        ItemBoxComponent,
         ITreeTableComponent,
         IMatDatepickerComponent
     ],
@@ -29,6 +31,7 @@ import { IMatDatepickerComponent } from '../components/i-mat-datepicker/i-mat-da
     exports: [
         ProgressSpinnerComponent,
         LedgerBoxComponent,
+        ItemBoxComponent,
         ITreeTableComponent,
         IMatDatepickerComponent
     ],
