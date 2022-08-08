@@ -101,7 +101,6 @@
                 <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="start">
                     
                     <div [fxLayout]="'row'" [fxFlex]="(isHandset$ | async) ? 100 : 50">
-
                         <mat-form-field appearance="outline"
                             [class]="(isHandset$ | async) ? 'innov-matFormField pr-5' : 'innov-matFormField pr-5'"
                             [fxFlex]="50">
@@ -116,10 +115,75 @@
                             <mat-label>Unit</mat-label>
                             <input matInput placeholder="Unit" #referenceNo name="unitName"
                                 id="unitName" formControlName="unitName">
-                        </mat-form-field>
-                        
+                        </mat-form-field>                        
                     </div>
-                    
+
+                    <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" [fxFlex]="(isHandset$ | async) ? 100 : 50">
+
+                        <mat-form-field appearance="outline"
+                            [class]="(isHandset$ | async) ? 'innov-matFormField pr-5' : 'innov-matFormField pr-5 ml-10'" 
+                            [fxFlex]="33">
+                            <mat-label>Discount (%)</mat-label>
+                            <input matInput placeholder="Discount (%)" #referenceNo name="discount"
+                                id="discount" formControlName="discount">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline"
+                            [class]="(isHandset$ | async) ? 'innov-matFormField pr-5' : 'innov-matFormField pr-5'" 
+                            [fxFlex]="33">
+                            <mat-label>Net Rate.</mat-label>
+                            <input matInput placeholder="Net Rate" #referenceNo name="netRate"
+                                id="netRate" formControlName="netRate">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline"
+                            [class]="'innov-matFormField pr-5'"                            
+                            [fxFlex]="33">
+                            <mat-label>Amount (Exc. Tax)</mat-label>
+                            <input matInput placeholder="Amount Excluding Tax" #amountExcludingTax name="amountExcludingTax"
+                                id="amountExcludingTax" formControlName="amountExcludingTax">
+                        </mat-form-field>
+                    </div>                    
+                </div>
+
+                <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'"  fxflexfill fxLayoutAlign="start">
+
+                    <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" [fxFlex]="(isHandset$ | async) ? 100 : 50">
+
+                        <mat-form-field class="innov-matFormField" appearance="outline"  
+                            [class]="(isHandset$ | async) ? 'innov-matFormField' : 'innov-matFormField pr-5'"
+                            [fxFlex]="(isHandset$ | async) ? 100 : 33">
+                            <mat-label>Tax Class</mat-label>
+                            <input type="text"
+                                placeholder="Select Tax Class" 
+                                aria-label="taxClass"
+                                matInput                    
+                                [matAutocomplete]="autoTaxClass"
+                                formControlName="taxClassName">
+                                <mat-icon matSuffix class="search-icon">search</mat-icon>
+                            <mat-autocomplete autoActiveFirstOption #autoTaxClass="matAutocomplete" (optionSelected)="onTaxClassSelectionChanged($event)">
+                            <mat-option *ngFor="let option of filteredTaxClass  | async" [value]="option.name">
+                                {{option.name}}
+                            </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+    
+                        <mat-form-field appearance="outline"
+                            [class]="(isHandset$ | async) ? 'innov-matFormField' : 'innov-matFormField pr-5'" 
+                            [fxFlex]="(isHandset$ | async) ? 100 : 33">
+                            <mat-label>Tax Amount</mat-label>
+                            <input matInput placeholder="taxAmount" #taxAmount name="taxAmount"
+                                id="taxAmount" formControlName="taxAmount">
+                        </mat-form-field>
+    
+                        <mat-form-field appearance="outline"
+                            [class]="(isHandset$ | async) ? 'innov-matFormField' : 'innov-matFormField'"                          
+                            [fxFlex]="(isHandset$ | async) ? 100 : 34">
+                            <mat-label>Total Amount</mat-label>
+                            <input matInput placeholder="Total Amount" #totalAmount name="totalAmount"
+                                id="totalAmount" formControlName="totalAmount">
+                        </mat-form-field>
+                    </div>                    
                 </div>
                 
             </mat-card-content>           

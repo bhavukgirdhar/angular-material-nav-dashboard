@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
 import { LedgerServiceService } from 'src/server/api/ledgerService.service';
+import { TaxClassServiceService } from 'src/server/api/taxClassService.service';
 import { OrderTxComponent } from '../order-tx.component';
 
 @Component({
@@ -13,8 +14,9 @@ import { OrderTxComponent } from '../order-tx.component';
 export class PurchaseComponent extends OrderTxComponent  implements OnInit {
 
   constructor(private purchaseBreakpointObserver: BreakpointObserver, private childFormBuilder : FormBuilder, 
-    private childDateAdapterService  : CustomDateAdapterService, private childLedgerService : LedgerServiceService) {
-    super(purchaseBreakpointObserver, childFormBuilder, childDateAdapterService, childLedgerService);
+    private childDateAdapterService  : CustomDateAdapterService, private childLedgerService : LedgerServiceService,
+    private childTaxClassService : TaxClassServiceService) {
+    super(purchaseBreakpointObserver, childFormBuilder, childDateAdapterService, childLedgerService, childTaxClassService);
     this.headerTitle = 'Purchase';
   }
 

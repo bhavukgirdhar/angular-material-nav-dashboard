@@ -19,6 +19,7 @@ import { SaleComponent } from './order/sale/sale.component';
 import { PurchaseComponent } from './order/purchase/purchase.component';
 import { SaleOrderComponent } from './order/sale-order/sale-order.component';
 import { ItemServiceService } from 'src/server/api/itemService.service';
+import { TaxClassServiceService } from 'src/server/api/taxClassService.service';
 
 @NgModule({
     declarations: [
@@ -45,7 +46,8 @@ import { ItemServiceService } from 'src/server/api/itemService.service';
       ReceiptTxServiceService,
       PaymentTxServiceService,
       JournalTxServiceService,
-      ItemServiceService
+      ItemServiceService,
+      TaxClassServiceService
     ],
     bootstrap: []
   })

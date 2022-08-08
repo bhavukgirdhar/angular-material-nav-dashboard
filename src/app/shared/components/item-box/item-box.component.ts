@@ -43,8 +43,7 @@ export class ItemBoxComponent implements OnInit {
     console.log("**** Item input has been changed *********");
   }
 
-  private fetchItemsFromServer() {
-    this.getItemsByCriteria.pageSize = 250;
+  private fetchItemsFromServer() {    
     this.getItemsByCriteria.startPageIndex = 0;
     this.getItemsByCriteria.genericSearch = false;
 
