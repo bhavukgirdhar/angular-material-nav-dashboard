@@ -20,6 +20,11 @@ import { PurchaseComponent } from './order/purchase/purchase.component';
 import { SaleOrderComponent } from './order/sale-order/sale-order.component';
 import { ItemServiceService } from 'src/server/api/itemService.service';
 import { TaxClassServiceService } from 'src/server/api/taxClassService.service';
+import { TaxGroupServiceService } from 'src/server/api/taxGroupService.service';
+import { TaxableEntityServiceService } from 'src/server/api/taxableEntityService.service';
+import { TransactionsProvider } from 'src/app/services/transactionsProvider';
+import { LedgerAttributesServiceService } from 'src/server/api/ledgerAttributesService.service';
+import { BillingClassificationServiceService } from 'src/server/api/billingClassificationService.service';
 
 @NgModule({
     declarations: [
@@ -47,7 +52,12 @@ import { TaxClassServiceService } from 'src/server/api/taxClassService.service';
       PaymentTxServiceService,
       JournalTxServiceService,
       ItemServiceService,
-      TaxClassServiceService
+      BillingClassificationServiceService,
+      LedgerAttributesServiceService,
+      TaxClassServiceService,
+      TaxGroupServiceService,
+      TaxableEntityServiceService,
+      TransactionsProvider
     ],
     bootstrap: []
   })

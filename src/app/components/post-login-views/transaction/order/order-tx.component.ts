@@ -1,12 +1,16 @@
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
-import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { map, Observable, shareReplay } from "rxjs";
 import { CustomDateAdapterService } from "src/app/services/date-adaptor";
-import { ITaxClass, PItemMaster, PLedgerMaster } from "src/server";
+import { ITax, ITaxGroup, ITaxLine, PItemMaster, PLedgerMaster } from "src/server";
 import { LedgerServiceService } from "src/server/api/ledgerService.service";
 import { startWith, switchMap } from 'rxjs/operators';
-import { TaxClassServiceService } from "src/server/api/taxClassService.service";
 import { MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
+import { TaxGroupServiceService } from "src/server/api/taxGroupService.service";
+import { TaxableEntityServiceService } from "src/server/api/taxableEntityService.service";
+import { TransactionsProvider } from "src/app/services/transactionsProvider";
+import { LedgerAttributesServiceService } from "src/server/api/ledgerAttributesService.service";
+import { BillingClassificationServiceService } from "src/server/api/billingClassificationService.service";
 
 
 export class OrderTxComponent {
@@ -20,8 +24,9 @@ export class OrderTxComponent {
 
   public orderTxForm!: FormGroup;
   public itemForm!: FormGroup; 
-  taxClasses : ITaxClass[];
-  filteredTaxClass : Observable<ITaxClass[]>;
+  taxGroups : ITaxGroup[];
+  filteredTaxGroups : Observable<ITaxGroup[]>;
+  itemTaxLines: Array<ITaxLine>;
 
   public headerTitle : string;
   isFormLoaded : boolean = false;
@@ -29,7 +34,9 @@ export class OrderTxComponent {
   
   constructor(private breakpointObserver: BreakpointObserver, private formBuilder : FormBuilder, 
     private customDateAdapterService  : CustomDateAdapterService, private ledgerService : LedgerServiceService,
-    private taxClassService : TaxClassServiceService) { 
+    private taxGroupService : TaxGroupServiceService, private taxableEntityService : TaxableEntityServiceService,
+    private txProvider : TransactionsProvider, private ledgerAttributesService : LedgerAttributesServiceService,
+    private billingClassificationService : BillingClassificationServiceService) { 
     
   }
   
@@ -48,6 +55,9 @@ export class OrderTxComponent {
           billName: new FormControl(data.name)          
         });
 
+        //Get billing group associated with Cash Ledger
+        this.getBillingGroup(data.id);
+
         this.itemForm = this.formBuilder.group({
           itemId: new FormControl(''),
           itemName: new FormControl(''),
@@ -59,31 +69,48 @@ export class OrderTxComponent {
           discount: new FormControl(''),
           netRate: new FormControl({value: '', disabled: true}),
           amountExcludingTax: new FormControl({value: '', disabled: true}),
-          taxClassId: new FormControl(''),
-          taxClassName: new FormControl(''),
+          taxGroupId: new FormControl(''),
+          taxGroupName: new FormControl(''),
+          taxLines : this.itemTaxLines,
           taxAmount: new FormControl({value: '', disabled: true}),
           totalAmount: new FormControl({value: '', disabled: true})
         });
-
-        this.itemForm.controls["quantity"].valueChanges.subscribe({
-          next: (data) => {
-            let netRate = data * this.itemForm.controls["mrp"].value;
-            this.itemForm.patchValue({
-              netRate: netRate
-            });
-          }
-        });
-
-        this.getTaxClasses();
+     
+        this.getTaxGroups();
         this.isFormLoaded = true;
       },
       error: () => { }
     });
   }
 
-  onItemSelectionChange(selectedItem: PItemMaster) {
 
-    console.log(selectedItem);
+  /**
+   * This function updates the billing classification and billing group for the current selected ledger.
+   * @param ledgerId : Current selected ledger id.
+   */
+  private getBillingGroup(ledgerId : number | undefined) : void {
+    this.ledgerAttributesService.findById(ledgerId).subscribe({
+      next: (ledgerAttributes) => {
+
+        let billingGroups = ledgerAttributes.billingGroupList?.filter((billingGroup) => {
+          return billingGroup.transactionTypes?.some((txType) => txType.type == 301);
+        });
+
+        if(!!billingGroups && billingGroups.length > 0) {
+          this.txProvider.billingGroup(billingGroups[0]);
+        }            
+
+        this.billingClassificationService.findById(ledgerAttributes.billingClassificationId).subscribe({
+          next: (iBillingClassification) => {
+            this.txProvider.billingClassification(iBillingClassification);            
+          }
+        });
+
+      }
+    });
+  }
+
+  onItemSelectionChange(selectedItem: PItemMaster) {
 
     this.itemForm.patchValue({
       itemId: selectedItem.id,
@@ -91,22 +118,73 @@ export class OrderTxComponent {
       mrp: selectedItem.mrp,
       quantity : 1,
       productCode: selectedItem.productCode,
+      discount : 0,
       unitId: selectedItem.unitId,
-      unitName: selectedItem.unitName,      
-      taxClassId: selectedItem.taxClassId,
-      taxClassName: selectedItem.taxClassName,
+      unitName: selectedItem.unitName     
+    });  
+
+    let netRate =  this.itemForm.controls["mrp"].value;
+    let discount = this.itemForm.controls["discount"].value;
+
+    netRate = netRate - ((netRate*discount)/100);
+
+    this.itemForm.patchValue({
+      netRate: netRate,
+      amountExcludingTax: netRate
+    });
+    
+    if(!!selectedItem.taxClassId) {
+      // This patches the tax group id,name in item form which will be further used to calculate the tax amount.
+      this.updateTaxGroupLinkedToItem(selectedItem.taxClassId,"ITEM");      
+    }
+
+    this.itemForm.controls["quantity"].valueChanges.subscribe({
+      next: (data) => {
+        let netRate = data * this.itemForm.controls["mrp"].value;
+        let discount = this.itemForm.controls["discount"].value;
+
+        netRate = netRate - ((netRate*discount)/100);
+
+        this.itemForm.patchValue({
+          netRate: netRate,
+          amountExcludingTax: netRate
+        });
+        
+        if(!!this.itemForm.controls["taxGroupId"].value) {
+          // This patches the tax group id,name in item form which will be further used to calculate the tax amount.
+          this.updateTaxGroupLinkedToItem(selectedItem.taxClassId,"ITEM");      
+        }
+      }
     });
 
-    
+    this.itemForm.controls["discount"].valueChanges.subscribe({
+      next: (data) =>{
+        let netRate = this.itemForm.controls["quantity"].value * this.itemForm.controls["mrp"].value;
 
+        netRate = netRate - ((netRate*data)/100);
+
+        this.itemForm.patchValue({
+          netRate: netRate,
+          amountExcludingTax: netRate
+        });
+
+        if(!!this.itemForm.controls["taxGroupId"].value) {
+          // This patches the tax group id,name in item form which will be further used to calculate the tax amount.
+          this.updateTaxGroupLinkedToItem(selectedItem.taxClassId,"ITEM");      
+        }
+      }
+    });
   }
 
-  private getTaxClasses() : void {    
-    this.taxClassService.getObjects().subscribe({
+  private getTaxGroups() : void {    
+    this.taxGroupService.getObjects().subscribe({
       next: (data) => {
-        this.taxClasses = data;
-        this.filteredTaxClass = this.itemForm.controls["taxClassName"].valueChanges
-            .pipe(startWith(this.itemForm.controls["taxClassName"].value), map(value => this._filterTaxClass(value || '')));
+        this.taxGroups = data;
+
+        console.log(this.taxGroups);
+
+        this.filteredTaxGroups = this.itemForm.controls["taxGroupName"].valueChanges
+            .pipe(startWith(this.itemForm.controls["taxGroupName"].value), map(value => this._filterTaxGroup(value || '')));
       },
       error: () => {}
     });    
@@ -120,18 +198,18 @@ export class OrderTxComponent {
     })
   }
 
-  private _filterTaxClass(value: string): ITaxClass[] {
+  private _filterTaxGroup(value: string): ITaxGroup[] {
     
     //filter value will be null in new and actual value in edit mode.
     const filterValue = !!value ? value.toLowerCase() : '';
 
     if(filterValue.length == 0) {
       this.itemForm.patchValue({
-        taxClassId: null
+        taxGroupId: null
       });
     }
 
-    return this.taxClasses.filter(option => option.name!.toLowerCase().includes(filterValue));
+    return this.taxGroups.filter(option => option.name!.toLowerCase().includes(filterValue));
   }
  
 
@@ -140,18 +218,116 @@ export class OrderTxComponent {
    * The selected tax class displayname is used to get the selected tax id to set in the FormGroup.
    * @param event 
   */
-  public onTaxClassSelectionChanged(event : MatAutocompleteSelectedEvent) {
-    const filterValue = event.option.value.toLowerCase();
+  public onTaxGroupSelectionChanged(event : MatAutocompleteSelectedEvent) {
+    const filterValue = event.option.value?.toLowerCase();
 
-    let taxClass  = this.taxClasses.find((itemGroup) => itemGroup.name?.toLowerCase().includes(filterValue));
+    let taxGroup  = this.taxGroups.find((taxGroup) => taxGroup.name?.toLowerCase().includes(filterValue));
 
-    if(!!taxClass){
+    if(!!taxGroup){
       this.itemForm.patchValue({
-        taxClassId: taxClass.id,
-        taxClassName: taxClass.name
+        taxGroupId: taxGroup.id,
+        taxGroupName: taxGroup.displayName
       });
     }
+  } 
+  
+  /**
+   * This method updates the tax group linked to item when an item is being selected from the list.
+   * Also updates the taxGroup id and name for calculating the tax amount
+   */
+  private updateTaxGroupLinkedToItem(taxClassId: number | undefined, type: string) : void{
+
+    this.taxableEntityService.getTaxGroup(this.txProvider.billingClassification().id, this.txProvider.billingGroup().id, taxClassId).subscribe({
+      next: (taxGroup) => {
+        if (taxGroup) {
+          if (type == 'ITEM') {
+            this.itemForm.patchValue({
+              taxGroupId: taxGroup.id,
+              taxGroupName: taxGroup.displayName
+            });
+
+
+            if(!!taxGroup) {
+              //update tax amount.
+              let taxAmount = this.updateTaxAmount(this.itemForm.controls["amountExcludingTax"].value, taxGroup);
+
+              let totalAmount = taxAmount + this.itemForm.controls["amountExcludingTax"].value;
+              
+              this.itemForm.patchValue({
+                taxAmount: taxAmount,
+                totalAmount: totalAmount
+              });
+            }  
+          }
+        }
+      }
+    });  
   }  
+
+
+  /**
+   * This function calculate the tax on item which is being added/edited.
+   * @param taxableAmount 
+   * @param taxGroup 
+   * @returns 
+   */
+  updateTaxAmount(taxableAmount: number, taxGroup: ITaxGroup): number {
+
+    this.itemTaxLines = new Array();
+    let taxAmount: number = 0;
+    let taxList = taxGroup.taxList;
+
+    if(!!taxList) {
+
+      taxList.forEach(tax => {
+        if (!tax.taxOnTax) {
+          let taxLine: ITaxLine = { jacksontype: "TaxLineImpl" };
+          taxLine.tax = tax.id;
+          taxLine.value = tax.value;
+  
+          let taxLineAmount: number = 0;
+          taxLineAmount = parseFloat((taxableAmount * (!!taxLine.value ? taxLine.value : 0) / 100).toFixed(2));
+          taxLine.amount = taxLineAmount;
+          taxAmount = taxAmount + taxLineAmount;
+          this.itemTaxLines.push(taxLine);
+  
+          tax.taxOnTaxList?.forEach(taxOnTax => {
+            let taxOnTaxLine: ITaxLine = { jacksontype: "TaxLineImpl" };
+            taxOnTaxLine.tax = taxOnTax.id;
+            taxOnTaxLine.value = taxOnTax.value;
+  
+            let taxOnTaxLineAmount: number = 0;
+            taxOnTaxLineAmount = parseFloat((taxLineAmount * (!!taxOnTaxLine.value ? taxOnTaxLine.value : 0) / 100).toFixed(2));
+  
+            taxOnTaxLine.amount = taxOnTaxLineAmount;
+            taxAmount = taxAmount + taxOnTaxLineAmount;
+            this.itemTaxLines.push(taxOnTaxLine);
+            taxLine.taxOnTaxLines?.push(taxOnTaxLine);
+            taxOnTaxLine.primaryTaxLine = false;
+            taxLine.taxOnTaxAmount = (!!taxLine.taxOnTaxAmount ? taxLine.taxOnTaxAmount : 0) + taxOnTaxLineAmount;
+          });
+        }
+      });
+  
+  
+      let taxAmountWithoutTaxOnTax: number = taxAmount;
+      taxList.forEach(tax => {
+        if (tax.taxOnTax) {
+          let taxLine: ITaxLine = { jacksontype: "TaxLineImpl" };
+          taxLine.tax = tax.id;
+          taxLine.value = tax.value;
+  
+          let taxLineAmount: number = 0;
+          taxLineAmount = parseFloat((taxAmountWithoutTaxOnTax * (!!taxLine.value ? taxLine.value : 0) / 100).toFixed(2));
+          taxLine.amount = taxLineAmount;
+          taxAmount = taxAmount + taxLineAmount;
+          this.itemTaxLines.push(taxLine);
+        }
+      });      
+    }
+
+    return taxAmount;
+  }
 
   getOrderFormControl(name: string) {
     return this.orderTxForm.get(name) as FormControl;

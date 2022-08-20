@@ -175,7 +175,7 @@ th {
 }
 
 .button-group{    
-    margin: 0 8px 0 0;
+    margin: 0 8px 0 0 !important;
     height: 35px;
 }
 
