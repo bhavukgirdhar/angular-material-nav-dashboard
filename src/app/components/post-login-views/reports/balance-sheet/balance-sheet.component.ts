@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
 import { BalanceSheetReportArgument } from 'src/server';
 import { BalanceSheetReportServiceService } from 'src/server/api/balanceSheetReportService.service';
 
@@ -8,8 +10,8 @@ import { BalanceSheetReportServiceService } from 'src/server/api/balanceSheetRep
   styleUrls: ['./balance-sheet.component.css']
 })
 export class BalanceSheetComponent implements OnInit {
-  public startDate!: Date;
-  public endDate!: Date;
+  public startDate!: FormControl;
+  public endDate!: FormControl;
   public zeroBalrequired!: boolean;
   public ledgerrequired!: boolean;
   private balanceSheetReportInput: BalanceSheetReportArgument;
@@ -18,9 +20,11 @@ export class BalanceSheetComponent implements OnInit {
   liabilitiesData : Object[];
   assetsData : Object[];
 
-  constructor(private balancesheetReportService: BalanceSheetReportServiceService) { 
-    this.startDate = new Date();
-    this.endDate = new Date();
+
+  constructor(private balancesheetReportService: BalanceSheetReportServiceService, private customDateAdapterService  : CustomDateAdapterService) { 
+    let txDate = new Date();
+    this.startDate = new FormControl(this.customDateAdapterService.createDate(txDate.getFullYear(),txDate.getMonth(), txDate.getDate()));
+    this.endDate = new FormControl(this.customDateAdapterService.createDate(txDate.getFullYear(),txDate.getMonth(), txDate.getDate()));
     this.zeroBalrequired = false;
     this.ledgerrequired= false;
   }
@@ -41,8 +45,8 @@ export class BalanceSheetComponent implements OnInit {
   getBalancesheetReport(): void {
     this.balanceSheetReportInput = {};
     
-    this.balanceSheetReportInput.dateFrom = this.startDate;
-    this.balanceSheetReportInput.dateTo = this.endDate;
+    this.balanceSheetReportInput.dateFrom = this.startDate.value;
+    this.balanceSheetReportInput.dateTo = this.endDate.value;
     this.balanceSheetReportInput.showZeroBalanceAccounts = this.zeroBalrequired;
     this.balanceSheetReportInput.showOnlyLedgerGroups = this.ledgerrequired;
     console.log(this.balanceSheetReportInput);

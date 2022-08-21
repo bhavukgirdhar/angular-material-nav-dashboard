@@ -15,19 +15,11 @@
         </mat-card-header>
         <mat-card-content>
             <div fxflexfill fxLayout="row" fxLayoutAlign="start" >
-              <div>
-                <mat-form-field appearance="outline" class="mr-10">
-                  <mat-label>Start date</mat-label>
-                  <input matInput [matDatepicker]="pickerTo"  [(ngModel)]="startDate">         
-                  <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
-                  <mat-datepicker #pickerTo></mat-datepicker>
-                </mat-form-field>
-                <mat-form-field appearance="outline" class="mr-10">
-                  <mat-label>End date</mat-label>
-                  <input matInput [matDatepicker]="pickerFrom"  [(ngModel)]="endDate">         
-                  <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
-                  <mat-datepicker #pickerFrom></mat-datepicker>
-                </mat-form-field>   
+              <div>            
+                <i-mat-datepicker [label]="'Start Date'" [dateFormControl]="startDate"></i-mat-datepicker>
+              </div>
+              <div [class]="'ml-10'">
+                <i-mat-datepicker [label]="'End Date'" [dateFormControl]="endDate"></i-mat-datepicker>
               </div>
               <div  fxflexfill fxLayout="column">
                 <mat-checkbox  [(ngModel)]="zeroBalrequired">Show account with Zero Balance</mat-checkbox>

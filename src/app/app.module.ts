@@ -21,7 +21,7 @@ import { HttpAuthInterceptor } from './services/http.interceptor';
   declarations: [
     AppComponent,
     LoginComponent,
-    RegistrationComponent    
+    RegistrationComponent       
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,15 @@
+<div>
+    <mat-form-field class="example-full-width" appearance="outline"
+        [class]="'innov-matFormField mr-10 search-taxgroup-area'">
+        <mat-label>Tax Group</mat-label>
+            <input type="text" placeholder="Select Tax Group" aria-label="taxGroup" matInput
+                [matAutocomplete]="autoTaxClass" [formControl]="autoCompleteInput">
+            <mat-icon matSuffix class="search-icon">search</mat-icon>
+            <mat-autocomplete autoActiveFirstOption #autoTaxClass="matAutocomplete"
+                (optionSelected)="onTaxGroupSelectionChanged($event)">
+                <mat-option *ngFor="let option of filteredTaxGroups  | async" [value]="option.displayName">
+                    {{option.displayName}}
+                </mat-option>
+            </mat-autocomplete>
+    </mat-form-field>
+</div>
