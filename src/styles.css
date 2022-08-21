@@ -165,6 +165,12 @@ th {
     width: 100%;
 }
 
+.responsive-table{
+    position: relative;
+    max-height: 400px;
+    overflow: auto;
+}
+
 .highlight{  
     background: #dddddd;
 }

@@ -83,8 +83,8 @@
                             [class]="(isHandset$ | async) ? 'innov-matFormField pr-5' : 'innov-matFormField pr-5 ml-10'" 
                             [fxFlex]="50">
                             <mat-label>Product Code</mat-label>
-                            <input matInput placeholder="Product Code" #referenceNo name="productCode"
-                                id="productCode" formControlName="productCode">
+                            <input matInput placeholder="Product Code" #referenceNo name="itemProductCode"
+                                id="itemProductCode" formControlName="itemProductCode">
                         </mat-form-field>
 
                         <mat-form-field appearance="outline"
@@ -131,8 +131,8 @@
                             [class]="'innov-matFormField'" 
                             [fxFlex]="50">
                             <mat-label>Net Rate.</mat-label>
-                            <input matInput placeholder="Net Rate" #referenceNo name="netRate"
-                                id="netRate" formControlName="netRate">
+                            <input matInput placeholder="Net Rate" #referenceNo name="rate"
+                                id="rate" formControlName="rate">
                         </mat-form-field>
 
                     </div>
@@ -146,8 +146,8 @@
                             [class]="'innov-matFormField pr-5'"                            
                             [fxFlex]="50">
                             <mat-label>Amount (Exc. Tax)</mat-label>
-                            <input matInput placeholder="Amount Excluding Tax" #amountExcludingTax name="amountExcludingTax"
-                                id="amountExcludingTax" formControlName="amountExcludingTax">
+                            <input matInput placeholder="Amount Excluding Tax" #taxableAmount name="taxableAmount"
+                                id="taxableAmount" formControlName="taxableAmount">
                         </mat-form-field>
 
                         <div [class]="(isHandset$ | async) ? 'innov-matFormField' : 'innov-matFormField'" 
@@ -180,15 +180,72 @@
                     </div>
                 </div>
 
-                <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="end">
+                <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="end" class="mb-5">
                     <div>
                         <button mat-raised-button class="button-group" [fxFlex]="50" (click)="cancelAddItem()">
                             Cancel
                         </button>
                         <button mat-raised-button class="button-group"  color="primary" [fxFlex]="50" (click)="addItemLine()">
-                            Add
+                            Add Item
                         </button>
                     </div>
+                </div>
+
+                <!--Selected Item Lines-->
+                <div [fxLayout]="'row'" fxflexfill fxLayoutAlign="start" class="responsive-table">
+
+                    <table mat-table class="full-width-table" [dataSource]="itemLinesDataSource" matSort aria-label="Elements">
+                        <!-- Id Column -->
+                        <ng-container matColumnDef="itemProductCode">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header>Product Code</th>
+                          <td mat-cell *matCellDef="let row">{{row.itemProductCode}}</td>
+                        </ng-container>
+                    
+                        <ng-container matColumnDef="itemName">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+                          <td mat-cell *matCellDef="let row">{{row.itemName}}</td>
+                        </ng-container>
+                    
+                        <ng-container matColumnDef="mrp">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header>Rate</th>
+                          <td mat-cell *matCellDef="let row">{{row.mrp}}</td>
+                        </ng-container>
+                    
+                        <ng-container matColumnDef="discount">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header>Discount(%)</th>
+                          <td mat-cell *matCellDef="let row">{{row.discount}}</td>
+                        </ng-container>
+                    
+                        <ng-container matColumnDef="rate">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header>Net Rate</th>
+                          <td mat-cell *matCellDef="let row">{{row.rate}}</td>
+                        </ng-container>
+                    
+                        <!-- Name Column -->
+                        <ng-container matColumnDef="taxableAmount">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount Exc. Tax</th>
+                          <td mat-cell *matCellDef="let row">{{row.taxableAmount}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="taxGroupName">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tax Group</th>
+                            <td mat-cell *matCellDef="let row">{{row.taxGroupName}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="taxAmount">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tax Amount</th>
+                            <td mat-cell *matCellDef="let row">{{row.taxAmount}}</td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="totalAmount">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Amount</th>
+                            <td mat-cell *matCellDef="let row">{{row.totalAmount}}</td>
+                        </ng-container>
+                    
+                        <tr mat-header-row *matHeaderRowDef="itemLineDisplayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: itemLineDisplayedColumns;"></tr>
+                      </table> 
+
                 </div>
 
                 

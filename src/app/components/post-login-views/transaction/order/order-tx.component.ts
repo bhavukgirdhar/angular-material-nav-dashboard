@@ -11,6 +11,7 @@ import { TaxableEntityServiceService } from "src/server/api/taxableEntityService
 import { TransactionsProvider } from "src/app/services/transactionsProvider";
 import { LedgerAttributesServiceService } from "src/server/api/ledgerAttributesService.service";
 import { BillingClassificationServiceService } from "src/server/api/billingClassificationService.service";
+import { MatTableDataSource } from "@angular/material/table";
 
 
 export class OrderTxComponent {
@@ -28,8 +29,20 @@ export class OrderTxComponent {
   isFormLoaded : boolean = false;
 
 
-  //Table Objects
+  //Item Line Table Objects
   itemLines : IItemLine[];
+  itemLinesDataSource = new MatTableDataSource<IItemLine>([]);
+  /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
+  itemLineDisplayedColumns = ['itemProductCode', 
+    'itemName', 
+    'mrp', 
+    'discount',
+    'rate',
+    'taxableAmount',
+    'taxGroupName',
+    'taxAmount',
+    'totalAmount'
+  ];
 
   
   constructor(private breakpointObserver: BreakpointObserver, private formBuilder : FormBuilder, 
@@ -76,20 +89,22 @@ export class OrderTxComponent {
     this.itemForm = this.formBuilder.group({
       jacksontype: 'ItemLineImpl',
       itemId: new FormControl(''),
-      itemName: new FormControl(''),
-      productCode: new FormControl({ value: '', disabled: true }),
+      itemName: new FormControl('', [ Validators.required]),
+      itemProductCode: new FormControl({ value: '', disabled: true }),
       quantity: new FormControl(''),
       unit: new FormControl(''),
       unitName: new FormControl({ value: '', disabled: true }),
       mrp: new FormControl({ value: '', disabled: true }),
       discount: new FormControl(''),
-      netRate: new FormControl({ value: '', disabled: true }),
-      amountExcludingTax: new FormControl({ value: '', disabled: true }),
-      taxGroupId: new FormControl(''),
+      rate: new FormControl({ value: '', disabled: true }),
+      taxGroup: new FormControl(''),
       taxGroupName: new FormControl(''),
       taxLines: [],
+      taxableAmount: new FormControl({ value: '', disabled: true }),
+      taxableAmountBeforeBillDiscount: new FormControl({ value: '', disabled: true }),
       taxAmount: new FormControl({ value: '', disabled: true }),
-      totalAmount: new FormControl({ value: '', disabled: true })
+      totalAmount: new FormControl({ value: '', disabled: true }),            
+      totalAmountBeforeBillDiscount: new FormControl({ value: '', disabled: true })
     });
   }
 
@@ -141,17 +156,18 @@ export class OrderTxComponent {
       itemName: selectedItem.name,
       mrp: selectedItem.mrp,
       quantity : 1,
-      productCode: selectedItem.productCode,
+      itemProductCode: selectedItem.productCode,
       discount : 0,
       unit: selectedItem.unitId,
       unitName: selectedItem.unitName     
     });  
 
-    let netRate = this.itemForm.controls["mrp"].value - ((this.itemForm.controls["mrp"].value * this.itemForm.controls["discount"].value)/100);
+    let rate = this.itemForm.controls["mrp"].value - ((this.itemForm.controls["mrp"].value * this.itemForm.controls["discount"].value)/100);
 
     this.itemForm.patchValue({
-      netRate: netRate,
-      amountExcludingTax: netRate
+      rate: rate,
+      taxableAmount: rate,
+      taxableAmountBeforeBillDiscount: rate
     });
     
     if(!!selectedItem.taxClassId) {
@@ -163,17 +179,18 @@ export class OrderTxComponent {
     // Executed when the form field values are updated.
     this.itemForm.controls["quantity"].valueChanges.subscribe({
       next: (data) => {
-        let netRate = data * this.itemForm.controls["mrp"].value;
+        let rate = data * this.itemForm.controls["mrp"].value;
         let discount = this.itemForm.controls["discount"].value;
 
-        netRate = netRate - ((netRate*discount)/100);
+        rate = rate - ((rate*discount)/100);
 
         this.itemForm.patchValue({
-          netRate: netRate,
-          amountExcludingTax: netRate
+          rate: rate,
+          taxableAmount: rate,
+          taxableAmountBeforeBillDiscount: rate
         });
         
-        if(!!this.itemForm.controls["taxGroupId"].value) {
+        if(!!this.itemForm.controls["taxGroup"].value) {
           // This patches the tax group id,name in item form which will be further used to calculate the tax amount.
           this.updateTaxGroupLinkedToItemAndAmount(selectedItem.taxClassId,"ITEM");      
         }
@@ -182,16 +199,17 @@ export class OrderTxComponent {
 
     this.itemForm.controls["discount"].valueChanges.subscribe({
       next: (data) =>{
-        let netRate = this.itemForm.controls["quantity"].value * this.itemForm.controls["mrp"].value;
+        let rate = this.itemForm.controls["quantity"].value * this.itemForm.controls["mrp"].value;
 
-        netRate = netRate - ((netRate*data)/100);
+        rate = rate - ((rate*data)/100);
 
         this.itemForm.patchValue({
-          netRate: netRate,
-          amountExcludingTax: netRate
+          rate: rate,
+          taxableAmount: rate,          
+          taxableAmountBeforeBillDiscount: rate
         });
 
-        if(!!this.itemForm.controls["taxGroupId"].value) {
+        if(!!this.itemForm.controls["taxGroup"].value) {
           // This patches the tax group id,name in item form which will be further used to calculate the tax amount.
           this.updateTaxGroupLinkedToItemAndAmount(selectedItem.taxClassId,"ITEM");      
         }
@@ -210,7 +228,7 @@ export class OrderTxComponent {
 
     if(!!selectedTaxGroup){
       this.itemForm.patchValue({
-        taxGroupId: selectedTaxGroup.id,
+        taxGroup: selectedTaxGroup.id,
         taxGroupName: selectedTaxGroup.displayName
       });
 
@@ -230,7 +248,7 @@ export class OrderTxComponent {
         if (taxGroup) {
           if (type == 'ITEM') {
             this.itemForm.patchValue({
-              taxGroupId: taxGroup.id,
+              taxGroup: taxGroup.id,
               taxGroupName: taxGroup.displayName
             });
 
@@ -249,13 +267,14 @@ export class OrderTxComponent {
   private updateTaxAmount(taxGroup: ITaxGroup) {
     if (!!taxGroup) {
       //update tax amount.
-      let taxAmount = this.calculateTaxAmount(this.itemForm.controls["amountExcludingTax"].value, taxGroup);
+      let taxAmount = this.calculateTaxAmount(this.itemForm.controls["taxableAmount"].value, taxGroup);
 
-      let totalAmount = taxAmount + this.itemForm.controls["amountExcludingTax"].value;
+      let totalAmount = taxAmount + this.itemForm.controls["taxableAmount"].value;
 
       this.itemForm.patchValue({
         taxAmount: taxAmount,
-        totalAmount: totalAmount
+        totalAmount: totalAmount,
+        totalAmountBeforeBillDiscount : totalAmount
       });
     }
   }
@@ -330,11 +349,15 @@ export class OrderTxComponent {
   }
 
   public addItemLine() : void {
-    let itemLine : IItemLine = this.itemForm.getRawValue();
 
-    this.itemLines = [...this.itemLines, itemLine];
-
-    console.log(this.itemLines);
+    if(this.itemForm.valid) {
+      let itemLine : IItemLine = this.itemForm.getRawValue();
+      this.itemLines = [...this.itemLines, itemLine];
+  
+      this.itemLinesDataSource.data = this.itemLines;    
+      this.initializeItemForm();
+    }
+   
   }
 
   public cancelAddItem() : void {
