@@ -180,7 +180,15 @@
                     </div>
                 </div>
 
-                <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="end" class="mb-5">
+                <div [fxLayout]="'row'" fxflexfill fxLayoutAlign="space-between" class="mb-5">
+                    <div class="table-action-buttons">
+                        <button mat-raised-button color="primary" class="button-group" [disabled]="selectedLineItemForEdit == undefined">
+                            <mat-icon>edit</mat-icon>
+                          </button>
+                          <button mat-raised-button color="warn" class="button-group" [disabled]="selectedLineItemForEdit == undefined">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                    </div>
                     <div>
                         <button mat-raised-button class="button-group" [fxFlex]="50" (click)="cancelAddItem()">
                             Cancel
@@ -243,7 +251,10 @@
                         </ng-container>
                     
                         <tr mat-header-row *matHeaderRowDef="itemLineDisplayedColumns"></tr>
-                        <tr mat-row *matRowDef="let row; columns: itemLineDisplayedColumns;"></tr>
+                        <tr mat-row *matRowDef="let row; columns: itemLineDisplayedColumns;"
+                            [ngClass]="{'highlight': selectedLineItemForEdit.itemId == row.itemId}"
+                            (click)="setSelectedLineItem(row)">
+                        </tr>
                       </table> 
 
                 </div>

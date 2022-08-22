@@ -43,6 +43,7 @@ export class OrderTxComponent {
     'taxAmount',
     'totalAmount'
   ];
+  selectedLineItemForEdit : IItemLine;
 
   
   constructor(private breakpointObserver: BreakpointObserver, private formBuilder : FormBuilder, 
@@ -362,6 +363,10 @@ export class OrderTxComponent {
 
   public cancelAddItem() : void {
     this.initializeItemForm();
+  }
+
+  public setSelectedLineItem(row : IItemLine) : void {
+    this.selectedLineItemForEdit = row;
   }
 
   getOrderFormControl(name: string) {
