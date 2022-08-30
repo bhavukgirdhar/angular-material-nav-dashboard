@@ -1,17 +1,17 @@
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { map, Observable, shareReplay } from "rxjs";
 import { CustomDateAdapterService } from "src/app/services/date-adaptor";
-import { IItemLine, ITax, ITaxGroup, ITaxLine, PItemMaster, PLedgerMaster } from "src/server";
+import { IItemLine, IOtherCharges, IOtherChargesLine, ITaxGroup, ITaxLine, PItemMaster, PLedgerMaster } from "src/server";
 import { LedgerServiceService } from "src/server/api/ledgerService.service";
-import { startWith, switchMap } from 'rxjs/operators';
-import { MatAutocompleteSelectedEvent } from "@angular/material/autocomplete";
-import { TaxGroupServiceService } from "src/server/api/taxGroupService.service";
 import { TaxableEntityServiceService } from "src/server/api/taxableEntityService.service";
 import { TransactionsProvider } from "src/app/services/transactionsProvider";
 import { LedgerAttributesServiceService } from "src/server/api/ledgerAttributesService.service";
 import { BillingClassificationServiceService } from "src/server/api/billingClassificationService.service";
 import { MatTableDataSource } from "@angular/material/table";
+import { StockLocationServiceService } from "src/server/api/stockLocationService.service";
+import { OtherChargesServiceService } from "src/server/api/otherChargesService.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 
 export class OrderTxComponent {
@@ -25,6 +25,7 @@ export class OrderTxComponent {
 
   public orderTxForm!: FormGroup;
   public itemForm!: FormGroup; 
+  public otherChargesDiscountForm! : FormGroup;
   public headerTitle : string;
   isFormLoaded : boolean = false;
 
@@ -43,15 +44,40 @@ export class OrderTxComponent {
     'taxAmount',
     'totalAmount'
   ];
-  selectedLineItemForEdit : IItemLine;
+  selectedLineItemForEdit : IItemLine | undefined;
+  itemLineEditMode : boolean = false;
+  
 
+  //Other Charges/Discount objects
+  retrievedOtherCharges : IOtherCharges[] = [];
+  addedOtherCharges : IOtherChargesLine[] = [];
+  otherChargesDataSource = new MatTableDataSource<IOtherChargesLine>([]);
+  otherChargesDisplayedColumns = ['chargesName','value','amount'];
+  
+
+  itemLinesTotalAmount = new FormControl(0);
+  otherChargesTotalAmount = new FormControl(0);
+  netFinalAmount = new FormControl(0);
+  receivedAmount = new FormControl(0); // value change is subsribed.
+  returnAmount = new FormControl(0);
   
   constructor(private breakpointObserver: BreakpointObserver, private formBuilder : FormBuilder, 
     private customDateAdapterService  : CustomDateAdapterService, private ledgerService : LedgerServiceService,
-    private taxGroupService : TaxGroupServiceService, private taxableEntityService : TaxableEntityServiceService,
+    private stockLocationService : StockLocationServiceService, private taxableEntityService : TaxableEntityServiceService,
     private txProvider : TransactionsProvider, private ledgerAttributesService : LedgerAttributesServiceService,
-    private billingClassificationService : BillingClassificationServiceService) { 
+    private billingClassificationService : BillingClassificationServiceService,
+    private otherChargesService : OtherChargesServiceService,private _snackBar: MatSnackBar) { 
     
+      this.receivedAmount.valueChanges.subscribe({
+        next: (data) => {
+          console.log("value change received amount");
+          if(data > this.netFinalAmount.value) {
+            this.returnAmount.setValue(Number((data - this.netFinalAmount.value).toFixed(2)));
+          }else{
+            this.returnAmount.setValue(0);  
+          }
+        }
+      });
   }
   
   // This function is called from child components : sale, sale order and purchase.
@@ -68,17 +94,34 @@ export class OrderTxComponent {
           billName: new FormControl(data.name)          
         });
 
+        this.updateStockLocation();
+
         //Get billing group associated with Cash Ledger
         this.getBillingGroup(data.id);
 
         //Initialize the item form on load.
         this.initializeItemForm();
-
         this.itemLines = [];
+
+        this.getOtherCharges();
+        this.initializeOtherChargesDiscountForm();
+        this.addedOtherCharges = [];
 
         this.isFormLoaded = true;
       },
       error: () => { }
+    });
+  }  
+ 
+
+  /**
+   * This function updates the stock location.
+   */
+  private updateStockLocation() {
+    this.stockLocationService.getObjects().subscribe({
+      next: (data) => {
+        this.txProvider.stockLocation(data[0]);
+      }
     });
   }
 
@@ -90,7 +133,7 @@ export class OrderTxComponent {
     this.itemForm = this.formBuilder.group({
       jacksontype: 'ItemLineImpl',
       itemId: new FormControl(''),
-      itemName: new FormControl('', [ Validators.required]),
+      itemName: new FormControl(''),
       itemProductCode: new FormControl({ value: '', disabled: true }),
       quantity: new FormControl(''),
       unit: new FormControl(''),
@@ -106,6 +149,31 @@ export class OrderTxComponent {
       taxAmount: new FormControl({ value: '', disabled: true }),
       totalAmount: new FormControl({ value: '', disabled: true }),            
       totalAmountBeforeBillDiscount: new FormControl({ value: '', disabled: true })
+    });
+  }
+
+  private getOtherCharges() {
+    this.otherChargesService.getObjects().subscribe({
+      next: (data) => {
+        this.retrievedOtherCharges = data;
+      }
+    });
+  }
+
+  /**
+   * This function initialize the other charges discount form.
+   */
+  private initializeOtherChargesDiscountForm() {
+    this.otherChargesDiscountForm = this.formBuilder.group({      
+      chargesId: new FormControl(''),
+      chargesName: new FormControl(''),
+      billAmount: new FormControl({ value: 0, disabled: true }),      
+      discount: new FormControl(''),
+      type: new FormControl(''),
+      value : new FormControl(0),
+      displayedValue : new FormControl(0),
+      amount: new FormControl(0),
+      displayedAmount: new FormControl(0)
     });
   }
 
@@ -173,52 +241,65 @@ export class OrderTxComponent {
     
     if(!!selectedItem.taxClassId) {
       // This patches the tax group id,name in item form which will be further used to calculate the tax amount.
-      this.updateTaxGroupLinkedToItemAndAmount(selectedItem.taxClassId,"ITEM");      
+      this.updateTaxGroupLinkedToItemAndTaxAmount(selectedItem.taxClassId,"ITEM");      
     }
 
     // Below are the value change subscribers which updates the form values.
     // Executed when the form field values are updated.
+    this.itemSelectionChangeSubscribers(selectedItem);
+  }
+
+ 
+
+  private itemSelectionChangeSubscribers(selectedItem: PItemMaster) {
+
     this.itemForm.controls["quantity"].valueChanges.subscribe({
       next: (data) => {
-        let rate = data * this.itemForm.controls["mrp"].value;
-        let discount = this.itemForm.controls["discount"].value;
 
-        rate = rate - ((rate*discount)/100);
-
-        this.itemForm.patchValue({
-          rate: rate,
-          taxableAmount: rate,
-          taxableAmountBeforeBillDiscount: rate
-        });
-        
-        if(!!this.itemForm.controls["taxGroup"].value) {
-          // This patches the tax group id,name in item form which will be further used to calculate the tax amount.
-          this.updateTaxGroupLinkedToItemAndAmount(selectedItem.taxClassId,"ITEM");      
+        if(!!data) { // Don't update values if form is reset
+          let rate = data * this.itemForm.controls["mrp"].value;
+          let discount = this.itemForm.controls["discount"].value;
+  
+          rate = rate - ((rate * discount) / 100);
+  
+          this.itemForm.patchValue({
+            rate: rate,
+            taxableAmount: rate,
+            taxableAmountBeforeBillDiscount: rate
+          });
+  
+          if (!!this.itemForm.controls["taxGroup"].value) {
+            // This patches the tax group id,name in item form which will be further used to calculate the tax amount.
+            this.updateTaxGroupLinkedToItemAndTaxAmount(selectedItem.taxClassId, "ITEM");
+          }
         }
+        
       }
     });
 
     this.itemForm.controls["discount"].valueChanges.subscribe({
-      next: (data) =>{
-        let rate = this.itemForm.controls["quantity"].value * this.itemForm.controls["mrp"].value;
+      next: (data) => {
 
-        rate = rate - ((rate*data)/100);
+        if(!!data) {// Don't update values if form is reset
+          let rate = this.itemForm.controls["quantity"].value * this.itemForm.controls["mrp"].value;
 
-        this.itemForm.patchValue({
-          rate: rate,
-          taxableAmount: rate,          
-          taxableAmountBeforeBillDiscount: rate
-        });
-
-        if(!!this.itemForm.controls["taxGroup"].value) {
-          // This patches the tax group id,name in item form which will be further used to calculate the tax amount.
-          this.updateTaxGroupLinkedToItemAndAmount(selectedItem.taxClassId,"ITEM");      
+          rate = rate - ((rate * data) / 100);
+  
+          this.itemForm.patchValue({
+            rate: rate,
+            taxableAmount: rate,
+            taxableAmountBeforeBillDiscount: rate
+          });
+  
+          if (!!this.itemForm.controls["taxGroup"].value) {
+            // This patches the tax group id,name in item form which will be further used to calculate the tax amount.
+            this.updateTaxGroupLinkedToItemAndTaxAmount(selectedItem.taxClassId, "ITEM");
+          }
         }
+        
       }
     });
   }
-
- 
 
   /**
    * This function is executed when the tax class is selected
@@ -242,7 +323,7 @@ export class OrderTxComponent {
    * This method updates the tax group linked to item when an item is being selected from the list.
    * Also updates the taxGroup id and name for calculating the tax amount
    */
-  private updateTaxGroupLinkedToItemAndAmount(taxClassId: number | undefined, type: string) : void{
+  private updateTaxGroupLinkedToItemAndTaxAmount(taxClassId: number | undefined, type: string) : void{
 
     this.taxableEntityService.getTaxGroup(this.txProvider.billingClassification().id, this.txProvider.billingGroup().id, taxClassId).subscribe({
       next: (taxGroup) => {
@@ -349,24 +430,218 @@ export class OrderTxComponent {
     return taxAmount;
   }
 
-  public addItemLine() : void {
+  /**
+   * This function is executed when user adds an item as item line from 'ADD ITEM' button.
+   * Also executed when user edit an already added item line.
+   */
+  public addOrEditItemLine() : void {
+
+    this.itemForm.controls["itemName"].addValidators([ Validators.required]);
+    this.itemForm.controls["itemName"].updateValueAndValidity();
 
     if(this.itemForm.valid) {
       let itemLine : IItemLine = this.itemForm.getRawValue();
-      this.itemLines = [...this.itemLines, itemLine];
-  
-      this.itemLinesDataSource.data = this.itemLines;    
-      this.initializeItemForm();
+      console.log(itemLine);
+
+      if(!this.itemLineEditMode) { //New Item Line added
+        this.itemLines = [...this.itemLines, itemLine];
+      }else{//Edit existing item line.
+        this.itemLines = this.itemLines.map((iL) => {
+          if(iL.itemId == itemLine.itemId) {
+            iL = itemLine;
+          }
+          return iL;
+        });
+
+        this.itemLineEditMode = false;
+        this.selectedLineItemForEdit = undefined;
+      }
+
+      this.updateItemLinesTotalAmount();
+      this.updateNetFinalAmount();
+        
+      this.itemLinesDataSource.data = this.itemLines;
+      this.itemForm.reset();
+
+      this.itemForm.controls["itemName"].clearValidators();
+      this.itemForm.controls["itemName"].updateValueAndValidity();
     }
-   
+       
+  }
+
+  /**
+   * This function updates the item lines total amount displayed in Transaction summary 
+   * and Other charges form.
+   */
+  updateItemLinesTotalAmount() {
+    this.itemLinesTotalAmount.setValue(0);
+    let itemLinesAmount = 0;
+
+    this.itemLines.forEach((itemLine) => {
+      itemLinesAmount = itemLinesAmount + itemLine.totalAmount!;
+    });
+
+    this.itemLinesTotalAmount.setValue(itemLinesAmount);
+  }
+
+  /**
+   * This function is executed once a user click on Edit button.
+   * The selected item line will be populated in the item form.
+   */
+  public editItemLine() : void{
+    this.itemForm.patchValue({
+      itemId: this.selectedLineItemForEdit?.itemId,
+      itemName: this.selectedLineItemForEdit?.itemName,
+      itemProductCode: this.selectedLineItemForEdit?.itemProductCode,
+      quantity: this.selectedLineItemForEdit?.quantity,
+      unit: this.selectedLineItemForEdit?.unit,
+      unitName: this.selectedLineItemForEdit?.unitName,
+      mrp: ((this.selectedLineItemForEdit?.rate! * 100) / (100-this.selectedLineItemForEdit?.discount!) / this.selectedLineItemForEdit?.quantity!),
+      discount: this.selectedLineItemForEdit?.discount,
+      rate: this.selectedLineItemForEdit?.rate,
+      taxGroup: this.selectedLineItemForEdit?.taxGroup,
+      taxGroupName: this.selectedLineItemForEdit?.taxGroupName,
+      taxLines: this.selectedLineItemForEdit?.taxLines,
+      taxableAmount: this.selectedLineItemForEdit?.taxableAmount,
+      taxableAmountBeforeBillDiscount: this.selectedLineItemForEdit?.taxableAmountBeforeBillDiscount,
+      taxAmount: this.selectedLineItemForEdit?.taxAmount,
+      totalAmount: this.selectedLineItemForEdit?.totalAmount,
+      totalAmountBeforeBillDiscount: this.selectedLineItemForEdit?.totalAmountBeforeBillDiscount
+    });
+    this.itemLineEditMode = true;
+  }
+
+  public deleteItemLine() : void{
+
   }
 
   public cancelAddItem() : void {
+    this.selectedLineItemForEdit = undefined;
     this.initializeItemForm();
   }
 
   public setSelectedLineItem(row : IItemLine) : void {
     this.selectedLineItemForEdit = row;
+  }
+
+
+  /**
+   * This function is executed when user changes the other charges/discount type.
+   * value and amount is updated when user click on ADD button.
+   */
+  public changeOtherChargesType() : void{
+    let selectedChargeId = this.otherChargesDiscountForm.controls["chargesId"].value;
+    
+    let selectedOtherCharge =  this.retrievedOtherCharges.find((otherCharge) => otherCharge.id == selectedChargeId);
+
+    if(!!selectedOtherCharge) {
+      console.log(selectedOtherCharge);
+
+      this.otherChargesDiscountForm.patchValue({
+        chargesName : selectedOtherCharge.name,
+        billAmount : this.itemLinesTotalAmount.value,
+        type : selectedOtherCharge.type,
+        discount : selectedOtherCharge.discount
+      });
+
+      if(this.otherChargesDiscountForm.controls["type"].value == "PERCENT") {
+        
+        this.otherChargesDiscountForm.controls["displayedValue"].enable();
+        this.otherChargesDiscountForm.controls["displayedAmount"].enable();
+
+        let amount = this.otherChargesDiscountForm.controls["billAmount"].value * selectedOtherCharge.value!/100;
+
+        this.otherChargesDiscountForm.patchValue({
+          displayedValue : Math.abs(selectedOtherCharge.value!),          
+          displayedAmount : Math.abs(amount)
+        });
+
+        // Subscribe for value change in displayed value control.
+        this.otherChargesDiscountForm.controls["displayedValue"].valueChanges.subscribe({
+          next: (data) => {
+            let amount = Math.abs(this.otherChargesDiscountForm.controls["billAmount"].value * data/100);
+
+            this.otherChargesDiscountForm.patchValue({              
+              displayedAmount : amount
+            });
+          }
+        });
+
+
+      } else if(this.otherChargesDiscountForm.controls["type"].value == "FIXED") {
+        
+        this.otherChargesDiscountForm.controls["displayedValue"].disable();
+        this.otherChargesDiscountForm.controls["displayedAmount"].enable();
+
+        this.otherChargesDiscountForm.patchValue({
+          value : 0, 
+          displayedValue : 0,
+          displayedAmount : Math.abs(selectedOtherCharge.value!) 
+        });
+      }
+    }
+
+  }
+
+  /**
+   * This function is executed when user add an other change line.
+   */
+  public addOrEditOtherChargesLine() : void {
+
+    if(!!this.itemLines && this.itemLines.length == 0) {
+      this._snackBar.open("Atleast one item is required",'Close', {
+        duration: 2000
+      });      
+    } else {      
+      
+      let isDiscount = this.otherChargesDiscountForm.controls["discount"].value;
+      let displayedValue = this.otherChargesDiscountForm.controls["displayedValue"].value;
+      let displayedAmount = this.otherChargesDiscountForm.controls["displayedAmount"].value;
+
+      if(isDiscount) {
+        this.otherChargesDiscountForm.patchValue({
+          value: displayedValue * -1,
+          amount: displayedAmount * -1
+        });
+      }else{
+        this.otherChargesDiscountForm.patchValue({
+          value: displayedValue,
+          amount: displayedAmount
+        });
+      }
+
+      let iOtherChargeLine : IOtherChargesLine = {};
+
+      iOtherChargeLine.jacksontype = "OtherChargesLineImpl";
+      iOtherChargeLine.chargesId = this.otherChargesDiscountForm.controls["chargesId"].value;
+      iOtherChargeLine.chargesName = this.otherChargesDiscountForm.controls["chargesName"].value;
+      iOtherChargeLine.value = this.otherChargesDiscountForm.controls["value"].value;
+      iOtherChargeLine.amount = this.otherChargesDiscountForm.controls["amount"].value;
+
+      this.addedOtherCharges = [...this.addedOtherCharges, iOtherChargeLine];
+
+      this.updateOtherChargesTotalAmount();
+      this.otherChargesDataSource.data = this.addedOtherCharges;
+    }
+   
+  }
+  updateOtherChargesTotalAmount() {
+    this.otherChargesTotalAmount.setValue(0);
+    let otherChargesAmount = 0;
+
+    this.addedOtherCharges.forEach((otherCharge) => {
+      otherChargesAmount = Number((otherChargesAmount + otherCharge.amount!).toFixed(2));
+    });
+
+    this.otherChargesTotalAmount.setValue(otherChargesAmount);
+    this.updateNetFinalAmount();
+  }
+  updateNetFinalAmount() {
+    this.netFinalAmount.setValue(this.itemLinesTotalAmount.value + this.otherChargesTotalAmount.value);
+  }
+
+  public cancelOtherCharges() : void {
+
   }
 
   getOrderFormControl(name: string) {

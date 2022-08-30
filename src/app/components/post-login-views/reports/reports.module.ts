@@ -19,6 +19,9 @@ import { OverstockReportServiceService } from 'src/server/api/overstockReportSer
 import { BalanceSheetComponent } from './balance-sheet/balance-sheet.component';
 import { BalanceSheetReportServiceService } from 'src/server/api/balanceSheetReportService.service';
 import { DayBookServiceService } from 'src/server/api/dayBookService.service';
+import { SaleRegisterComponent } from './sale-register/sale-register.component';
+import { PurchaseRegisterComponent } from './purchase-register/purchase-register.component';
+import { ItemRegisterComponent } from './item-register/item-register.component';
 
 
 
@@ -29,7 +32,10 @@ import { DayBookServiceService } from 'src/server/api/dayBookService.service';
     OverstockReportComponent,
     DayBookComponent,
     LedgerBookComponent,
-    BalanceSheetComponent
+    BalanceSheetComponent,
+    SaleRegisterComponent,
+    PurchaseRegisterComponent,
+    ItemRegisterComponent
   ],
   imports: [
     CommonModule,

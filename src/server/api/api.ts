@@ -17,7 +17,9 @@ import { PaymentTxServiceService } from "./paymentTxService.service";
 import { ReceiptTxServiceService } from "./receiptTxService.service";
 import { JournalTxServiceService } from "./journalTxService.service";
 import { BalanceSheetReportServiceService } from "./balanceSheetReportService.service";
+import { StockLocationServiceService } from "./stockLocationService.service";
+import { OtherChargesServiceService } from "./otherChargesService.service";
 
 export const APIS = [BillingClassificationServiceService, CashInHandReportServiceService, DayBookServiceService, BalanceSheetReportServiceService, LedgerServiceService, ItemServiceService, UnitServiceService, 
     ItemGroupServiceService, LedgerGroupServiceService, LedgerAttributesServiceService , TaxClassServiceService, TaxGroupServiceService , TaxableEntityServiceService , OverstockReportServiceService,
-    VoucherNumberServiceService,PaymentTxServiceService, ReceiptTxServiceService, JournalTxServiceService];
+    VoucherNumberServiceService,PaymentTxServiceService, ReceiptTxServiceService, JournalTxServiceService, StockLocationServiceService, OtherChargesServiceService];

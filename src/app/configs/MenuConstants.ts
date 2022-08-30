@@ -149,6 +149,24 @@ export class MenuConstants {
           iconName: '',
           route: 'balanceSheet',
           children: []
+        },
+        {
+          displayName: 'Sale Register',
+          iconName: '',
+          route: 'saleRegister',
+          children: []
+        },
+        {
+          displayName: 'Purchase Register',
+          iconName: '',
+          route: 'purchaseRegister',
+          children: []
+        },
+        {
+          displayName: 'Item Register',
+          iconName: '',
+          route: 'itemRegister',
+          children: []
         }
       ]
     }

@@ -1,11 +1,14 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
 import { TransactionsProvider } from 'src/app/services/transactionsProvider';
 import { BillingClassificationServiceService } from 'src/server/api/billingClassificationService.service';
 import { LedgerAttributesServiceService } from 'src/server/api/ledgerAttributesService.service';
 import { LedgerServiceService } from 'src/server/api/ledgerService.service';
+import { OtherChargesServiceService } from 'src/server/api/otherChargesService.service';
+import { StockLocationServiceService } from 'src/server/api/stockLocationService.service';
 import { TaxableEntityServiceService } from 'src/server/api/taxableEntityService.service';
 import { TaxClassServiceService } from 'src/server/api/taxClassService.service';
 import { TaxGroupServiceService } from 'src/server/api/taxGroupService.service';
@@ -20,11 +23,12 @@ export class PurchaseComponent extends OrderTxComponent  implements OnInit {
 
   constructor(private purchaseBreakpointObserver: BreakpointObserver, private childFormBuilder : FormBuilder, 
     private childDateAdapterService  : CustomDateAdapterService, private childLedgerService : LedgerServiceService,
-    private childTaxGroupService : TaxGroupServiceService, private childTaxableEntityService : TaxableEntityServiceService,
+    private childstockLocationService : StockLocationServiceService, private childTaxableEntityService : TaxableEntityServiceService,
     private childTxProvider : TransactionsProvider, private childLedgerAttributesService : LedgerAttributesServiceService,
-    private childBillingClassificationService : BillingClassificationServiceService) {
-    super(purchaseBreakpointObserver, childFormBuilder, childDateAdapterService, childLedgerService, childTaxGroupService, childTaxableEntityService,
-      childTxProvider, childLedgerAttributesService, childBillingClassificationService);
+    private childBillingClassificationService : BillingClassificationServiceService,
+    private childOtherChargesService : OtherChargesServiceService, private _childSnackBar: MatSnackBar) {
+    super(purchaseBreakpointObserver, childFormBuilder, childDateAdapterService, childLedgerService, childstockLocationService, childTaxableEntityService,
+      childTxProvider, childLedgerAttributesService, childBillingClassificationService,childOtherChargesService, _childSnackBar);
     this.headerTitle = 'Purchase';
   }
 

@@ -61,7 +61,7 @@ export class TaxGroupBoxComponent implements OnInit, OnChanges {
           let taxGroupInEditMode: ITaxGroup[] = [];
           if (!!this.autoCompleteInput.value && this.autoCompleteInput.value.length > 0) {
             taxGroupInEditMode = this._filterTaxGroups(this.autoCompleteInput.value);
-            this.autoCompleteInput.setValue(taxGroupInEditMode[0].name);
+            this.autoCompleteInput.setValue(taxGroupInEditMode[0].displayName);
           }
 
           this.filteredTaxGroups = this.autoCompleteInput.valueChanges.pipe(startWith(this.autoCompleteInput.value), map(value => this._filterTaxGroups(value)));
