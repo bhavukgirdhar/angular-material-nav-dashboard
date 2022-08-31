@@ -331,12 +331,12 @@
 
                 <div [fxLayout]="'row'" fxflexfill fxLayoutAlign="space-between" class="mb-5">
                     <div class="table-action-buttons">
-                        <button mat-raised-button color="primary" class="button-group" [disabled]="selectedLineItemForEdit == undefined"
-                            (click)="editItemLine()">
+                        <button mat-raised-button color="primary" class="button-group" [disabled]="selectedOtherChargeLineForEdit == undefined"
+                            (click)="editOtherChargeLine()">
                             <mat-icon>edit</mat-icon>
                           </button>
-                          <button mat-raised-button color="warn" class="button-group" [disabled]="selectedLineItemForEdit == undefined"
-                            (click)="deleteItemLine()">
+                          <button mat-raised-button color="warn" class="button-group" [disabled]="selectedOtherChargeLineForEdit == undefined"
+                            (click)="deleteOtherChargeLine()">
                             <mat-icon>delete</mat-icon>
                           </button>
                     </div>
@@ -377,7 +377,9 @@
                     
                         <tr mat-header-row *matHeaderRowDef="otherChargesDisplayedColumns"></tr>
 
-                        <tr mat-row *matRowDef="let row; columns: otherChargesDisplayedColumns;">
+                        <tr mat-row *matRowDef="let row; columns: otherChargesDisplayedColumns;"
+                            [ngClass]="{'highlight': !!selectedOtherChargeLineForEdit && selectedOtherChargeLineForEdit.chargesId == row.chargesId}"
+                            (click)="setSelectedOtherChargeLine(row)">
                         </tr>
                       </table> 
 

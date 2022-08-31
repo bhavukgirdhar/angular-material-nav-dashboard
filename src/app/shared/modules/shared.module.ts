@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProgressSpinnerComponent } from '../components/progress-spinner/progress-spinner.component';
 import { LedgerBoxComponent } from '../components/ledger-box/ledger-box.component';
@@ -11,12 +11,14 @@ import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
 import { IMatDatepickerComponent } from '../components/i-mat-datepicker/i-mat-datepicker.component';
 import { ItemBoxComponent } from '../components/item-box/item-box.component';
 import { TaxGroupBoxComponent } from '../components/tax-group-box/tax-group-box.component';
+import { FormControlPipe } from '../pipes/form-control.pipe';
 
 
 
 @NgModule({
     declarations: [
         ProgressSpinnerComponent,
+        FormControlPipe,
         LedgerBoxComponent,
         ItemBoxComponent,
         TaxGroupBoxComponent,
@@ -32,6 +34,7 @@ import { TaxGroupBoxComponent } from '../components/tax-group-box/tax-group-box.
     ],
     exports: [
         ProgressSpinnerComponent,
+        FormControlPipe,
         LedgerBoxComponent,
         ItemBoxComponent,
         TaxGroupBoxComponent, 
@@ -40,7 +43,8 @@ import { TaxGroupBoxComponent } from '../components/tax-group-box/tax-group-box.
     ],
     providers: [
         LedgerServiceService,
-        CustomDateAdapterService
+        CustomDateAdapterService,
+        DatePipe
     ]
 })
 export class SharedModule { }

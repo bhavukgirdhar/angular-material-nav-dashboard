@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
+import { PLedgerMaster } from 'src/server';
 
 @Component({
   selector: 'app-sale-register',
@@ -18,18 +19,25 @@ export class SaleRegisterComponent implements OnInit {
     shareReplay()
   );
 
-  public startDate!: FormControl;
-  public endDate!: FormControl;
-  public itemdetailrequired!: boolean;
-  constructor(private breakpointObserver: BreakpointObserver,private customDateAdapterService  : CustomDateAdapterService) {
-    let txDate = new Date();
+  public saleRegisterForm!: FormGroup;
 
-    this.startDate = new FormControl(this.customDateAdapterService.createDate(txDate.getFullYear(),txDate.getMonth(), txDate.getDate()));
-    this.endDate = new FormControl(this.customDateAdapterService.createDate(txDate.getFullYear(),txDate.getMonth(), txDate.getDate()));
-
-   }
+  constructor(private breakpointObserver: BreakpointObserver,private customDateAdapterService  : CustomDateAdapterService, private formBuilder: FormBuilder) {
+    
+  }
 
   ngOnInit(): void {
+    let txDate = new Date();
+
+    this.saleRegisterForm = this.formBuilder.group({
+      ledger : new FormControl(''),
+      startDate: new FormControl(this.customDateAdapterService.createDate(txDate.getFullYear(),txDate.getMonth(), txDate.getDate())),
+      endDate : new FormControl(this.customDateAdapterService.createDate(txDate.getFullYear(),txDate.getMonth(), txDate.getDate())),
+      isItemDetailRequired : new FormControl(true)
+    });
+  }
+
+  onFromLedgerSelection(selectedLedger: PLedgerMaster) : void {
+    
   }
 
 }

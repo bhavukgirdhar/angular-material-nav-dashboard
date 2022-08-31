@@ -1,6 +1,6 @@
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
-import { map, Observable, shareReplay } from "rxjs";
+import { map, Observable, shareReplay, Subscription } from "rxjs";
 import { CustomDateAdapterService } from "src/app/services/date-adaptor";
 import { IItemLine, IOtherCharges, IOtherChargesLine, ITaxGroup, ITaxLine, PItemMaster, PLedgerMaster } from "src/server";
 import { LedgerServiceService } from "src/server/api/ledgerService.service";
@@ -12,6 +12,8 @@ import { MatTableDataSource } from "@angular/material/table";
 import { StockLocationServiceService } from "src/server/api/stockLocationService.service";
 import { OtherChargesServiceService } from "src/server/api/otherChargesService.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { VoucherNumberServiceService } from "src/server/api/voucherNumberService.service";
+import { Inject } from "@angular/core";
 
 
 export class OrderTxComponent {
@@ -51,8 +53,11 @@ export class OrderTxComponent {
   //Other Charges/Discount objects
   retrievedOtherCharges : IOtherCharges[] = [];
   addedOtherCharges : IOtherChargesLine[] = [];
+  otherChargeValueSubscription : Subscription;
   otherChargesDataSource = new MatTableDataSource<IOtherChargesLine>([]);
   otherChargesDisplayedColumns = ['chargesName','value','amount'];
+  selectedOtherChargeLineForEdit : IOtherChargesLine | undefined;
+  otherChargeLineEditMode : boolean = false;
   
 
   itemLinesTotalAmount = new FormControl(0);
@@ -69,8 +74,7 @@ export class OrderTxComponent {
     private otherChargesService : OtherChargesServiceService,private _snackBar: MatSnackBar) { 
     
       this.receivedAmount.valueChanges.subscribe({
-        next: (data) => {
-          console.log("value change received amount");
+        next: (data) => {          
           if(data > this.netFinalAmount.value) {
             this.returnAmount.setValue(Number((data - this.netFinalAmount.value).toFixed(2)));
           }else{
@@ -511,15 +515,26 @@ export class OrderTxComponent {
     this.itemLineEditMode = true;
   }
 
+  /**
+   * This function delete the selected line item.
+   */
   public deleteItemLine() : void{
 
   }
 
+  /**
+   * This function reset the item line form to its initial state.
+   */
   public cancelAddItem() : void {
     this.selectedLineItemForEdit = undefined;
     this.initializeItemForm();
   }
 
+  /**
+   * This function set the line item for Edit.
+   * Only set the selected item line not do edit.
+   * @param row 
+   */
   public setSelectedLineItem(row : IItemLine) : void {
     this.selectedLineItemForEdit = row;
   }
@@ -557,15 +572,7 @@ export class OrderTxComponent {
         });
 
         // Subscribe for value change in displayed value control.
-        this.otherChargesDiscountForm.controls["displayedValue"].valueChanges.subscribe({
-          next: (data) => {
-            let amount = Math.abs(this.otherChargesDiscountForm.controls["billAmount"].value * data/100);
-
-            this.otherChargesDiscountForm.patchValue({              
-              displayedAmount : amount
-            });
-          }
-        });
+        this.addSubscriptionOnOtherChargeValue();
 
 
       } else if(this.otherChargesDiscountForm.controls["type"].value == "FIXED") {
@@ -584,7 +591,24 @@ export class OrderTxComponent {
   }
 
   /**
-   * This function is executed when user add an other change line.
+   * This function add the subscription on other charge value if PERCENT type of other charge is selected.
+   */
+  private addSubscriptionOnOtherChargeValue() {
+    this.otherChargeValueSubscription = this.otherChargesDiscountForm.controls["displayedValue"].valueChanges.subscribe({
+      next: (data) => {
+        console.log("Triggered value change subscribe");
+        let amount = Math.abs(this.otherChargesDiscountForm.controls["billAmount"].value * data / 100);
+
+        this.otherChargesDiscountForm.patchValue({
+          displayedAmount: amount
+        });
+      }
+    });
+  }
+
+  /**
+   * This function is executed when user add or edit an other change line.
+   * Only works on click of ADD button.
    */
   public addOrEditOtherChargesLine() : void {
 
@@ -610,22 +634,99 @@ export class OrderTxComponent {
         });
       }
 
-      let iOtherChargeLine : IOtherChargesLine = {};
+      if(!this.otherChargeLineEditMode) { // New Other Charge Line Mode
+        let iOtherChargeLine : IOtherChargesLine = {};
 
-      iOtherChargeLine.jacksontype = "OtherChargesLineImpl";
-      iOtherChargeLine.chargesId = this.otherChargesDiscountForm.controls["chargesId"].value;
-      iOtherChargeLine.chargesName = this.otherChargesDiscountForm.controls["chargesName"].value;
-      iOtherChargeLine.value = this.otherChargesDiscountForm.controls["value"].value;
-      iOtherChargeLine.amount = this.otherChargesDiscountForm.controls["amount"].value;
+        iOtherChargeLine.jacksontype = "OtherChargesLineImpl";
+        iOtherChargeLine.chargesId = this.otherChargesDiscountForm.controls["chargesId"].value;
+        iOtherChargeLine.chargesName = this.otherChargesDiscountForm.controls["chargesName"].value;
+        iOtherChargeLine.value = this.otherChargesDiscountForm.controls["value"].value;
+        iOtherChargeLine.amount = this.otherChargesDiscountForm.controls["amount"].value;
+  
+        this.addedOtherCharges = [...this.addedOtherCharges, iOtherChargeLine];
+      } else { // Edit Mode
 
-      this.addedOtherCharges = [...this.addedOtherCharges, iOtherChargeLine];
+        this.addedOtherCharges = this.addedOtherCharges.map((ocL) => {
+          if(ocL.chargesId == this.otherChargesDiscountForm.controls["chargesId"].value) {
+            ocL.chargesId = this.otherChargesDiscountForm.controls["chargesId"].value;
+            ocL.chargesName = this.otherChargesDiscountForm.controls["chargesName"].value;
+            ocL.value = this.otherChargesDiscountForm.controls["value"].value;
+            ocL.amount = this.otherChargesDiscountForm.controls["amount"].value;
+          }
+          return ocL;
+        });
 
+        this.otherChargeLineEditMode = false;
+        this.selectedOtherChargeLineForEdit = undefined;
+      }
+
+      this.otherChargeValueSubscription.unsubscribe(); // Unsubscribe the subscription.
       this.updateOtherChargesTotalAmount();
       this.otherChargesDataSource.data = this.addedOtherCharges;
+      this.otherChargesDiscountForm.reset();
     }
    
   }
-  updateOtherChargesTotalAmount() {
+
+  /**
+  * This function reset the other charge form in case if user select wrong or change mind.
+  */
+  public cancelOtherCharges() : void {
+    this.selectedOtherChargeLineForEdit = undefined;
+    this.otherChargesDiscountForm.reset();
+  }
+
+  /**
+   * This function is executed when user click on EDIT button.
+   * The values and visibility is updated in form group as per the selected other charge line.
+   */
+  public editOtherChargeLine() : void {
+
+    // Get original other charge line to get type and discount value.
+    let originalOtherCharge =  this.retrievedOtherCharges
+      .find((otherCharge) => otherCharge.id == this.selectedOtherChargeLineForEdit?.chargesId);    
+    
+   this.otherChargesDiscountForm.patchValue({
+    chargesId: this.selectedOtherChargeLineForEdit?.chargesId,
+    chargesName: this.selectedOtherChargeLineForEdit?.chargesName,
+    discount: originalOtherCharge?.discount,
+    type: originalOtherCharge?.type,
+    billAmount: this.itemLinesTotalAmount.value,
+    value: this.selectedOtherChargeLineForEdit?.value,
+    amount: this.selectedOtherChargeLineForEdit?.amount,
+    displayedValue: Math.abs(this.selectedOtherChargeLineForEdit?.value!),
+    displayedAmount: Math.abs(this.selectedOtherChargeLineForEdit?.amount!)
+   }); 
+
+   if(this.otherChargesDiscountForm.controls["type"].value == "PERCENT") {        
+    this.otherChargesDiscountForm.controls["displayedValue"].enable();
+    this.otherChargesDiscountForm.controls["displayedAmount"].enable();
+
+    this.addSubscriptionOnOtherChargeValue(); // Adding subscription again as 
+                                              // it was unsubscribed after addition of other charge line.
+
+   }else{
+    this.otherChargesDiscountForm.controls["displayedValue"].disable();
+    this.otherChargesDiscountForm.controls["displayedAmount"].enable();
+   }
+
+   this.otherChargeLineEditMode = true;
+  }
+
+  public deleteOtherChargeLine() : void {
+
+  }
+
+  public setSelectedOtherChargeLine(row: IOtherChargesLine) : void {
+    this.selectedOtherChargeLineForEdit = row;
+    console.log(this.selectedOtherChargeLineForEdit);
+  }
+
+  /**
+   * This function updates the total other charges added from Other Charge form.
+   * Further updates the Net final amount.
+   */
+  private updateOtherChargesTotalAmount() : void{
     this.otherChargesTotalAmount.setValue(0);
     let otherChargesAmount = 0;
 
@@ -636,12 +737,12 @@ export class OrderTxComponent {
     this.otherChargesTotalAmount.setValue(otherChargesAmount);
     this.updateNetFinalAmount();
   }
+
+  /**
+   * This function updates the net final amount.
+   */
   updateNetFinalAmount() {
     this.netFinalAmount.setValue(this.itemLinesTotalAmount.value + this.otherChargesTotalAmount.value);
-  }
-
-  public cancelOtherCharges() : void {
-
   }
 
   getOrderFormControl(name: string) {

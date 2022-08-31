@@ -11,7 +11,6 @@ import { ReceiptComponent } from './voucher/receipt/receipt.component';
 import { VoucherNumberServiceService } from 'src/server/api/voucherNumberService.service';
 import { ReceiptTxServiceService } from 'src/server/api/receiptTxService.service';
 import { PaymentTxServiceService } from 'src/server/api/paymentTxService.service';
-import { FormControlPipe } from 'src/app/shared/pipes/form-control.pipe';
 import { JournalComponent } from './journal/journal.component';
 import { JournalTxServiceService } from 'src/server/api/journalTxService.service';
 
@@ -32,11 +31,10 @@ import { OtherChargesServiceService } from 'src/server/api/otherChargesService.s
     declarations: [
         TransactionBaseViewComponent,          
         PaymentComponent,
-        ReceiptComponent,
-        FormControlPipe,
+        ReceiptComponent,        
         JournalComponent,        
         SaleComponent,
-        PurchaseComponent,
+        PurchaseComponent,   
         SaleOrderComponent
     ],
     imports: [

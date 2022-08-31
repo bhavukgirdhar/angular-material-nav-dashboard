@@ -23,11 +23,9 @@ import { SaleRegisterComponent } from './sale-register/sale-register.component';
 import { PurchaseRegisterComponent } from './purchase-register/purchase-register.component';
 import { ItemRegisterComponent } from './item-register/item-register.component';
 
-
-
 @NgModule({
   declarations: [ 
-    ReportsBaseViewComponent,
+    ReportsBaseViewComponent,    
     CashInHandComponent,
     OverstockReportComponent,
     DayBookComponent,

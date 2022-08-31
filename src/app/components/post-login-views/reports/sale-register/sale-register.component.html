@@ -11,21 +11,33 @@
             </mat-card-title>
         </mat-card-header>
         <mat-card-content class="text-center">
-            <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="start"
-                [class]="(isHandset$ | async) ? 'pb-10' : 'search-criteria'">
+            <form [formGroup]="saleRegisterForm">
 
-                <div>
-                    <i-mat-datepicker [label]="'Start Date'" [dateFormControl]="startDate"></i-mat-datepicker>
-                </div>
-                <div [class]="(isHandset$ | async) ? '' : 'ml-10'">
-                    <i-mat-datepicker [label]="'End Date'" [dateFormControl]="endDate"></i-mat-datepicker>
-                </div>
-                <div fxflexfill fxLayout="column" [class]="'ml-10 mr-10'">
-                    <mat-checkbox [(ngModel)]="itemdetailrequired">Show Item Details</mat-checkbox>
-        
-                </div>
-            </div>
+                <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="start"
+                    [class]="(isHandset$ | async) ? 'pb-10' : 'search-criteria'">
+                    <div>
+                        <Ledger-Box [fxFlex]="(isHandset$ | async) ? 100 : 50"
+                            [ledgerFormControl]="saleRegisterForm.controls['ledger'] | convertToFormControl"
+                            [ledgerBoxTitle]="'From Ledger'" (onLedgerSelection)="onFromLedgerSelection($event)">
+                        </Ledger-Box>
+                    </div>
 
+                    <div>
+                        <i-mat-datepicker [label]="'Start Date'" 
+                            [dateFormControl]="saleRegisterForm.controls['startDate'] | convertToFormControl">
+                        </i-mat-datepicker>
+                    </div>
+                    <div [class]="(isHandset$ | async) ? '' : 'ml-10'">
+                        <i-mat-datepicker [label]="'End Date'"
+                             [dateFormControl]="saleRegisterForm.controls['endDate'] | convertToFormControl">
+                        </i-mat-datepicker>
+                    </div>
+                    <div fxflexfill fxLayout="column" [class]="'ml-10 mr-10'">
+                        <mat-checkbox formControlName="isItemDetailRequired">Show Item Details</mat-checkbox>
+
+                    </div>
+                </div>
+            </form>
 
         </mat-card-content>
     </mat-card>
