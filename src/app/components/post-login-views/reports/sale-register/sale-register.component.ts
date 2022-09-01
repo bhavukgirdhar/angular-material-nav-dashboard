@@ -4,7 +4,7 @@ import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { PLedgerMaster } from 'src/server';
+import { PLedgerMaster, TaxServiceGetReport } from 'src/server';
 
 @Component({
   selector: 'app-sale-register',
@@ -29,11 +29,19 @@ export class SaleRegisterComponent implements OnInit {
     let txDate = new Date();
 
     this.saleRegisterForm = this.formBuilder.group({
-      ledger : new FormControl(''),
+      ledgerId : new FormControl(''),
+      ledgerName : new FormControl(''),
       startDate: new FormControl(this.customDateAdapterService.createDate(txDate.getFullYear(),txDate.getMonth(), txDate.getDate())),
       endDate : new FormControl(this.customDateAdapterService.createDate(txDate.getFullYear(),txDate.getMonth(), txDate.getDate())),
       isItemDetailRequired : new FormControl(true)
     });
+  }
+
+  getReport() : void{
+    console.log(this.saleRegisterForm.controls["ledgerName"].value);
+    console.log(this.saleRegisterForm.controls["startDate"].value);
+    console.log(this.saleRegisterForm.controls["endDate"].value);
+    console.log(this.saleRegisterForm.controls["isItemDetailRequired"].value);
   }
 
   onFromLedgerSelection(selectedLedger: PLedgerMaster) : void {

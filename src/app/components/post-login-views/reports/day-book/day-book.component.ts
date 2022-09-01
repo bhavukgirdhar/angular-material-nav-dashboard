@@ -1,6 +1,8 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Component, OnInit } from '@angular/core';
+import { ComponentType } from '@angular/cdk/portal';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
@@ -8,11 +10,15 @@ import { DayBookGridLine } from 'src/app/models/DayBookGridLine';
 import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
 import { DayBook, DayBookReportArgument } from 'src/server';
 import { DayBookServiceService } from 'src/server/api/dayBookService.service';
+import { JournalComponent } from '../../transaction/journal/journal.component';
+import { PaymentComponent } from '../../transaction/voucher/payment/payment.component';
+import { ReceiptComponent } from '../../transaction/voucher/receipt/receipt.component';
 
 @Component({
   selector: 'app-day-book',
   templateUrl: './day-book.component.html',
   styleUrls: ['./day-book.component.css'],
+  encapsulation: ViewEncapsulation.None 
 })
 export class DayBookComponent implements OnInit {
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
@@ -35,7 +41,9 @@ export class DayBookComponent implements OnInit {
   private selectedTxId : string;
   private selectedTxType : string;
 
-  constructor(private breakpointObserver: BreakpointObserver,private router: Router, private customDateAdapterService  : CustomDateAdapterService, private dayBookService : DayBookServiceService) { 
+  constructor(private breakpointObserver: BreakpointObserver,private router: Router, 
+    private customDateAdapterService  : CustomDateAdapterService, private dayBookService : DayBookServiceService,
+    public dialog: MatDialog) { 
     let txDate = new Date();
 
     this.fromDate = new FormControl(this.customDateAdapterService.createDate(txDate.getFullYear(),txDate.getMonth(), txDate.getDate()));
@@ -103,8 +111,46 @@ export class DayBookComponent implements OnInit {
 
   }
 
-  onRowEdit() : void {
-    this.router.navigate(['/main/transaction/editTx', this.selectedTxType, this.selectedTxId]);
+  onRowEdit() : void { 
+
+    switch(this.selectedTxType) {
+      case "Journal" :
+        const JournalDialogRef = this.dialog.open(JournalComponent, { 
+          panelClass: 'custom-dialog-container', 
+          data : {
+            txId : this.selectedTxId
+          } 
+        });
+
+        JournalDialogRef.afterClosed().subscribe(result => {
+          this.getDayBookReport();
+        });
+        break;
+      case "Payment" :        
+        const PaymentDialogRef = this.dialog.open(PaymentComponent, { 
+          panelClass: 'custom-dialog-container', 
+          data : {
+            txId : this.selectedTxId
+          } 
+        });
+        PaymentDialogRef.afterClosed().subscribe(result => {
+          this.getDayBookReport();
+        });
+        break;
+      case "Receipt" :
+        
+        const ReceiptDialogRef = this.dialog.open(ReceiptComponent, { 
+          panelClass: 'custom-dialog-container', 
+          data : {
+            txId : this.selectedTxId
+          } 
+        });
+        ReceiptDialogRef.afterClosed().subscribe(result => {
+          this.getDayBookReport();
+        });
+        break;
+    }  
+
   }
 
   private prepareTreeGridData(dayBookData : Array<DayBook>) : void {  
@@ -161,4 +207,5 @@ export class DayBookComponent implements OnInit {
     
     this.data = rowData;
   }
+
 }

@@ -1,6 +1,7 @@
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
 import { OverlayService } from 'src/app/services/overlay.service';
@@ -23,28 +24,29 @@ export class PaymentComponent extends VoucherComponent implements OnInit {
   constructor(private paymentBreakpointObserver: BreakpointObserver,private route: ActivatedRoute, private paymentOverlayService : OverlayService, private paymentFormBuilder : FormBuilder, 
     private voucherNumberService: VoucherNumberServiceService,
     private paymentService : PaymentTxServiceService, private receiptService: ReceiptTxServiceService, private  paymentLedgerService : LedgerServiceService,
-    private paymentDateAdapterService  : CustomDateAdapterService) {
-      super(paymentBreakpointObserver, paymentOverlayService, paymentFormBuilder, "PaymentTxImpl", paymentService, receiptService, paymentLedgerService, paymentDateAdapterService);
+    private paymentDateAdapterService  : CustomDateAdapterService,
+    @Inject(MAT_DIALOG_DATA) public data: { txId: number },
+    public paymentDialogRef: MatDialogRef<PaymentComponent>) {
+      super(paymentBreakpointObserver, paymentOverlayService, paymentFormBuilder, "PaymentTxImpl", paymentService, receiptService, paymentLedgerService, paymentDateAdapterService, paymentDialogRef);
       this.headerTitle = "Payment";
   }
 
   ngOnInit(): void {
-    this.paymentTx = {};
+    this.paymentTx = {};   
     
-    this.route.params.subscribe(params => {
-      if (params['paymentId'])  {
-          this.paymentService.findById(params['paymentId']).subscribe({
-            next: (data) => {
-              console.log(data);
-              //Initialize voucher form with the returned data
-              this.initializeVocherFormInEditCase(data, undefined);
-            },
-            error: () =>{}
-          });
-      }else {
-        this.initializeNewVoucherForm();        
-      }
-    });  
+    if (!!this.data.txId) {
+        this.paymentService.findById(this.data.txId).subscribe({
+          next: (data) => {
+            console.log(data);
+            //Initialize voucher form with the returned data
+            this.initializeVocherFormInEditCase(data, undefined);
+          },
+          error: () =>{}
+        });
+    }else {
+      this.initializeNewVoucherForm();        
+    }
+    
   }
 
   public getNextVoucherNumber() {

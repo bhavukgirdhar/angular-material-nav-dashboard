@@ -1,6 +1,7 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 
 import { map, Observable, shareReplay } from 'rxjs';
 import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
@@ -27,7 +28,7 @@ export abstract class VoucherComponent {
   constructor(private breakpointObserver: BreakpointObserver, private overlayService: OverlayService, private formBuilder: FormBuilder,
     @Inject(String) private jacksonType: String, private paymentTxService: PaymentTxServiceService,
     private receiptTxService: ReceiptTxServiceService, private ledgerService: LedgerServiceService,
-    private customDateAdapterService  : CustomDateAdapterService) {
+    private customDateAdapterService  : CustomDateAdapterService, public dialogRef: MatDialogRef<VoucherComponent>) {
     this.headerTitle = "";    
 
     this.filterLedgersByGroupNames = ["Cash-in-hand", "Bank Accounts", "Bank OD A/c", "Bank OCC A/c"];
@@ -236,14 +237,16 @@ export abstract class VoucherComponent {
           this.paymentTxService.save(voucherForSave.value).subscribe({
             next: (data) => {
               this.initializeNewVoucherForm();
+              this.overlayService.disableProgressSpinner();
             },
             error: () => { this.overlayService.disableProgressSpinner(); }
           });
         }else {
 
           this.paymentTxService.update(voucherForSave.value).subscribe({
-            next: (data) => {
-              this.initializeNewVoucherForm();
+            next: (data) => {    
+              this.overlayService.disableProgressSpinner();         
+              this.dialogRef.close();              
             },
             error: () => { this.overlayService.disableProgressSpinner(); }
           });
@@ -258,6 +261,7 @@ export abstract class VoucherComponent {
           this.receiptTxService.save(voucherForSave.value).subscribe({
             next: (data) => {
               this.initializeNewVoucherForm();
+              this.overlayService.disableProgressSpinner();
             },
             error: () => { this.overlayService.disableProgressSpinner(); }
           });
@@ -266,7 +270,8 @@ export abstract class VoucherComponent {
 
           this.receiptTxService.update(voucherForSave.value).subscribe({
             next: (data) => {
-              this.initializeNewVoucherForm();
+              this.overlayService.disableProgressSpinner();
+              this.dialogRef.close();
             },
             error: () => { this.overlayService.disableProgressSpinner(); }
           });

@@ -15,9 +15,9 @@
 
                 <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="start"
                     [class]="(isHandset$ | async) ? 'pb-10' : 'search-criteria'">
-                    <div>
-                        <Ledger-Box [fxFlex]="(isHandset$ | async) ? 100 : 50"
-                            [ledgerFormControl]="saleRegisterForm.controls['ledger'] | convertToFormControl"
+                    <div class="mr-10">
+                        <Ledger-Box [fxFlex]="100"
+                            [ledgerFormControl]="saleRegisterForm.controls['ledgerName'] | convertToFormControl"
                             [ledgerBoxTitle]="'From Ledger'" (onLedgerSelection)="onFromLedgerSelection($event)">
                         </Ledger-Box>
                     </div>
@@ -36,6 +36,11 @@
                         <mat-checkbox formControlName="isItemDetailRequired">Show Item Details</mat-checkbox>
 
                     </div>
+                <div>
+                    <button mat-raised-button color="primary" (click)="getReport()">
+                        Show
+                      </button> 
+                </div>
                 </div>
             </form>
 

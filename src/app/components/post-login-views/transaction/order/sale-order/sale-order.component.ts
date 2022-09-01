@@ -20,7 +20,7 @@ import { OrderTxComponent } from '../order-tx.component';
   styleUrls: ['../order-tx.component.css']
 })
 export class SaleOrderComponent extends OrderTxComponent  implements OnInit {
-
+ 
   constructor(private sOBreakpointObserver: BreakpointObserver, private childFormBuilder : FormBuilder, 
     private childDateAdapterService  : CustomDateAdapterService, private voucherNumberService : VoucherNumberServiceService,  
     private childLedgerService : LedgerServiceService,
@@ -47,5 +47,10 @@ export class SaleOrderComponent extends OrderTxComponent  implements OnInit {
         }
     });
   }
+
+  public saveOrderTx(): void {
+    
+  }
+
 
 }

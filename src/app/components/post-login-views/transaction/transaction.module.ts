@@ -26,6 +26,7 @@ import { LedgerAttributesServiceService } from 'src/server/api/ledgerAttributesS
 import { BillingClassificationServiceService } from 'src/server/api/billingClassificationService.service';
 import { StockLocationServiceService } from 'src/server/api/stockLocationService.service';
 import { OtherChargesServiceService } from 'src/server/api/otherChargesService.service';
+import { SaleOrderTxServiceService } from 'src/server/api/saleOrderTxService.service';
 
 @NgModule({
     declarations: [
@@ -59,7 +60,8 @@ import { OtherChargesServiceService } from 'src/server/api/otherChargesService.s
       TaxableEntityServiceService,
       TransactionsProvider,
       StockLocationServiceService,
-      OtherChargesServiceService
+      OtherChargesServiceService,
+      SaleOrderTxServiceService
     ],
     bootstrap: []
   })

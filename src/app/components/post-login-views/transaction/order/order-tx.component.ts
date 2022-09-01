@@ -12,11 +12,10 @@ import { MatTableDataSource } from "@angular/material/table";
 import { StockLocationServiceService } from "src/server/api/stockLocationService.service";
 import { OtherChargesServiceService } from "src/server/api/otherChargesService.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { VoucherNumberServiceService } from "src/server/api/voucherNumberService.service";
-import { Inject } from "@angular/core";
 
 
-export class OrderTxComponent {
+
+export abstract class OrderTxComponent {
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
   .pipe(
@@ -51,8 +50,8 @@ export class OrderTxComponent {
   
 
   //Other Charges/Discount objects
-  retrievedOtherCharges : IOtherCharges[] = [];
-  addedOtherCharges : IOtherChargesLine[] = [];
+  retrievedOtherCharges : IOtherCharges[] = []; // From server.
+  addedOtherCharges : IOtherChargesLine[] = []; // Added by user.
   otherChargeValueSubscription : Subscription;
   otherChargesDataSource = new MatTableDataSource<IOtherChargesLine>([]);
   otherChargesDisplayedColumns = ['chargesName','value','amount'];
@@ -103,13 +102,22 @@ export class OrderTxComponent {
         //Get billing group associated with Cash Ledger
         this.getBillingGroup(data.id);
 
-        //Initialize the item form on load.
+        //Initialize the item form on load and other properties.
         this.initializeItemForm();
         this.itemLines = [];
+        this.itemLinesDataSource.data = this.itemLines;
 
+        // Inititalize the Other Charges Form and other properties.
         this.getOtherCharges();
         this.initializeOtherChargesDiscountForm();
         this.addedOtherCharges = [];
+        this.otherChargesDataSource.data = this.addedOtherCharges;
+
+        this.itemLinesTotalAmount.setValue(0);
+        this.otherChargesTotalAmount.setValue(0);
+        this.netFinalAmount.setValue(0);
+        this.receivedAmount.setValue(0);
+        this.returnAmount.setValue(0);
 
         this.isFormLoaded = true;
       },
@@ -135,7 +143,6 @@ export class OrderTxComponent {
   private initializeItemForm() {
 
     this.itemForm = this.formBuilder.group({
-      jacksontype: 'ItemLineImpl',
       itemId: new FormControl(''),
       itemName: new FormControl(''),
       itemProductCode: new FormControl({ value: '', disabled: true }),
@@ -444,8 +451,8 @@ export class OrderTxComponent {
     this.itemForm.controls["itemName"].updateValueAndValidity();
 
     if(this.itemForm.valid) {
-      let itemLine : IItemLine = this.itemForm.getRawValue();
-      console.log(itemLine);
+      let itemLine : IItemLine = this.itemForm.getRawValue();      
+      itemLine.jacksontype = 'ItemLineImpl';
 
       if(!this.itemLineEditMode) { //New Item Line added
         this.itemLines = [...this.itemLines, itemLine];
@@ -753,5 +760,5 @@ export class OrderTxComponent {
     return this.itemForm.get(name) as FormControl;
   }
 
-  
+  public abstract saveOrderTx() : void;
 }

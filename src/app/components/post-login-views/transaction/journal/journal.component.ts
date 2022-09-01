@@ -1,6 +1,7 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
@@ -54,29 +55,28 @@ export class JournalComponent implements OnInit , AfterViewInit{
   constructor(private breakpointObserver: BreakpointObserver, private customDateAdapterService  : CustomDateAdapterService, private formBuilder : FormBuilder, 
     private route: ActivatedRoute,private router: Router,
     public voucherNumberService: VoucherNumberServiceService,private journalTxService: JournalTxServiceService,
-    private _snackBar: MatSnackBar) {     
+    private _snackBar: MatSnackBar,
+    @Inject(MAT_DIALOG_DATA) public data: { txId: number },
+    public dialogRef: MatDialogRef<JournalComponent>) {
      
   }
 
   ngOnInit(): void {
     
-    this.route.params.subscribe(params => {
-      if (params['journalId']) {
-          this.journalTxService.findById(params['journalId']).subscribe({
-              next: (data) => {
-                this.editJournalTxData = data;
-                this.initalizeJournalForm(); 
-                this.isFormLoaded = true;                 
-              },
-              error: () =>{}
-            }
-          );
-      }else {
-        this.initalizeJournalForm();  
-        this.getNewVoucherNo();
-      }
-    });    
-
+    if (!!this.data.txId) {
+        this.journalTxService.findById(this.data.txId).subscribe({
+            next: (data) => {
+              this.editJournalTxData = data;
+              this.initalizeJournalForm(); 
+              this.isFormLoaded = true;                 
+            },
+            error: () =>{}
+          }
+        );
+    }else {
+      this.initalizeJournalForm();  
+      this.getNewVoucherNo();
+    }
    
   } 
 
@@ -148,9 +148,9 @@ export class JournalComponent implements OnInit , AfterViewInit{
    */
   private initializeEntryForm() {
     this.entryForm = this.formBuilder.group({
-      ledgerName: new FormControl(null, [Validators.required]),
+      ledgerName: new FormControl(null),
       ledgerId: new FormControl(null),
-      lineAmount: new FormControl(null, [Validators.required]),
+      lineAmount: new FormControl(null),
       txType: new FormControl(false),
       description: new FormControl()
     });
@@ -224,6 +224,12 @@ export class JournalComponent implements OnInit , AfterViewInit{
    * This function is called when user add/edit journal entry from Ledger detail line form.
    */
   addJounralEntry() : void {
+
+    this.entryForm.controls["ledgerName"].addValidators([ Validators.required]);
+    this.entryForm.controls["lineAmount"].addValidators([ Validators.required]);
+    this.entryForm.controls["ledgerName"].updateValueAndValidity();
+    this.entryForm.controls["lineAmount"].updateValueAndValidity();
+
     if(this.entryForm.valid) {
       let ledgerDetailLines = this.journalForm.get("ledgerDetailLines")?.value;
 
@@ -271,6 +277,11 @@ export class JournalComponent implements OnInit , AfterViewInit{
     
       this.dataSource.data = this.journalForm.get("ledgerDetailLines")?.value as Array<ILedgerDetailLine>;       
       this.resetEntryForm();
+
+      this.entryForm.controls["ledgerName"].clearValidators();
+      this.entryForm.controls["lineAmount"].clearValidators();
+      this.entryForm.controls["ledgerName"].updateValueAndValidity();
+      this.entryForm.controls["lineAmount"].updateValueAndValidity();
     }    
   }
 
@@ -375,8 +386,8 @@ export class JournalComponent implements OnInit , AfterViewInit{
       if(!!this.editJournalTxData) {
 
         this.journalTxService.update(journalFormForSave.value).subscribe({
-          next: (data) => {
-            this.router.navigate(['/main/transaction/journal']);
+          next: (data) => {            
+            this.dialogRef.close();
           },  
           error: () => { }
         });

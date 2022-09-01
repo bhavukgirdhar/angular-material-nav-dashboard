@@ -4,16 +4,17 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
+import { OverlayService } from 'src/app/services/overlay.service';
 import { TransactionsProvider } from 'src/app/services/transactionsProvider';
 import { BillingClassificationServiceService } from 'src/server/api/billingClassificationService.service';
 import { LedgerAttributesServiceService } from 'src/server/api/ledgerAttributesService.service';
 import { LedgerServiceService } from 'src/server/api/ledgerService.service';
 import { OtherChargesServiceService } from 'src/server/api/otherChargesService.service';
+import { SaleOrderTxServiceService } from 'src/server/api/saleOrderTxService.service';
 import { StockLocationServiceService } from 'src/server/api/stockLocationService.service';
 import { TaxableEntityServiceService } from 'src/server/api/taxableEntityService.service';
-import { TaxClassServiceService } from 'src/server/api/taxClassService.service';
-import { TaxGroupServiceService } from 'src/server/api/taxGroupService.service';
 import { VoucherNumberServiceService } from 'src/server/api/voucherNumberService.service';
+import { ISaleOrderTx } from 'src/server/model/models';
 import { OrderTxComponent } from '../order-tx.component';
 
 @Component({
@@ -28,7 +29,8 @@ export class SaleComponent extends OrderTxComponent  implements OnInit {
     private childstockLocationService : StockLocationServiceService, private childTaxableEntityService : TaxableEntityServiceService,
     private childTxProvider : TransactionsProvider, private childLedgerAttributesService : LedgerAttributesServiceService,
     private childBillingClassificationService : BillingClassificationServiceService,
-    private childOtherChargesService : OtherChargesServiceService, private _childSnackBar: MatSnackBar, private datePipe: DatePipe) {
+    private childOtherChargesService : OtherChargesServiceService, private _childSnackBar: MatSnackBar, private datePipe: DatePipe, private saleOrderTxService : SaleOrderTxServiceService,
+    private overlayService : OverlayService) {
     super(saleBreakpointObserver, childFormBuilder, childDateAdapterService, 
       childLedgerService, childstockLocationService, childTaxableEntityService
       ,childTxProvider, childLedgerAttributesService, childBillingClassificationService, childOtherChargesService,_childSnackBar);
@@ -47,6 +49,37 @@ export class SaleComponent extends OrderTxComponent  implements OnInit {
           });
         }
     });
+  }
+
+  public saveOrderTx(): void {
+    if(this.netFinalAmount.value != 0) {
+
+      this.overlayService.enableProgressSpinner();
+
+      let  tx : ISaleOrderTx = {};
+      tx.jacksontype = "SaleOrderTxImpl";
+      tx.transactiondate = this.orderTxForm.controls["transactiondate"].value;
+      tx.billingGroup = this.childTxProvider.billingGroup().id;
+      tx.billingClassification = this.childTxProvider.billingClassification().id;
+      tx.vouchernumber = this.orderTxForm.controls["vouchernumber"].value;
+      tx.ledger = this.orderTxForm.controls["ledgerId"].value;
+      tx.printName = this.orderTxForm.controls["billName"].value;
+      tx.taxableLines = this.itemLines;
+      tx.otherChargesLines = this.addedOtherCharges;
+      tx.otherChargesTotal = this.otherChargesTotalAmount.value;
+      tx.receivedAmount = this.receivedAmount.value;
+      tx.returnAmount = this.returnAmount.value;     
+
+      this.saleOrderTxService.save(tx).subscribe({
+        next: (data) => {          
+          this.initializeOrderTxForm();
+          this.overlayService.disableProgressSpinner();
+        },
+        error: () => {
+          this.overlayService.disableProgressSpinner();
+        }
+      });
+    }
   }
 
 }

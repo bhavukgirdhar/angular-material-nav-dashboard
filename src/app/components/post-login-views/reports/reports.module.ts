@@ -22,6 +22,20 @@ import { DayBookServiceService } from 'src/server/api/dayBookService.service';
 import { SaleRegisterComponent } from './sale-register/sale-register.component';
 import { PurchaseRegisterComponent } from './purchase-register/purchase-register.component';
 import { ItemRegisterComponent } from './item-register/item-register.component';
+import { VoucherNumberServiceService } from 'src/server/api/voucherNumberService.service';
+import { ReceiptTxServiceService } from 'src/server/api/receiptTxService.service';
+import { PaymentTxServiceService } from 'src/server/api/paymentTxService.service';
+import { JournalTxServiceService } from 'src/server/api/journalTxService.service';
+import { ItemServiceService } from 'src/server/api/itemService.service';
+import { BillingClassificationServiceService } from 'src/server/api/billingClassificationService.service';
+import { LedgerAttributesServiceService } from 'src/server/api/ledgerAttributesService.service';
+import { TaxClassServiceService } from 'src/server/api/taxClassService.service';
+import { TaxGroupServiceService } from 'src/server/api/taxGroupService.service';
+import { TaxableEntityServiceService } from 'src/server/api/taxableEntityService.service';
+import { TransactionsProvider } from 'src/app/services/transactionsProvider';
+import { StockLocationServiceService } from 'src/server/api/stockLocationService.service';
+import { OtherChargesServiceService } from 'src/server/api/otherChargesService.service';
+import { SaleOrderTxServiceService } from 'src/server/api/saleOrderTxService.service';
 
 @NgModule({
   declarations: [ 
@@ -50,7 +64,21 @@ import { ItemRegisterComponent } from './item-register/item-register.component';
     DayBookServiceService,
     LedgerServiceService,
     OverstockReportServiceService,
-    BalanceSheetReportServiceService    
+    BalanceSheetReportServiceService,
+    VoucherNumberServiceService,   
+    ReceiptTxServiceService,
+    PaymentTxServiceService,
+    JournalTxServiceService,
+    ItemServiceService,
+    BillingClassificationServiceService,
+    LedgerAttributesServiceService,
+    TaxClassServiceService,
+    TaxGroupServiceService,
+    TaxableEntityServiceService,
+    TransactionsProvider,
+    StockLocationServiceService,
+    OtherChargesServiceService,
+    SaleOrderTxServiceService   
   ],
   bootstrap: []
 })

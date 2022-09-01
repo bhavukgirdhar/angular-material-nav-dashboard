@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-transaction-base-view',
+  selector: 'transaction-base-view',
   templateUrl: './transaction-base-view.component.html',
   styleUrls: ['./transaction-base-view.component.css']
 })

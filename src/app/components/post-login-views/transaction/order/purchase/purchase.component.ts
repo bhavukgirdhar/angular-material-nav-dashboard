@@ -49,4 +49,8 @@ export class PurchaseComponent extends OrderTxComponent  implements OnInit {
     });
   }
 
+  public saveOrderTx(): void {
+    
+  }
+
 }
