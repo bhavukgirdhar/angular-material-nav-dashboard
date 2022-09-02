@@ -38,7 +38,7 @@
                             #vouchernumber name="vouchernumber" id="vouchernumber" 
                             formControlName="vouchernumber">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="innov-matFormField ml-10" [fxFlex]="(isHandset$ | async) ? 100 : 50">
+                    <mat-form-field appearance="outline" [class]="(isHandset$ | async) ? 'innov-matFormField' : 'innov-matFormField ml-10'" [fxFlex]="(isHandset$ | async) ? 100 : 50">
                         <mat-label>Reference No.</mat-label>
                         <input matInput placeholder="Enter Reference No."
                             #referenceNo name="referenceNo" id="referenceNo"
@@ -51,7 +51,7 @@
                         <input matInput placeholder="Enter Ref. Invoice No."
                             #referenceInvoiceNo name="referenceInvoiceNo" id="referenceNo">
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="innov-matFormField ml-10" [fxFlex]="(isHandset$ | async) ? 100 : 50">
+                    <mat-form-field appearance="outline" [class]="(isHandset$ | async) ? 'innov-matFormField' : 'innov-matFormField ml-10'" [fxFlex]="(isHandset$ | async) ? 100 : 50">
                         <mat-label>Amount</mat-label>
                         <input matInput placeholder="Enter Amount"
                             #amount name="amount" id="amount"
@@ -67,7 +67,7 @@
                         (onLedgerSelection)="onByLedgerSelection($event)">
                     </Ledger-Box>
 
-                    <mat-form-field appearance="outline" class="innov-matFormField ml-10" [fxFlex]="(isHandset$ | async) ? 100 : 50">
+                    <mat-form-field appearance="outline" [class]="(isHandset$ | async) ? 'innov-matFormField' : 'innov-matFormField ml-10'" [fxFlex]="(isHandset$ | async) ? 100 : 50">
                         <mat-label>Description</mat-label>
                         <input matInput placeholder="Enter Description"
                             #description name="description" id="description"

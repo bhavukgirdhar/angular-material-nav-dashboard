@@ -12,7 +12,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class OverlayService {
 
-    private displayProgressSpinnerSubject = new BehaviorSubject<any>(false);
+    public displayProgressSpinnerSubject = new BehaviorSubject<any>(false);
     public displayProgressSpinner$ = this.displayProgressSpinnerSubject.asObservable();
 
     constructor(private overlay: Overlay) {

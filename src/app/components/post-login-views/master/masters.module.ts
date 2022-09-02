@@ -9,7 +9,6 @@ import { MastersRoutingModule } from './masters-routing.module';
 import { ItemServiceService } from 'src/server/api/itemService.service';
 import { MatTooltipDefaultOptions, MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
-import { AppOverlayModule } from 'src/app/shared/modules/overlay.module';
 import { NewItemComponent } from './new-item/new-item.component';
 import { UnitServiceService } from 'src/server/api/unitService.service';
 import { ItemGroupServiceService } from 'src/server/api/itemGroupService.service';
@@ -37,8 +36,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
     FlexLayoutModule,
     MastersRoutingModule,
     SharedModule,
-    AngularMaterialModule,
-    AppOverlayModule
+    AngularMaterialModule
   ],
   providers: [
     ItemServiceService,

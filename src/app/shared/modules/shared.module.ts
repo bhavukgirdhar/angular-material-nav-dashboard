@@ -12,6 +12,7 @@ import { IMatDatepickerComponent } from '../components/i-mat-datepicker/i-mat-da
 import { ItemBoxComponent } from '../components/item-box/item-box.component';
 import { TaxGroupBoxComponent } from '../components/tax-group-box/tax-group-box.component';
 import { FormControlPipe } from '../pipes/form-control.pipe';
+import { AppOverlayModule } from './overlay.module';
 
 
 
@@ -30,7 +31,8 @@ import { FormControlPipe } from '../pipes/form-control.pipe';
         FormsModule,
         ReactiveFormsModule,        
         AngularMaterialModule,
-        AngularTreeGridModule        
+        AngularTreeGridModule,
+        AppOverlayModule        
     ],
     exports: [
         ProgressSpinnerComponent,

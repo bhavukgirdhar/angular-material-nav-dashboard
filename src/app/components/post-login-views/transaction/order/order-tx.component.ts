@@ -253,6 +253,8 @@ export abstract class OrderTxComponent {
     if(!!selectedItem.taxClassId) {
       // This patches the tax group id,name in item form which will be further used to calculate the tax amount.
       this.updateTaxGroupLinkedToItemAndTaxAmount(selectedItem.taxClassId,"ITEM");      
+    }else{
+      this.updateTaxAmount(undefined);
     }
 
     // Below are the value change subscribers which updates the form values.
@@ -357,17 +359,25 @@ export abstract class OrderTxComponent {
    * 1. When tax group, quantity , discount is changed (From subscribers on form control)   
    * @param taxGroup 
    */
-  private updateTaxAmount(taxGroup: ITaxGroup) {
+  private updateTaxAmount(taxGroup: ITaxGroup | undefined) {
+
+    let taxableAmount = this.itemForm.controls["taxableAmount"].value;
     if (!!taxGroup) {
       //update tax amount.
-      let taxAmount = this.calculateTaxAmount(this.itemForm.controls["taxableAmount"].value, taxGroup);
+      let taxAmount = this.calculateTaxAmount(taxableAmount, taxGroup);
 
-      let totalAmount = taxAmount + this.itemForm.controls["taxableAmount"].value;
+      let totalAmount = taxAmount + taxableAmount;
 
       this.itemForm.patchValue({
         taxAmount: taxAmount,
         totalAmount: totalAmount,
         totalAmountBeforeBillDiscount : totalAmount
+      });
+    }else{ // In case if selected item has no tax class.
+      this.itemForm.patchValue({
+        taxAmount: 0,
+        totalAmount: taxableAmount,
+        totalAmountBeforeBillDiscount : taxableAmount
       });
     }
   }
@@ -468,7 +478,8 @@ export abstract class OrderTxComponent {
         this.selectedLineItemForEdit = undefined;
       }
 
-      this.updateItemLinesTotalAmount();
+      this.updateItemLinesTotalAmount(); // Update the total item lines amount.
+      this.updateOtherCharges(); // Update the total other charges amount and other charges lines.      
       this.updateNetFinalAmount();
         
       this.itemLinesDataSource.data = this.itemLines;
@@ -479,6 +490,7 @@ export abstract class OrderTxComponent {
     }
        
   }
+
 
   /**
    * This function updates the item lines total amount displayed in Transaction summary 
@@ -667,12 +679,30 @@ export abstract class OrderTxComponent {
         this.selectedOtherChargeLineForEdit = undefined;
       }
 
-      this.otherChargeValueSubscription.unsubscribe(); // Unsubscribe the subscription.
+      if(!!this.otherChargeValueSubscription) {
+        this.otherChargeValueSubscription.unsubscribe(); // Unsubscribe the subscription.
+      }      
       this.updateOtherChargesTotalAmount();
       this.otherChargesDataSource.data = this.addedOtherCharges;
       this.otherChargesDiscountForm.reset();
     }
    
+  }
+
+  /** 
+  * This function updates the already added other charges and total other charges amount in case if 
+  *  - New item is added.
+  *  - Existing item is modified
+  */
+  updateOtherCharges() {
+    
+    this.addedOtherCharges.map((otherCharge) =>{
+      if(otherCharge.value != 0){
+        otherCharge.amount = (otherCharge.value! * this.itemLinesTotalAmount.value)/100;
+      }
+    });
+
+    this.updateOtherChargesTotalAmount();
   }
 
   /**

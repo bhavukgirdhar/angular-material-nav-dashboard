@@ -3,6 +3,7 @@ import { Component, DoCheck, Input, OnInit, TemplateRef, ViewChild, ViewContaine
 import { ThemePalette } from '@angular/material/core';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { OverlayService } from 'src/app/services/overlay.service';
+import { take } from "rxjs";
 
 @Component({
   selector: 'app-progress-spinner',

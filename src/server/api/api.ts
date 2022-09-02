@@ -20,7 +20,11 @@ import { BalanceSheetReportServiceService } from "./balanceSheetReportService.se
 import { StockLocationServiceService } from "./stockLocationService.service";
 import { OtherChargesServiceService } from "./otherChargesService.service";
 import { SaleOrderTxServiceService } from "./saleOrderTxService.service";
+import { PurchaseOrderTxServiceService } from "./purchaseOrderTxService.service";
+import { POTxServiceService } from "./pOTxService.service";
+
 
 export const APIS = [BillingClassificationServiceService, CashInHandReportServiceService, DayBookServiceService, BalanceSheetReportServiceService, LedgerServiceService, ItemServiceService, UnitServiceService, 
     ItemGroupServiceService, LedgerGroupServiceService, LedgerAttributesServiceService , TaxClassServiceService, TaxGroupServiceService , TaxableEntityServiceService , OverstockReportServiceService,
-    VoucherNumberServiceService,PaymentTxServiceService, ReceiptTxServiceService, JournalTxServiceService, StockLocationServiceService, OtherChargesServiceService, SaleOrderTxServiceService];
+    VoucherNumberServiceService,PaymentTxServiceService, ReceiptTxServiceService, JournalTxServiceService, StockLocationServiceService, OtherChargesServiceService, SaleOrderTxServiceService,
+    PurchaseOrderTxServiceService, POTxServiceService];

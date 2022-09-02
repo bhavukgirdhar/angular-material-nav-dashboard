@@ -182,14 +182,18 @@
 
                 <div [fxLayout]="'row'" fxflexfill fxLayoutAlign="space-between" class="mb-5">
                     <div class="table-action-buttons">
-                        <button mat-raised-button color="primary" class="button-group" [disabled]="selectedLineItemForEdit == undefined"
+                        <button mat-raised-button color="primary"
+                            [class]="(isHandset$ | async) ? 'edit-delete-action' : 'button-group'" 
+                            [disabled]="selectedLineItemForEdit == undefined"
                             (click)="editItemLine()">
                             <mat-icon>edit</mat-icon>
-                          </button>
-                          <button mat-raised-button color="warn" class="button-group" [disabled]="selectedLineItemForEdit == undefined"
+                        </button>
+                        <button mat-raised-button color="warn" 
+                            [class]="(isHandset$ | async) ? 'edit-delete-action' : 'button-group'"
+                            [disabled]="selectedLineItemForEdit == undefined"
                             (click)="deleteItemLine()">
-                            <mat-icon>delete</mat-icon>
-                          </button>
+                        <mat-icon>delete</mat-icon>
+                        </button>
                     </div>
                     <div>
                         <button mat-raised-button class="button-group" [fxFlex]="50" (click)="cancelAddItem()">
@@ -331,11 +335,15 @@
 
                 <div [fxLayout]="'row'" fxflexfill fxLayoutAlign="space-between" class="mb-5">
                     <div class="table-action-buttons">
-                        <button mat-raised-button color="primary" class="button-group" [disabled]="selectedOtherChargeLineForEdit == undefined"
+                        <button mat-raised-button color="primary" 
+                            [class]="(isHandset$ | async) ? 'edit-delete-action' : 'button-group'" 
+                            [disabled]="selectedOtherChargeLineForEdit == undefined"
                             (click)="editOtherChargeLine()">
                             <mat-icon>edit</mat-icon>
                           </button>
-                          <button mat-raised-button color="warn" class="button-group" [disabled]="selectedOtherChargeLineForEdit == undefined"
+                          <button mat-raised-button color="warn"
+                            [class]="(isHandset$ | async) ? 'edit-delete-action' : 'button-group'" 
+                            [disabled]="selectedOtherChargeLineForEdit == undefined"
                             (click)="deleteOtherChargeLine()">
                             <mat-icon>delete</mat-icon>
                           </button>
@@ -427,7 +435,7 @@
                     </div>
                 </div>                
             </div>
-            <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="end">
+            <div *ngIf="receivedAmount.enabled" [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="end">
                 <div [fxLayout]="'row'" [class]="'summary-component'" [fxFlex]="(isHandset$ | async) ? 100 : 30" fxLayoutAlign="space-between">
                     <div [class]="'summary-header summary-received-amount'">
                         Received Amount
@@ -440,7 +448,7 @@
                     </div>
                 </div>                
             </div>
-            <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="end" class="mb-5">
+            <div *ngIf="returnAmount.enabled" [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="end">
                 <div [fxLayout]="'row'" [class]="'summary-component'" [fxFlex]="(isHandset$ | async) ? 100 : 30" fxLayoutAlign="space-between">
                     <div [class]="'summary-header'">
                         Return Amount
@@ -451,7 +459,7 @@
                 </div>                
             </div>
 
-            <div [fxLayout]="'row'" fxflexfill fxLayoutAlign="end">               
+            <div [fxLayout]="'row'" fxflexfill fxLayoutAlign="end" class="mt-5">               
                 <div>
                     <button mat-raised-button class="button-group" [fxFlex]="50">
                         Cancel

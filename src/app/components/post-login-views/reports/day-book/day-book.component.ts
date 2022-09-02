@@ -11,6 +11,9 @@ import { CustomDateAdapterService } from 'src/app/services/date-adaptor';
 import { DayBook, DayBookReportArgument } from 'src/server';
 import { DayBookServiceService } from 'src/server/api/dayBookService.service';
 import { JournalComponent } from '../../transaction/journal/journal.component';
+import { PurchaseComponent } from '../../transaction/order/purchase/purchase.component';
+import { SaleOrderComponent } from '../../transaction/order/sale-order/sale-order.component';
+import { SaleComponent } from '../../transaction/order/sale/sale.component';
 import { PaymentComponent } from '../../transaction/voucher/payment/payment.component';
 import { ReceiptComponent } from '../../transaction/voucher/receipt/receipt.component';
 
@@ -137,8 +140,7 @@ export class DayBookComponent implements OnInit {
           this.getDayBookReport();
         });
         break;
-      case "Receipt" :
-        
+      case "Receipt" :        
         const ReceiptDialogRef = this.dialog.open(ReceiptComponent, { 
           panelClass: 'custom-dialog-container', 
           data : {
@@ -146,6 +148,39 @@ export class DayBookComponent implements OnInit {
           } 
         });
         ReceiptDialogRef.afterClosed().subscribe(result => {
+          this.getDayBookReport();
+        });
+        break;
+      case "Sale" :      
+        const SaleDialogRef = this.dialog.open(SaleComponent, { 
+          panelClass: 'custom-dialog-container', 
+          data : {
+            txId : this.selectedTxId
+          } 
+        });
+        SaleDialogRef.afterClosed().subscribe(result => {
+          this.getDayBookReport();
+        });
+        break;
+      case "Purchase" :      
+        const PurchaseDialogRef = this.dialog.open(PurchaseComponent, { 
+          panelClass: 'custom-dialog-container', 
+          data : {
+            txId : this.selectedTxId
+          } 
+        });
+        PurchaseDialogRef.afterClosed().subscribe(result => {
+          this.getDayBookReport();
+        });
+        break;
+      case "Inward Purchase Order" :      
+        const IPODialogRef = this.dialog.open(SaleOrderComponent, { 
+          panelClass: 'custom-dialog-container', 
+          data : {
+            txId : this.selectedTxId
+          } 
+        });
+        IPODialogRef.afterClosed().subscribe(result => {
           this.getDayBookReport();
         });
         break;

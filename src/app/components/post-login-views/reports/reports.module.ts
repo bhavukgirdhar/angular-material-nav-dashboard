@@ -36,6 +36,8 @@ import { TransactionsProvider } from 'src/app/services/transactionsProvider';
 import { StockLocationServiceService } from 'src/server/api/stockLocationService.service';
 import { OtherChargesServiceService } from 'src/server/api/otherChargesService.service';
 import { SaleOrderTxServiceService } from 'src/server/api/saleOrderTxService.service';
+import { PurchaseOrderTxServiceService } from 'src/server/api/purchaseOrderTxService.service';
+import { POTxServiceService } from 'src/server/api/pOTxService.service';
 
 @NgModule({
   declarations: [ 
@@ -78,7 +80,9 @@ import { SaleOrderTxServiceService } from 'src/server/api/saleOrderTxService.ser
     TransactionsProvider,
     StockLocationServiceService,
     OtherChargesServiceService,
-    SaleOrderTxServiceService   
+    SaleOrderTxServiceService,
+    PurchaseOrderTxServiceService,
+    POTxServiceService   
   ],
   bootstrap: []
 })
