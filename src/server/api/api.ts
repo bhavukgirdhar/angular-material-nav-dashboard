@@ -1,6 +1,9 @@
 export * from './cashInHandReportService.service';
+import { AttributeServiceService } from './attributeService.service';
+import { AttributeGroupServiceService } from './attributeGroupService.service';
 import { BillingClassificationServiceService } from './billingClassificationService.service';
 import { CashInHandReportServiceService } from './cashInHandReportService.service';
+import { ChoiceListServiceService } from './choiceListService.service';
 import { DayBookServiceService } from './dayBookService.service';
 import { LedgerServiceService } from './ledgerService.service';
 import { ItemServiceService } from "./itemService.service";
@@ -24,7 +27,7 @@ import { PurchaseOrderTxServiceService } from "./purchaseOrderTxService.service"
 import { POTxServiceService } from "./pOTxService.service";
 
 
-export const APIS = [BillingClassificationServiceService, CashInHandReportServiceService, DayBookServiceService, BalanceSheetReportServiceService, LedgerServiceService, ItemServiceService, UnitServiceService, 
+export const APIS = [AttributeServiceService,AttributeGroupServiceService,  BillingClassificationServiceService, CashInHandReportServiceService,ChoiceListServiceService,  DayBookServiceService, BalanceSheetReportServiceService, LedgerServiceService, ItemServiceService, UnitServiceService, 
     ItemGroupServiceService, LedgerGroupServiceService, LedgerAttributesServiceService , TaxClassServiceService, TaxGroupServiceService , TaxableEntityServiceService , OverstockReportServiceService,
     VoucherNumberServiceService,PaymentTxServiceService, ReceiptTxServiceService, JournalTxServiceService, StockLocationServiceService, OtherChargesServiceService, SaleOrderTxServiceService,
     PurchaseOrderTxServiceService, POTxServiceService];

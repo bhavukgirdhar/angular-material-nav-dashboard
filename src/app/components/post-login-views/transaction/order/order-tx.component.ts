@@ -538,7 +538,7 @@ export abstract class OrderTxComponent {
    * This function delete the selected line item.
    */
   public deleteItemLine() : void{
-
+    
   }
 
   /**

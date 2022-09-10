@@ -9,13 +9,22 @@ import { MastersRoutingModule } from './masters-routing.module';
 import { ItemServiceService } from 'src/server/api/itemService.service';
 import { MatTooltipDefaultOptions, MAT_TOOLTIP_DEFAULT_OPTIONS } from '@angular/material/tooltip';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
-import { NewItemComponent } from './new-item/new-item.component';
 import { UnitServiceService } from 'src/server/api/unitService.service';
 import { ItemGroupServiceService } from 'src/server/api/itemGroupService.service';
 import { LedgerGroupServiceService } from 'src/server/api/ledgerGroupService.service';
 import { LedgerServiceService } from 'src/server/api/ledgerService.service';
 import { TaxClassServiceService } from 'src/server/api/taxClassService.service';
 import { AngularMaterialModule } from 'src/app/shared/modules/angular-material.module';
+import { ItemGroupsComponent } from './item-groups/item-groups.component';
+import { NewEditItemGroupComponent } from './item-groups/new-edit-item-group/new-edit-item-group.component';
+import { NewItemComponent } from './items/new-item/new-item.component';
+import { AllAttributesComponent } from './attributes/all-attributes/all-attributes.component';
+import { AttributeServiceService } from 'src/server/api/attributeService.service';
+import { NewEditAttributeComponent } from './attributes/new-edit-attribute/new-edit-attribute.component';
+import { ChoiceListServiceService } from 'src/server/api/choiceListService.service';
+import { AllAttributeGroupsComponent } from './attribute-groups/all-attribute-groups/all-attribute-groups.component';
+import { AttributeGroupServiceService } from 'src/server/api/attributeGroupService.service';
+import { NewEditAttributeGroupComponent } from './attribute-groups/new-edit-attribute-group/new-edit-attribute-group.component';
 
 
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
@@ -26,11 +35,14 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
 
 @NgModule({
   declarations: [
-      MasterBaseViewComponent, 
-      AllItemsComponent, NewItemComponent
+    MasterBaseViewComponent,
+    AllItemsComponent, NewItemComponent, 
+    ItemGroupsComponent, NewEditItemGroupComponent,
+    AllAttributesComponent, NewEditAttributeComponent, 
+    AllAttributeGroupsComponent, NewEditAttributeGroupComponent
   ],
   imports: [
-    CommonModule,    
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,
@@ -39,13 +51,16 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
     AngularMaterialModule
   ],
   providers: [
+    AttributeServiceService,
+    AttributeGroupServiceService, 
+    ChoiceListServiceService,
     ItemServiceService,
     UnitServiceService,
     ItemGroupServiceService,
     LedgerGroupServiceService,
     LedgerServiceService,
     TaxClassServiceService,
-    {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults}
+    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults }
   ],
   bootstrap: []
 })

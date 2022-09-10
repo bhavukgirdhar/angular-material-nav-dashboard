@@ -1,1 +1,48 @@
-<p>purchase-register works!</p>
+<div class="mat-elevation-z8">
+    <mat-card class="mb-5">
+        <mat-card-header>
+            <mat-card-title>
+                Purchase Register
+                <div class="title-underline"></div>
+                <mat-menu #menu="matMenu" xPosition="before">
+                    <button mat-menu-item>Expand</button>
+                    <button mat-menu-item>Remove</button>
+                </mat-menu>
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="text-center">
+            <form [formGroup]="purchaseRegisterForm">
+
+                <div [fxLayout]="(isHandset$ | async) ? 'column' : 'row'" fxflexfill fxLayoutAlign="start"
+                    [class]="(isHandset$ | async) ? 'pb-10' : 'search-criteria'">
+                    <div class="mr-10">
+                        <Ledger-Box [fxFlex]="100"
+                            [ledgerFormControl]="purchaseRegisterForm.controls['ledgerName'] | convertToFormControl"
+                            [ledgerBoxTitle]="'From Ledger'" (onLedgerSelection)="onFromLedgerSelection($event)">
+                        </Ledger-Box>
+                    </div>
+
+                    <div>
+                        <i-mat-datepicker [label]="'Start Date'" 
+                            [dateFormControl]="purchaseRegisterForm.controls['startDate'] | convertToFormControl">
+                        </i-mat-datepicker>
+                    </div>
+                    <div [class]="(isHandset$ | async) ? '' : 'ml-10'">
+                        <i-mat-datepicker [label]="'End Date'"
+                             [dateFormControl]="purchaseRegisterForm.controls['endDate'] | convertToFormControl">
+                        </i-mat-datepicker>
+                    </div>
+                    <div fxflexfill fxLayout="column" [class]="'ml-10 mr-10'">
+                        <mat-checkbox formControlName="isItemDetailRequired">Show Item Details</mat-checkbox>
+
+                    </div>
+                <div>
+                    <button mat-raised-button color="primary" (click)="getReport()">
+                        Show
+                      </button> 
+                </div>
+                </div>
+            </form>
+
+        </mat-card-content>
+    </mat-card>

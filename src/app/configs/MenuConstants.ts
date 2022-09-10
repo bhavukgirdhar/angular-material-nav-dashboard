@@ -17,35 +17,35 @@ export class MenuConstants {
 
         },
         {
-          displayName: 'All Ledges',
-          iconName: '',
-          route: 'master/allLedgers',
-          children: []
-        },
-        {
           displayName: 'Item Groups',
           iconName: '',
-          route: '',
-          children: []
-        },
-        {
-          displayName: 'Other Charges',
-          iconName: '',
-          route: '',
+          route: 'allItemGroups',
           children: []
         },
         {
           displayName: 'Attribute',
           iconName: '',
-          route: '',
+          route: 'allAttributes',
           children: []
         },
         {
           displayName: 'Attribute Group',
           iconName: '',
-          route: '',
+          route: 'allAttributeGroups',
           children: []
         },
+        {
+          displayName: 'All Ledges',
+          iconName: '',
+          route: 'master/allLedgers',
+          children: []
+        },       
+        {
+          displayName: 'Other Charges',
+          iconName: '',
+          route: '',
+          children: []
+        },        
         {
           displayName: 'Manufacturer',
           iconName: '',
